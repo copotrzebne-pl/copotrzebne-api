@@ -1,26 +1,30 @@
+const url = require('url');
+
+const dbUrl = url.parse(process.env.DATABASE_URL || 'postgres://postgres@localhost:5432/postgres', true);
+
 module.exports = {
   development: {
     dialect: 'postgres',
-    username: process.env.API_DB_USERNAME,
-    password: process.env.API_DB_PWD,
-    database: process.env.API_DB_DATABASE,
-    host: process.env.API_DB_HOST,
-    port: process.env.API_DB_PORT,
+    username: dbUrl.username,
+    password: dbUrl.password,
+    database: dbUrl.pathname,
+    host: dbUrl.hostname,
+    port: dbUrl.port,
   },
   test: {
     dialect: 'postgres',
-    username: process.env.API_DB_USERNAME,
-    password: process.env.API_DB_PWD,
-    database: process.env.API_DB_DATABASE,
-    host: process.env.API_DB_HOST,
-    port: process.env.API_DB_PORT,
+    username: dbUrl.username,
+    password: dbUrl.password,
+    database: dbUrl.pathname,
+    host: dbUrl.hostname,
+    port: dbUrl.port,
   },
   production: {
     dialect: 'postgres',
-    username: process.env.API_DB_USERNAME,
-    password: process.env.API_DB_PWD,
-    database: process.env.API_DB_DATABASE,
-    host: process.env.API_DB_HOST,
-    port: process.env.API_DB_PORT,
+    username: dbUrl.username,
+    password: dbUrl.password,
+    database: dbUrl.pathname,
+    host: dbUrl.hostname,
+    port: dbUrl.port,
   },
 };
