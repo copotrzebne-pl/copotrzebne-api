@@ -61,7 +61,7 @@ Adminer is hosted on http://localhost:8080
 
 GitHub Actions are used for CI/CD.
 
-Heroku is used for hosting - two apps per pipeline: beta and production.
+Heroku is used for hosting - ~two apps per pipeline: beta and production.~
 
 ## Continous Integration
 
@@ -73,7 +73,7 @@ Heroku is used for hosting - two apps per pipeline: beta and production.
 
 ## Promotion to production
 
-App need to be promoted manually on Heroku, pipeline: `api.copotrzebne.pl`
+~App need to be promoted manually on Heroku, pipeline: `api.copotrzebne.pl`~
 
 ## DB
 
