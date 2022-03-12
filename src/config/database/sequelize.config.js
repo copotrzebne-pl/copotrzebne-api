@@ -1,7 +1,7 @@
 const url = require('url');
 
 const dbUrl = url.parse(process.env.DATABASE_URL, true);
-
+console.log(dbUrl);
 module.exports = {
   development: {
     dialect: 'postgres',
