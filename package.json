@@ -22,7 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:create": "npx sequelize-cli db:create",
     "db:drop": "npx sequelize-cli db:drop",
-    "db:migrate": "npx sequelize-cli db:migrate"
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "prettier:check": "prettier --check './**/*.{ts,js}'",
+    "prettier:fix": "prettier --write './**/*.{ts,js}'"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",

@@ -1,4 +1,4 @@
-import {Controller, Get, Post} from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 import { PlacesService } from './places.service';
 import { Place } from './models/place.model';
