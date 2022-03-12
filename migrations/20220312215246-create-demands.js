@@ -91,7 +91,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.dropTable('demands');
+      await queryInterface.dropTable('demands', { transaction });
 
       await queryInterface.removeConstraint('places', 'places_pkey', { transaction });
     });
