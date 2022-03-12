@@ -3,18 +3,31 @@
 This is the API for copotrzebne.pl
 
 # important TODOS:
-
-1. Prepare Docker for hosting on heroku
-2. Configure Sequelize, so it can generate migration files based on models (currently must be done by hand)
-3. Host the app
+- 
+- [ ] Prepare Docker for hosting on heroku 
+- [x] Configure Sequelize, so it can generate migration files based on models (currently must be done by hand)
+- [x] Host the app
 
 # Start the project
 
 1. Copy `.env.dist` to `.env` and fill in env variables
+
+    ```ini
+    NODE_ENV=development
+    PORT=3000
+    API_DB_HOST=localhost
+    API_DB_PORT=15432
+    API_DB_USERNAME=postgres
+    API_DB_PWD=postgres
+    API_DB_DATABASE=postgres
+    ```
+
 2. Install node modules
-```bash
-$ yarn install
-```
+
+    ```bash
+    $ yarn install
+    ```
+
 3. Run the app
 
 # Running the app
