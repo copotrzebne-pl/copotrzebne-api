@@ -115,3 +115,19 @@ PostgreSQL from Heroku is used.
 
 The value of `DATABASE_URL` config var can change at any time.
 Do not rely on this value either inside or outside your Heroku app.
+
+## Transactions
+We are using [Sequelize managed transactions](https://sequelize.org/master/manual/transactions.html)
+and the standard flow looks like this:
+- we inject global sequelize instance into controller 
+- we open new sequelize transaction inside controller method
+
+```typescript
+await this.sequelize.transaction(async (transaction) => {
+  /* ... */
+});
+```
+
+- now we can write all business logic inside the above callback, and it will be wrapped inside the transaction
+- every service method that is operating on database should accept transaction as last parameter
+- we can now use as many services as we want inside the controller and in case of any error, the whole transaction will roll back automatically
