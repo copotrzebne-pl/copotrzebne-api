@@ -1,7 +1,7 @@
 import { Controller, Get, Injectable, Post } from '@nestjs/common';
 
 import { PlacesService } from './places.service';
-import { Place } from './models/place.model';
+import { Place } from './places.model';
 import { Sequelize } from 'sequelize-typescript';
 
 @Controller('places')

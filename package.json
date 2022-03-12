@@ -23,6 +23,7 @@
     "db:create": "npx sequelize-cli db:create",
     "db:drop": "npx sequelize-cli db:drop",
     "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "prettier:check": "prettier --check './**/*.{ts,js}'",
     "prettier:fix": "prettier --write './**/*.{ts,js}'"
   },

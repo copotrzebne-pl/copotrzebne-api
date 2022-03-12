@@ -2,7 +2,7 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize/dist/interfaces/sequel
 import { ConfigService } from '@nestjs/config';
 import { URL } from 'url';
 
-import { Place } from '../../places/models/place.model';
+import { Place } from '../../places/places.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
