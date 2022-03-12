@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import {Controller, Get, Post} from '@nestjs/common';
 
 import { PlacesService } from './places.service';
 import { Place } from './models/place.model';
@@ -11,4 +11,9 @@ export class PlacesController {
   public async getPlaces(): Promise<Place[]> {
     return await this.placesService.getAllPlaces();
   }
+
+  // @Post('/')
+  // public async createPlace() {
+  //
+  // }
 }

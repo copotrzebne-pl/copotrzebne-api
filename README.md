@@ -47,6 +47,15 @@ npx sequelize-cli migration:generate --name <migration-name>
 $ dotenv sequelize-cli db:migrate
 ```
 
+## Example of migration
+
+how to add column to existing table
+```javascript
+    await queryInterface.addColumn('places', 'building_number', {
+      type: Sequelize.STRING(50),
+      allowNull: false,
+    });
+```
 
 # Dockerized DB and Adminer
 
