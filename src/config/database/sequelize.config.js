@@ -1,9 +1,11 @@
-const url = require('url');
-
 module.exports = {
   development: {
     dialect: 'postgres',
-    use_env_variable: 'DATABASE_URL',
+    username: process.env.API_DB_USERNAME,
+    password: process.env.API_DB_PWD,
+    database: process.env.API_DB_DATABASE,
+    host: process.env.API_DB_HOST,
+    port: process.env.API_DB_PORT,
   },
   test: {
     dialect: 'postgres',
