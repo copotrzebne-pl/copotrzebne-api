@@ -1,17 +1,22 @@
 import { SequelizeModuleOptions } from '@nestjs/sequelize/dist/interfaces/sequelize-options.interface';
 import { ConfigService } from '@nestjs/config';
+import { URL } from 'url';
 
 import { Place } from '../../places/models/place.model';
 
 export const getDatabaseConfig = (
   configService: ConfigService,
-): SequelizeModuleOptions => ({
-  dialect: 'postgres',
-  host: configService.get<string>('API_DB_HOST', ''),
-  port: configService.get<number>('API_DB_PORT', 3000),
-  username: configService.get<string>('API_DB_USERNAME', ''),
-  password: configService.get<string>('API_DB_PWD', ''),
-  database: configService.get<string>('API_DB_DATABASE', ''),
-  synchronize: false,
-  models: [Place],
-});
+): SequelizeModuleOptions => {
+  const dbUrl = new URL(configService.get<string>('DATABASE_URL', 'postgres://postgres@localhost:5432/postgres'));
+
+  return {
+    dialect: 'postgres',
+    host: dbUrl.hostname,
+    port: +dbUrl.port,
+    username: dbUrl.username,
+    password: dbUrl.password,
+    database: dbUrl.pathname,
+    synchronize: false,
+    models: [Place],
+  };
+}
