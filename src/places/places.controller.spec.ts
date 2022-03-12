@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { PlacesController } from './places.controller';
 import { PlacesService } from './places.service';
+import { Sequelize } from 'sequelize-typescript';
 
 describe('PlacesController', () => {
   let controller: PlacesController;
@@ -12,6 +13,10 @@ describe('PlacesController', () => {
       providers: [
         {
           provide: PlacesService,
+          useValue: jest.fn(),
+        },
+        {
+          provide: Sequelize,
           useValue: jest.fn(),
         },
       ],
