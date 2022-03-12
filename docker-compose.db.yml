@@ -5,11 +5,9 @@ services:
     image: postgres:alpine
     restart: always
     environment:
-      POSTGRES_USER: ${API_DB_USERNAME}
       POSTGRES_PASSWORD: ${API_DB_PWD}
-      POSTGRES_DB: ${API_DB_DATABASE}
     ports:
-      - ${API_DB_PORT}:${5432}
+      - ${API_DB_PORT}:5432
 
   adminer:
     image: adminer

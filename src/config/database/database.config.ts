@@ -7,15 +7,24 @@ import { Place } from '../../places/models/place.model';
 export const getDatabaseConfig = (
   configService: ConfigService,
 ): SequelizeModuleOptions => {
-  const dbUrl = new URL(configService.get<string>('DATABASE_URL', 'postgres://postgres@localhost:5432/postgres'));
-
+  const dbUrl = new URL(configService.get<string>('DATABASE_URL', ''));
+console.log({
+  dialect: 'postgres',
+  host: dbUrl.hostname,
+  port: +dbUrl.port,
+  username: dbUrl.username,
+  password: dbUrl.password,
+  database: dbUrl.pathname.split('/')[1],
+  synchronize: false,
+  models: [Place],
+})
   return {
     dialect: 'postgres',
     host: dbUrl.hostname,
     port: +dbUrl.port,
     username: dbUrl.username,
     password: dbUrl.password,
-    database: dbUrl.pathname,
+    database: dbUrl.pathname.split('/')[1],
     synchronize: false,
     models: [Place],
   };
