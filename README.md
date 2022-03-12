@@ -44,6 +44,16 @@ $ yarn start:dev
 
 https://docs.nestjs.com/techniques/database#sequelize-integration
 
+## Creating database
+```bash
+yarn db:create
+```
+
+## Dropping database
+```bash
+yarn db:drop
+```
+
 ## Generating database migrations
 
 In order to generate migration for Sequelize ORM sequelize-cli is required.
@@ -57,7 +67,7 @@ npx sequelize-cli migration:generate --name <migration-name>
 ## Running migrations
 
 ```bash
-$ dotenv sequelize-cli db:migrate
+$ yarn db:migrate
 ```
 
 ## Example of migration

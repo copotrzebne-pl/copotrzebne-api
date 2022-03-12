@@ -17,9 +17,6 @@ describe('AppController (e2e)', () => {
   });
 
   it('/places (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/places')
-      .expect(200)
-      .expect([]);
+    return request(app.getHttpServer()).get('/places').expect(200).expect([]);
   });
 });

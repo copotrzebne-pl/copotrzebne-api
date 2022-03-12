@@ -9,8 +9,7 @@ import { getDatabaseConfig } from './config/database/database.config';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({
-      useFactory: async (configService: ConfigService) =>
-        getDatabaseConfig(configService),
+      useFactory: async (configService: ConfigService) => getDatabaseConfig(configService),
       inject: [ConfigService],
     }),
     PlacesModule,

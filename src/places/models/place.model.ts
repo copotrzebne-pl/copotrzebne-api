@@ -1,4 +1,4 @@
-import { Column, DataType, Model, Table} from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
