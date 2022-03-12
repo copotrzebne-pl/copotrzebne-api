@@ -69,7 +69,7 @@ Heroku is used for hosting - two apps per pipeline: beta and production.
 
 ## Release to beta
 
-`relsease.yml` workflow push app to Heroku using GIT if test sucessed on branch `main`.
+`relsease.yml` workflow push app to Heroku using GIT if test sucessed on branch `master`.
 
 ## Promotion to production
 
