@@ -51,6 +51,8 @@ $ dotenv sequelize-cli db:migrate
 # Dockerized DB and Adminer
 
 To login into the adminer use credentials from `.env`
-Host is the name of the docker-compose service 
+Host is the name of the db service from docker-compose - postgres.
+
+Adminer is hosted on http://localhost:8080
 
 ![Adminer login](readme/adminer-login.png)
