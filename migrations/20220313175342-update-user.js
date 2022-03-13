@@ -44,6 +44,8 @@ module.exports = {
         },
         { transaction },
       );
+      await queryInterface.sequelize.query('ALTER TABLE users DROP CONSTRAINT users_id_key', { transaction });
+      await queryInterface.removeIndex('users', 'users_id_key', { transaction });
 
       await queryInterface.changeColumn(
         'users',
@@ -55,6 +57,9 @@ module.exports = {
         },
         { transaction },
       );
+
+      await queryInterface.sequelize.query('ALTER TABLE users DROP CONSTRAINT users_login_key', { transaction });
+      await queryInterface.removeIndex('users', 'users_login_key', { transaction });
     });
   },
 };
