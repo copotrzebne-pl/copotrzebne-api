@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken, SequelizeModule } from '@nestjs/sequelize';
+import { getModelToken } from '@nestjs/sequelize';
 
 import { PlacesService } from './places.service';
-import { Place } from './models/place.model';
+import { Place } from './places.model';
 
 describe('PlacesService', () => {
   let service: PlacesService;
