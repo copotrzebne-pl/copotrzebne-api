@@ -30,8 +30,8 @@ export class Place extends Model {
   phone!: string | null;
 
   @Column({ allowNull: true, type: DataType.DECIMAL })
-  latitude!: string | null;
+  latitude!: number | null;
 
   @Column({ allowNull: true, type: DataType.DECIMAL })
-  longitude!: string | null;
+  longitude!: number | null;
 }
