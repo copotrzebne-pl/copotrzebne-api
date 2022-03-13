@@ -12,14 +12,11 @@ import { UserRole } from '../users/types/user-role.enum';
 export class PlacesController {
   constructor(private readonly sequelize: Sequelize, private readonly placesService: PlacesService) {}
 
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN, UserRole.SERVICE])
   @Get('/')
   public async getPlaces(): Promise<Place[]> {
-    const places = await this.sequelize.transaction(async (transaction) => {
+    return await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
       return await this.placesService.getAllPlaces(transaction);
     });
-
-    return places;
   }
 
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
