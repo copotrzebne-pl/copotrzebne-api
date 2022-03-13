@@ -1,4 +1,4 @@
-FROM node:16-alpine AS build
+FROM node:17.7.1-alpine AS build
 
 WORKDIR /app
 
@@ -9,16 +9,12 @@ COPY . .
 
 RUN yarn build
 
-FROM node:16-alpine AS dependencies
-
-WORKDIR /app
-
-COPY package.json yarn.lock  ./
+# Prune dev dependencies
 RUN yarn --production --frozen-lockfile
 
-FROM node:16-alpine AS production
+FROM node:17.7.1-alpine AS production
 
-COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 
 CMD ["node", "dist/main"]

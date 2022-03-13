@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { PlacesModule } from './places/places.module';
 import { getDatabaseConfig } from './config/database/database.config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { getDatabaseConfig } from './config/database/database.config';
       inject: [ConfigService],
     }),
     PlacesModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

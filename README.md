@@ -131,3 +131,34 @@ await this.sequelize.transaction(async (transaction) => {
 - now we can write all business logic inside the above callback, and it will be wrapped inside the transaction
 - every service method that is operating on database should accept transaction as last parameter
 - we can now use as many services as we want inside the controller and in case of any error, the whole transaction will roll back automatically
+
+
+# User Roles
+
+## Admin
+
+Should have access to everything
+
+## Service
+
+Have access to fetch data only - for generating static frontend
+
+## Place Manager
+
+Can access only his own places
+
+# Authorization
+
+To authorize user, use AuthGuard and define allowed roles using SetMetaData.
+AuthGuard verifies the session and roles.
+
+```javascript
+class SomeController {
+   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
+   @UseGuards(AuthGuard)
+   @Get('/') methodForGet() {}
+}
+```
+
+To authorize user pass JWT via authorization header.
+Header has a following content: `Bearer <jwt_token>`

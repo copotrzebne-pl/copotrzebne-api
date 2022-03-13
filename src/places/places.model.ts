@@ -15,7 +15,7 @@ export class Place extends Model {
   @Column({ allowNull: false })
   street!: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, type: DataType.STRING(50) })
   buildingNumber!: string;
 
   @Column({ allowNull: true, type: DataType.STRING(50) })
@@ -29,6 +29,12 @@ export class Place extends Model {
 
   @Column({ allowNull: true, type: DataType.STRING })
   phone!: string | null;
+
+  @Column({ allowNull: true, type: DataType.DECIMAL })
+  latitude!: number | null;
+
+  @Column({ allowNull: true, type: DataType.DECIMAL })
+  longitude!: number | null;
 
   @HasMany(() => Demand)
   demands!: Demand[];
