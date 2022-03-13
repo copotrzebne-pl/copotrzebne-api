@@ -15,7 +15,10 @@ describe('PlacesController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PlacesController],
       providers: [
-        UsersService,
+        {
+          provide: UsersService,
+          useValue: jest.fn(),
+        },
         {
           provide: getModelToken(User),
           useValue: jest.fn(),
