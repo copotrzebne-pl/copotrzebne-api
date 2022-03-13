@@ -1,7 +1,7 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { Demand } from '../demands/demands.model';
 
-@Table({ tableName: 'supplies', underscored: true })
+@Table({ tableName: 'priorities', underscored: true })
 export class Priority extends Model {
   @Column({ type: DataType.UUID, primaryKey: true, allowNull: false })
   id!: string;
