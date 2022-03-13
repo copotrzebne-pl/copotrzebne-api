@@ -25,7 +25,8 @@
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "prettier:check": "prettier --check './**/*.{ts,js}'",
-    "prettier:fix": "prettier --write './**/*.{ts,js}'"
+    "prettier:fix": "prettier --write './**/*.{ts,js}'",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
@@ -67,7 +68,8 @@
     "ts-loader": "^8.0.18",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "husky": "^7.0.0"
   },
   "jest": {
     "moduleFileExtensions": [
