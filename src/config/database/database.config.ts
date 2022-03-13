@@ -23,6 +23,7 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
     options.username = dbUrl.username;
     options.password = dbUrl.password;
     options.database = dbUrl.pathname.split('/')[1];
+    options.dialectOptions = { ssl: { require: true, rejectUnauthorized: false } };
   } else {
     options.host = configService.get<string>('API_DB_HOST', '');
     options.port = configService.get<number>('API_DB_PORT', 3000);
