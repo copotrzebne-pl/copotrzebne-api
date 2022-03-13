@@ -20,4 +20,8 @@ export class UsersService {
 
     return user;
   }
+
+  public async getUserByLogin(transaction: Transaction, login: string): Promise<User | null> {
+    return await this.userModel.findOne({ where: { login }, transaction });
+  }
 }
