@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Demand } from '../demands/demands.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -34,4 +35,7 @@ export class Place extends Model {
 
   @Column({ allowNull: true, type: DataType.DECIMAL })
   longitude!: number | null;
+
+  @HasMany(() => Demand)
+  demands!: Demand[];
 }
