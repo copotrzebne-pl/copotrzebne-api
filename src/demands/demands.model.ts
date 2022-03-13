@@ -12,10 +12,10 @@ export class Demand extends Model {
   comment!: string | null;
 
   @BelongsTo(() => Place)
-  place!: Place;
+  place!: Place | null;
 
   @BelongsTo(() => Supply)
-  supply!: Supply;
+  supply!: Supply | null;
 
   @BelongsTo(() => Priority)
   priority!: Priority | null;

@@ -3,6 +3,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.addConstraint('places', {
+        type: 'primary key',
+        name: 'places_pkey',
+        fields: ['id'],
+        transaction,
+      });
+
       await queryInterface.createTable(
         'demands',
         {
@@ -19,13 +26,31 @@ module.exports = {
           place_id: {
             type: Sequelize.UUID,
             allowNull: false,
+            references: {
+              model: 'places',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
           },
           supply_id: {
             type: Sequelize.UUID,
             allowNull: false,
+            references: {
+              model: 'supplies',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
           },
           priority_id: {
             type: Sequelize.UUID,
+            references: {
+              model: 'priorities',
+              key: 'id',
+            },
+            onUpdate: 'set null',
+            onDelete: 'set null',
           },
           created_at: {
             type: Sequelize.DATE,
@@ -40,52 +65,6 @@ module.exports = {
         },
         { transaction },
       );
-
-      await queryInterface.addConstraint('places', {
-        type: 'primary key',
-        name: 'places_pkey',
-        fields: ['id'],
-        transaction,
-      });
-
-      await queryInterface.addConstraint('demands', {
-        type: 'foreign key',
-        name: 'demands_placeId_fkey',
-        fields: ['place_id'],
-        references: {
-          table: 'places',
-          field: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        transaction,
-      });
-
-      await queryInterface.addConstraint('demands', {
-        type: 'foreign key',
-        name: 'demands_supplyId_fkey',
-        fields: ['supply_id'],
-        references: {
-          table: 'supplies',
-          field: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        transaction,
-      });
-
-      await queryInterface.addConstraint('demands', {
-        type: 'foreign key',
-        name: 'demands_priorityId_fkey',
-        fields: ['priority_id'],
-        references: {
-          table: 'priorities',
-          field: 'id',
-        },
-        onUpdate: 'set null',
-        onDelete: 'set null',
-        transaction,
-      });
     });
   },
 

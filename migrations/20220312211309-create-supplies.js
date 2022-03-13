@@ -10,15 +10,15 @@ module.exports = {
         unique: true,
         autoIncrement: false,
       },
-      name_PL: {
+      name_pl: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      name_UA: {
+      name_ua: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      name_EN: {
+      name_en: {
         type: Sequelize.STRING,
         allowNull: false,
       },

@@ -7,13 +7,13 @@ export class Priority extends Model {
   id!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  namePL!: string;
+  namePl!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  nameUA!: string;
+  nameUa!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  nameEN!: string;
+  nameEn!: string;
 
   @HasMany(() => Demand)
   demands!: Demand[];

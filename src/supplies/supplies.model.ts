@@ -7,13 +7,13 @@ export class Supply extends Model {
   id!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  namePL!: string;
+  namePl!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  nameUA!: string;
+  nameUa!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
-  nameGB!: string;
+  nameEn!: string;
 
   @HasOne(() => Demand)
   demand!: Demand | null;
