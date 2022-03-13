@@ -17,7 +17,7 @@ export class Demand extends Model {
 
   @Column({ allowNull: false, type: DataType.UUID })
   @ForeignKey(() => Supply)
-  supplyId!: string | null;
+  supplyId!: string;
 
   @Column({ allowNull: true, type: DataType.UUID })
   @ForeignKey(() => Priority)
