@@ -3,6 +3,17 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.changeColumn(
+        'places',
+        'id',
+        {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          allowNull: false,
+        },
+        { transaction },
+      );
+
       await queryInterface.addConstraint('places', {
         type: 'primary key',
         name: 'places_pkey',
@@ -68,11 +79,22 @@ module.exports = {
     });
   },
 
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.dropTable('demands', { transaction });
 
-      await queryInterface.removeConstraint('places', 'places_pkey', { transaction });
+      await queryInterface.removeColumn('places', 'id', { transaction });
+
+      await queryInterface.addColumn(
+        'places',
+        'id',
+        {
+          allowNull: false,
+          primaryKey: true,
+          type: Sequelize.UUID,
+        },
+        { transaction },
+      );
     });
   },
 };
