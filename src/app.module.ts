@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SuppliesModule } from './supplies/supplies.module';
 import { PrioritiesModule } from './priorities/priorities.module';
+import { DemandsModule } from './demands/demands.module';
 
 @Module({
   imports: [
@@ -16,11 +17,12 @@ import { PrioritiesModule } from './priorities/priorities.module';
       useFactory: async (configService: ConfigService) => getDatabaseConfig(configService),
       inject: [ConfigService],
     }),
+    UsersModule,
+    AuthenticationModule,
     PlacesModule,
     SuppliesModule,
     PrioritiesModule,
-    UsersModule,
-    AuthenticationModule,
+    DemandsModule,
   ],
 })
 export class AppModule {}

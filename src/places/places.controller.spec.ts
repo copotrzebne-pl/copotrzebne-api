@@ -7,6 +7,7 @@ import { PlacesController } from './places.controller';
 import { PlacesService } from './services/places.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
+import { DemandsService } from '../demands/services/demands.service';
 
 describe('PlacesController', () => {
   let controller: PlacesController;
@@ -25,6 +26,10 @@ describe('PlacesController', () => {
         },
         {
           provide: PlacesService,
+          useValue: jest.fn(),
+        },
+        {
+          provide: DemandsService,
           useValue: jest.fn(),
         },
         {
