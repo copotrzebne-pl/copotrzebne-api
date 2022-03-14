@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
 import { getModelToken } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
+import { ConfigService } from '@nestjs/config';
 
 import { AuthenticationService } from './authentication.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import { JwtService } from '../jwt/jwt.service';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -14,8 +15,9 @@ describe('AuthenticationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthenticationService,
-        ConfigService,
         UsersService,
+        ConfigService,
+        { provide: JwtService, useValue: jest.fn() },
         { provide: getModelToken(User), useValue: jest.fn() },
         {
           provide: Sequelize,

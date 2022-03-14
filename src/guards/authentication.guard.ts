@@ -1,37 +1,35 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Sequelize } from 'sequelize-typescript';
-import { verify } from 'jsonwebtoken';
 import { DateTime } from 'luxon';
-import { ConfigService } from '@nestjs/config';
 
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../users/types/user-role.enum';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { User } from '../users/models/user.model';
 import { ApiJwtPayload } from '../types/api-jwt-payload.type';
+import { JwtService } from '../jwt/jwt.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly usersService: UsersService,
     private readonly sequelize: Sequelize,
     private readonly reflector: Reflector,
-    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authorizationToken = AuthGuard.getAuthorizationToken(AuthGuard.getAuthorizationHeaderFromRequest(request));
+    const authorizationToken = this.jwtService.getAuthorizationToken(
+      AuthGuard.getAuthorizationHeaderFromRequest(request),
+    );
 
     if (!authorizationToken) {
       return false;
     }
 
-    const payload = AuthGuard.getPayloadFromToken(
-      authorizationToken,
-      this.configService.get<string>('API_JWT_SIGNATURE', ''),
-    );
+    const payload = this.jwtService.getPayloadFromToken(authorizationToken);
 
     if (!payload) {
       return false;
@@ -60,31 +58,10 @@ export class AuthGuard implements CanActivate {
     return request?.headers?.authorization || null;
   }
 
-  private static getAuthorizationToken(authorizationString: string | null): string | null {
-    if (!authorizationString || !authorizationString.startsWith('Bearer ')) {
-      return null;
-    }
-
-    const token = authorizationString.split(' ')[1];
-    if (!token) {
-      return null;
-    }
-
-    return token;
-  }
-
-  private static getPayloadFromToken(token: string, signature: string): ApiJwtPayload | null {
-    try {
-      return verify(token, signature) as ApiJwtPayload;
-    } catch (_) {
-      return null;
-    }
-  }
-
   private static verifyIfSessionValid(payload: ApiJwtPayload): boolean {
     const { exp } = payload;
     const now = DateTime.now();
-    const expirationDate = DateTime.fromMillis(exp);
+    const expirationDate = DateTime.fromSeconds(exp);
     return expirationDate > now;
   }
 }

@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
 import { Sequelize } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
 
@@ -8,6 +7,7 @@ import { PlacesService } from './services/places.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
 import { DemandsService } from '../demands/services/demands.service';
+import { JwtService } from '../jwt/jwt.service';
 
 describe('PlacesController', () => {
   let controller: PlacesController;
@@ -16,6 +16,10 @@ describe('PlacesController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PlacesController],
       providers: [
+        {
+          provide: JwtService,
+          useValue: jest.fn(),
+        },
         {
           provide: UsersService,
           useValue: jest.fn(),
@@ -34,10 +38,6 @@ describe('PlacesController', () => {
         },
         {
           provide: Sequelize,
-          useValue: jest.fn(),
-        },
-        {
-          provide: ConfigService,
           useValue: jest.fn(),
         },
       ],
