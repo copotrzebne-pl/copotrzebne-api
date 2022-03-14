@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { verify } from 'jsonwebtoken';
 import { DateTime } from 'luxon';
 import { ConfigService } from '@nestjs/config';
