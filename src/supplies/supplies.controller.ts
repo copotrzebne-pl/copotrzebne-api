@@ -1,7 +1,22 @@
-import { Controller, Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Post,
+  SetMetadata,
+  UseGuards,
+} from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
+import CreationError from '../error/creationError';
+import { CreateSupplyDto } from './dto/createSupplyDto';
+import { MetadataKey } from '../types/metadata-key.enum';
+import { UserRole } from '../users/types/user-role.enum';
+import { AuthGuard } from '../guards/authentication.guard';
 
 @Controller('supplies')
 @Injectable()
@@ -16,6 +31,25 @@ export class SuppliesController {
       });
     } catch (error) {
       throw new HttpException('Cannot get supplies', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @Post('/')
+  public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply> {
+    try {
+      const supply = await this.sequelize.transaction(async (transaction) => {
+        return await this.suppliesService.createSupply(transaction, createSupplyDto);
+      });
+
+      if (!supply) {
+        throw new CreationError();
+      }
+
+      return supply;
+    } catch (error) {
+      throw new HttpException('Cannot create Supply', HttpStatus.BAD_REQUEST);
     }
   }
 }

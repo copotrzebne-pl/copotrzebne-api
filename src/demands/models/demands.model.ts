@@ -5,7 +5,14 @@ import { Place } from '../../places/models/places.model';
 
 @Table({ tableName: 'demands', underscored: true })
 export class Demand extends Model {
-  @Column({ type: DataType.UUID, primaryKey: true, allowNull: false })
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    unique: true,
+    autoIncrement: false,
+    defaultValue: DataType.UUIDV4,
+  })
   id!: string;
 
   @Column({ allowNull: true, type: DataType.STRING })

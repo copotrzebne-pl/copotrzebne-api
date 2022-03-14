@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 import { Supply } from '../models/supplies.model';
+import { CreateSupplyDto } from '../dto/createSupplyDto';
 
 @Injectable()
 export class SuppliesService {
@@ -12,5 +13,9 @@ export class SuppliesService {
 
   public async getAllSupplies(transaction: Transaction): Promise<Supply[]> {
     return await this.supplyModel.findAll({ transaction });
+  }
+
+  public async createSupply(transaction: Transaction, supplyDto: CreateSupplyDto): Promise<Supply> {
+    return this.supplyModel.create({ ...supplyDto }, { transaction });
   }
 }
