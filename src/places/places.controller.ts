@@ -1,10 +1,12 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Injectable,
   Param,
+  Patch,
   Post,
   SetMetadata,
   UseGuards,
@@ -18,6 +20,9 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { Demand } from '../demands/models/demands.model';
 import { DemandsService } from '../demands/services/demands.service';
+import CRUDError from '../error/CRUDError';
+import { CreatePlaceDto } from './dto/createPlaceDto';
+import { UpdatePlaceDto } from './dto/updatePlaceDto';
 
 @Controller('places')
 @Injectable()
@@ -53,8 +58,38 @@ export class PlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createPlace() {
-    // TODO: add implementation
-    return null;
+  public async createPlace(@Body() placeDto: CreatePlaceDto): Promise<Place> {
+    try {
+      const place = await this.sequelize.transaction(async (transaction) => {
+        return await this.placesService.createPlace(transaction, placeDto);
+      });
+
+      if (!place) {
+        throw new CRUDError();
+      }
+
+      return place;
+    } catch (error) {
+      throw new HttpException('Cannot create Place', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @Patch('/:id')
+  public async updatePlace(@Param('id') id: string, @Body() placeDto: UpdatePlaceDto): Promise<Place> {
+    try {
+      const place = await this.sequelize.transaction(async (transaction) => {
+        return await this.placesService.updatePlace(transaction, id, placeDto);
+      });
+
+      if (!place) {
+        throw new CRUDError();
+      }
+
+      return place;
+    } catch (error) {
+      throw new HttpException('Cannot create Place', HttpStatus.BAD_REQUEST);
+    }
   }
 }
