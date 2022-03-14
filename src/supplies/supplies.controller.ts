@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import { ApiTags } from '@nestjs/swagger';
+
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
 import CRUDError from '../error/CRUDError';
@@ -18,6 +20,7 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 
+@ApiTags('supplies')
 @Controller('supplies')
 @Injectable()
 export class SuppliesController {
