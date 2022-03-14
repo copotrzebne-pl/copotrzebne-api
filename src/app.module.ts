@@ -6,6 +6,7 @@ import { PlacesModule } from './places/places.module';
 import { getDatabaseConfig } from './config/database/database.config';
 import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { SuppliesModule } from './supplies/supplies.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
       inject: [ConfigService],
     }),
     PlacesModule,
+    SuppliesModule,
     UsersModule,
     AuthenticationModule,
   ],
