@@ -7,7 +7,6 @@ import { AuthenticationController } from './authentication.controller';
 import { User } from '../users/models/user.model';
 import { AuthenticationService } from './authentication.service';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '../jwt/jwt.service';
 
 describe('AuthenticationController', () => {
   let controller: AuthenticationController;
@@ -19,17 +18,12 @@ describe('AuthenticationController', () => {
         AuthenticationService,
         UsersService,
         ConfigService,
-        { provide: JwtService, useValue: jest.fn() },
         {
           provide: Sequelize,
           useValue: jest.fn(),
         },
         {
           provide: getModelToken(User),
-          useValue: jest.fn(),
-        },
-        {
-          provide: JwtService,
           useValue: jest.fn(),
         },
       ],
