@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
 
 import { PlacesController } from './places.controller';
-import { PlacesService } from './places.service';
+import { PlacesService } from './services/places.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
 

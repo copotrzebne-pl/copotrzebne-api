@@ -1,8 +1,8 @@
 import { Controller, Get, Injectable, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 
-import { PlacesService } from './places.service';
-import { Place } from './places.model';
+import { PlacesService } from './services/places.service';
+import { Place } from './models/places.model';
 import { AuthGuard } from '../guards/authentication.guard';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';

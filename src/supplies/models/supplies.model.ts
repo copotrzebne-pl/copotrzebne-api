@@ -1,5 +1,5 @@
 import { Column, DataType, HasOne, Model, Table } from 'sequelize-typescript';
-import { Demand } from '../demands/demands.model';
+import { Demand } from '../../demands/models/demands.model';
 
 @Table({ tableName: 'supplies', underscored: true })
 export class Supply extends Model {

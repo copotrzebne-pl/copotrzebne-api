@@ -2,11 +2,11 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize/dist/interfaces/sequel
 import { ConfigService } from '@nestjs/config';
 import { URL } from 'url';
 
-import { Place } from '../../places/places.model';
+import { Place } from '../../places/models/places.model';
 import { User } from '../../users/models/user.model';
-import { Demand } from '../../demands/demands.model';
-import { Supply } from '../../supplies/supplies.model';
-import { Priority } from '../../priorities/priorities.model';
+import { Demand } from '../../demands/models/demands.model';
+import { Supply } from '../../supplies/models/supplies.model';
+import { Priority } from '../../priorities/models/priorities.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
