@@ -12,7 +12,7 @@ import {
 import { Sequelize } from 'sequelize-typescript';
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
-import CreationError from '../error/creationError';
+import CRUDError from '../error/CRUDError';
 import { CreateSupplyDto } from './dto/createSupplyDto';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
@@ -44,7 +44,7 @@ export class SuppliesController {
       });
 
       if (!supply) {
-        throw new CreationError();
+        throw new CRUDError();
       }
 
       return supply;

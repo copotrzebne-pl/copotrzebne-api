@@ -14,7 +14,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/createDemandDto';
 import { Demand } from './models/demands.model';
-import CreationError from '../error/creationError';
+import CRUDError from '../error/CRUDError';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
@@ -35,7 +35,7 @@ export class DemandsController {
       });
 
       if (!demand) {
-        throw new CreationError();
+        throw new CRUDError();
       }
 
       return demand;
@@ -54,7 +54,7 @@ export class DemandsController {
       });
 
       if (!demand) {
-        throw new CreationError();
+        throw new CRUDError();
       }
 
       return demand;
