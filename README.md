@@ -129,7 +129,7 @@ await this.sequelize.transaction(async (transaction) => {
 ```
 
 - now we can write all business logic inside the above callback, and it will be wrapped inside the transaction
-- every service method that is operating on database should accept transaction as last parameter
+- every service method that is operating on database should accept transaction as first parameter
 - we can now use as many services as we want inside the controller and in case of any error, the whole transaction will roll back automatically
 
 

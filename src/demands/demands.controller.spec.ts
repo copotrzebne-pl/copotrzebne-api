@@ -3,18 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import { Sequelize } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
 
-import { PlacesController } from './places.controller';
-import { PlacesService } from './services/places.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
-import { DemandsService } from '../demands/services/demands.service';
+import { DemandsService } from './services/demands.service';
+import { DemandsController } from './demands.controller';
 
 describe('PlacesController', () => {
-  let controller: PlacesController;
+  let controller: DemandsController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [PlacesController],
+      controllers: [DemandsController],
       providers: [
         {
           provide: UsersService,
@@ -22,10 +21,6 @@ describe('PlacesController', () => {
         },
         {
           provide: getModelToken(User),
-          useValue: jest.fn(),
-        },
-        {
-          provide: PlacesService,
           useValue: jest.fn(),
         },
         {
@@ -43,7 +38,7 @@ describe('PlacesController', () => {
       ],
     }).compile();
 
-    controller = module.get<PlacesController>(PlacesController);
+    controller = module.get<DemandsController>(DemandsController);
   });
 
   it('is defined', () => {

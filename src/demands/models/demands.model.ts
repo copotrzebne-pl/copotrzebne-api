@@ -1,11 +1,18 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
-import { Supply } from '../supplies/supplies.model';
-import { Priority } from '../priorities/priorities.model';
-import { Place } from '../places/places.model';
+import { Supply } from '../../supplies/models/supplies.model';
+import { Priority } from '../../priorities/models/priorities.model';
+import { Place } from '../../places/models/places.model';
 
 @Table({ tableName: 'demands', underscored: true })
 export class Demand extends Model {
-  @Column({ type: DataType.UUID, primaryKey: true, allowNull: false })
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    unique: true,
+    autoIncrement: false,
+    defaultValue: DataType.UUIDV4,
+  })
   id!: string;
 
   @Column({ allowNull: true, type: DataType.STRING })

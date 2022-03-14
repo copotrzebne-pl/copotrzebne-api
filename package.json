@@ -8,13 +8,15 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:docker:db": "docker-compose -p copotrzeba_db --env-file .env -f docker-compose.db.yml up",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,js}\" \"test/**/*.{ts,js}\" \"migrations/**/*.{ts,js}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js}\" \"test/**/*.{ts,js}\" \"migrations/**/*.{ts,js}\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
+    "lint:check": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -24,8 +26,6 @@
     "db:drop": "npx sequelize-cli db:drop",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
-    "prettier:check": "prettier --check './**/*.{ts,js}'",
-    "prettier:fix": "prettier --write './**/*.{ts,js}'",
     "prepare": "husky install"
   },
   "dependencies": {

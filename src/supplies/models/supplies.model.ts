@@ -1,9 +1,16 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { Demand } from '../demands/demands.model';
+import { Demand } from '../../demands/models/demands.model';
 
-@Table({ tableName: 'priorities', underscored: true })
-export class Priority extends Model {
-  @Column({ type: DataType.UUID, primaryKey: true, allowNull: false })
+@Table({ tableName: 'supplies', underscored: true })
+export class Supply extends Model {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    unique: true,
+    autoIncrement: false,
+    defaultValue: DataType.UUIDV4,
+  })
   id!: string;
 
   @Column({ allowNull: false, type: DataType.STRING })
@@ -16,5 +23,5 @@ export class Priority extends Model {
   nameEn!: string;
 
   @HasMany(() => Demand)
-  demands!: Demand[];
+  demand!: Demand[];
 }

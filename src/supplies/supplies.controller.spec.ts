@@ -2,34 +2,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { Sequelize } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
-
-import { PlacesController } from './places.controller';
-import { PlacesService } from './services/places.service';
+import { SuppliesController } from './supplies.controller';
+import { SuppliesService } from './services/supplies.service';
+import { Supply } from './models/supplies.model';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/models/user.model';
-import { DemandsService } from '../demands/services/demands.service';
 
-describe('PlacesController', () => {
-  let controller: PlacesController;
+describe('SuppliesController', () => {
+  let controller: SuppliesController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [PlacesController],
+      controllers: [SuppliesController],
       providers: [
         {
           provide: UsersService,
           useValue: jest.fn(),
         },
         {
-          provide: getModelToken(User),
+          provide: getModelToken(Supply),
           useValue: jest.fn(),
         },
         {
-          provide: PlacesService,
-          useValue: jest.fn(),
-        },
-        {
-          provide: DemandsService,
+          provide: SuppliesService,
           useValue: jest.fn(),
         },
         {
@@ -43,7 +37,7 @@ describe('PlacesController', () => {
       ],
     }).compile();
 
-    controller = module.get<PlacesController>(PlacesController);
+    controller = module.get<SuppliesController>(SuppliesController);
   });
 
   it('is defined', () => {
