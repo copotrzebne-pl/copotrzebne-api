@@ -1,5 +1,6 @@
 import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { ApiResponse } from '@nestjs/swagger';
 
 import { AuthenticationService } from './authentication.service';
 import { LoginDto } from './dto/login.dto';
@@ -8,6 +9,24 @@ import { LoginDto } from './dto/login.dto';
 export class AuthenticationController {
   constructor(private readonly sequelize: Sequelize, private readonly authenticationService: AuthenticationService) {}
 
+  @ApiResponse({
+    status: 201,
+    schema: {
+      type: 'object',
+      properties: {
+        jwt: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    schema: {
+      example: {
+        statusCode: 403,
+        message: 'FAILED_TO_LOGIN',
+      },
+    },
+  })
   @Post('/login')
   async login(@Body() loginDto: LoginDto): Promise<{ jwt: string }> {
     const { login, password } = loginDto;
