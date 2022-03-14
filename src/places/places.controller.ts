@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Injectable, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 
 import { PlacesService } from './services/places.service';
@@ -14,9 +14,13 @@ export class PlacesController {
 
   @Get('/')
   public async getPlaces(): Promise<Place[]> {
-    return await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
-      return await this.placesService.getAllPlaces(transaction);
-    });
+    try {
+      return await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
+        return await this.placesService.getAllPlaces(transaction);
+      });
+    } catch (error) {
+      throw new HttpException('CANNOT_GET_PLACES', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])

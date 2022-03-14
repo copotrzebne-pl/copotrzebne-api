@@ -12,11 +12,6 @@ export class PlacesService {
   ) {}
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
-    try {
-      return await this.placeModel.findAll({ transaction });
-    } catch (error) {
-      // TODO: return handled error gracefully
-      throw error;
-    }
+    return await this.placeModel.findAll({ transaction });
   }
 }
