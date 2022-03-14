@@ -7,6 +7,7 @@ import { getDatabaseConfig } from './config/database/database.config';
 import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SuppliesModule } from './supplies/supplies.module';
+import { PrioritiesModule } from './priorities/priorities.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SuppliesModule } from './supplies/supplies.module';
     }),
     PlacesModule,
     SuppliesModule,
+    PrioritiesModule,
     UsersModule,
     AuthenticationModule,
   ],
