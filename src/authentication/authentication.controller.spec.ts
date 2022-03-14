@@ -28,6 +28,10 @@ describe('AuthenticationController', () => {
           provide: getModelToken(User),
           useValue: jest.fn(),
         },
+        {
+          provide: JwtService,
+          useValue: jest.fn(),
+        },
       ],
     }).compile();
 

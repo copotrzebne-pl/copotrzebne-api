@@ -1,16 +1,9 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demands.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    unique: true,
-    autoIncrement: false,
-    defaultValue: DataType.UUIDV4,
-  })
+  @Column({ primaryKey: true, defaultValue: Sequelize.fn('uuid_generate_v4') })
   id!: string;
 
   @Column({ allowNull: false })
