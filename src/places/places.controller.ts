@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import { ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PlacesService } from './services/places.service';
 import { Place } from './models/places.model';
@@ -24,6 +25,7 @@ import CRUDError from '../error/CRUDError';
 import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
 
+@ApiTags('places')
 @Controller('places')
 @Injectable()
 export class PlacesController {
@@ -42,6 +44,20 @@ export class PlacesController {
     } catch (error) {
       throw new HttpException('Cannot get places', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
+  @ApiHeader({ name: 'authorization' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Get('/owned')
+  public async getOwnedPlaces() {
+    const userId = '3ff8762e-ab58-46df-b053-6a806807cbce';
+    const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
+      return await this.placesService.getUserPlaces(transaction, userId);
+    });
+
+    return places;
   }
 
   @Get(':id/demands')

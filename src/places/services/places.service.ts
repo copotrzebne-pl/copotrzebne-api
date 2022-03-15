@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Transaction } from 'sequelize';
 
 import { Place } from '../models/places.model';
-import { Transaction } from 'sequelize';
 import { CreatePlaceDto } from '../dto/createPlaceDto';
 import { UpdatePlaceDto } from '../dto/updatePlaceDto';
+import { UsersService } from '../../users/users.service';
+import CRUDError from '../../error/CRUDError';
 
 @Injectable()
 export class PlacesService {
   constructor(
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
+    private readonly usersService: UsersService,
   ) {}
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
@@ -24,5 +27,17 @@ export class PlacesService {
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
     await this.placeModel.update({ ...placeDto }, { where: { id }, transaction });
     return this.placeModel.findByPk(id, { transaction });
+  }
+
+  public async getUserPlaces(transaction: Transaction, userId: string): Promise<Place[]> {
+    const user = await this.usersService.getUserById(transaction, userId);
+
+    if (!user) {
+      throw new CRUDError();
+    }
+
+    // TODO: skip "UserPlace" from output
+    const places = await user.$get('places');
+    return places;
   }
 }

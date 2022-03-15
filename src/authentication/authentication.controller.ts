@@ -1,10 +1,11 @@
 import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthenticationService } from './authentication.service';
 import { LoginDto } from './dto/login.dto';
 
+@ApiTags('authentication')
 @Controller()
 export class AuthenticationController {
   constructor(private readonly sequelize: Sequelize, private readonly authenticationService: AuthenticationService) {}

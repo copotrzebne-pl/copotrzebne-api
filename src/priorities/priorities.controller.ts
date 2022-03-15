@@ -1,8 +1,11 @@
 import { Controller, Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { Priority } from './models/priorities.model';
+import { ApiTags } from '@nestjs/swagger';
+
 import { PrioritiesService } from './services/priorities.service';
 
+@ApiTags('priorities')
 @Controller('priorities')
 @Injectable()
 export class PrioritiesController {

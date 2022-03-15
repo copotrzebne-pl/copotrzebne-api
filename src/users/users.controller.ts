@@ -1,5 +1,6 @@
 import { Body, Controller, HttpException, HttpStatus, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './models/user.model';
@@ -8,6 +9,7 @@ import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly sequelize: Sequelize, private readonly usersService: UsersService) {}

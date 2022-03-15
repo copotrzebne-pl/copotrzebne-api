@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import { ApiTags } from '@nestjs/swagger';
+
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/createDemandDto';
 import { Demand } from './models/demands.model';
@@ -20,6 +22,7 @@ import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateDemandDto } from './dto/updateDemandDto';
 
+@ApiTags('demands')
 @Controller('demands')
 @Injectable()
 export class DemandsController {
