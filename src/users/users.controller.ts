@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  HttpException,
-  HttpStatus,
-  Post,
-  SetMetadata,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@nestjs/swagger';
@@ -20,6 +10,8 @@ import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 import { JwtService } from '../jwt/jwt.service';
+import { SessionUserId } from '../decorators/session-user-id.decorator';
+import CRUDError from '../error/CRUDError';
 
 @ApiTags('users')
 @Controller('users')
@@ -75,27 +67,17 @@ export class UsersController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  public async whoami(
-    @Headers('authorization') authHeader: string,
-  ): Promise<{ login: string; id: string; role: string }> {
-    const token = this.jwtService.getAuthorizationToken(authHeader);
-    if (!token) {
-      throw new Error('ACCESS_FORBIDDEN');
+  public async whoami(@SessionUserId() userId: string | null): Promise<{ login: string; id: string; role: string }> {
+    if (!userId) {
+      throw new CRUDError('ACCESS_FORBIDDEN');
     }
-
-    const jwtPayload = this.jwtService.getPayloadFromToken(token);
-    if (!jwtPayload) {
-      throw new Error('ACCESS_FORBIDDEN');
-    }
-
-    const userId = jwtPayload.user.id;
     try {
       const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
         return await this.usersService.getUserById(transaction, userId);
       });
 
       if (!user) {
-        throw new Error('ACCESS_FORBIDDEN');
+        throw new CRUDError('ACCESS_FORBIDDEN');
       }
 
       return { login: user.login, id: user.id, role: user.role };
