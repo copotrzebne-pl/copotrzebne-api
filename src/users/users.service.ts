@@ -20,13 +20,16 @@ export class UsersService {
   }
 
   public async getUserById(transaction: Transaction, id: string): Promise<User | null> {
-    const user = await this.userModel.findByPk(id, { transaction });
+    try {
+      const user = await this.userModel.findByPk(id, { transaction });
+      if (!user) {
+        return null;
+      }
 
-    if (!user) {
+      return user;
+    } catch (_) {
       return null;
     }
-
-    return user;
   }
 
   public async getUserByLogin(transaction: Transaction, login: string): Promise<User | null> {
