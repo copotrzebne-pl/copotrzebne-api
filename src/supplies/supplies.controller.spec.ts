@@ -6,6 +6,7 @@ import { SuppliesController } from './supplies.controller';
 import { SuppliesService } from './services/supplies.service';
 import { Supply } from './models/supplies.model';
 import { UsersService } from '../users/users.service';
+import { JwtService } from '../jwt/jwt.service';
 
 describe('SuppliesController', () => {
   let controller: SuppliesController;
@@ -32,6 +33,10 @@ describe('SuppliesController', () => {
         },
         {
           provide: ConfigService,
+          useValue: jest.fn(),
+        },
+        {
+          provide: JwtService,
           useValue: jest.fn(),
         },
       ],

@@ -1,21 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { DateTime } from 'luxon';
-import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
+import { Transaction } from 'sequelize';
 
 import { ApiJwtPayload } from '../types/api-jwt-payload.type';
 import { User } from '../users/models/user.model';
-import { Transaction } from 'sequelize';
 import { UsersService } from '../users/users.service';
+import { JwtService } from '../jwt/jwt.service';
 
 @Injectable()
 export class AuthenticationService {
-  private readonly jwtSignature: string;
-
-  constructor(private readonly configService: ConfigService, private readonly usersService: UsersService) {
-    this.jwtSignature = configService.get<string>('API_JWT_SIGNATURE', '');
-  }
+  constructor(private readonly usersService: UsersService, private readonly jwtService: JwtService) {}
 
   public async createSessionOrFail(
     transaction: Transaction,
@@ -41,8 +35,7 @@ export class AuthenticationService {
   }
 
   private generateJWT(user: User): string {
-    const expirationDate = DateTime.now().plus({ days: 30 }).toMillis();
-    const payload: ApiJwtPayload = { user: { id: user.id }, exp: expirationDate };
-    return sign(payload, this.jwtSignature);
+    const payload: Omit<ApiJwtPayload, 'exp'> = { user: { id: user.id } };
+    return this.jwtService.generateJwt(payload);
   }
 }

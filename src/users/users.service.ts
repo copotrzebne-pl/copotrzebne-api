@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UsersService {
   private readonly passwordSalt: string;
+
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User)

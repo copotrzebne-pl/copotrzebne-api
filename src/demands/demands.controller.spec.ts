@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
 import { DemandsService } from './services/demands.service';
 import { DemandsController } from './demands.controller';
+import { JwtService } from '../jwt/jwt.service';
 
 describe('PlacesController', () => {
   let controller: DemandsController;
@@ -33,6 +34,10 @@ describe('PlacesController', () => {
         },
         {
           provide: ConfigService,
+          useValue: jest.fn(),
+        },
+        {
+          provide: JwtService,
           useValue: jest.fn(),
         },
       ],

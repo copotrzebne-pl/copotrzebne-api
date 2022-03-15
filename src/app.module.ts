@@ -9,6 +9,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { SuppliesModule } from './supplies/supplies.module';
 import { PrioritiesModule } from './priorities/priorities.module';
 import { DemandsModule } from './demands/demands.module';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DemandsModule } from './demands/demands.module';
     SuppliesModule,
     PrioritiesModule,
     DemandsModule,
+    JwtModule,
   ],
 })
 export class AppModule {}
