@@ -24,6 +24,8 @@ import { DemandsService } from '../demands/services/demands.service';
 import CRUDError from '../error/CRUDError';
 import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
+import { SessionUserId } from '../decorators/session-user-id.decorator';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('places')
 @Controller('places')
@@ -33,6 +35,7 @@ export class PlacesController {
     private readonly sequelize: Sequelize,
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Get('/')
@@ -51,13 +54,30 @@ export class PlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/owned')
-  public async getOwnedPlaces() {
-    const userId = '3ff8762e-ab58-46df-b053-6a806807cbce';
-    const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
-      return await this.placesService.getUserPlaces(transaction, userId);
-    });
+  public async getOwnedPlaces(@SessionUserId() userId: string | null) {
+    try {
+      if (!userId) {
+        throw new CRUDError();
+      }
 
-    return places;
+      const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
+        const user = await this.usersService.getUserById(transaction, userId);
+
+        if (!user) {
+          throw new CRUDError();
+        }
+
+        if (user.role === UserRole.ADMIN) {
+          return await this.placesService.getAllPlaces(transaction);
+        }
+
+        return await this.placesService.getUserPlaces(transaction, userId);
+      });
+
+      return places;
+    } catch (error) {
+      throw new HttpException('ACCESS_FORBIDDEN', HttpStatus.FORBIDDEN);
+    }
   }
 
   @Get(':id/demands')
