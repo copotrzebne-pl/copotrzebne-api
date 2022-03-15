@@ -52,17 +52,13 @@ export class PlacesController {
     }
   }
 
-  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
   @ApiHeader({ name: 'authorization' })
+  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/owned')
-  public async getOwnedPlaces(@SessionUserId() userId: string | null) {
+  public async getOwnedPlaces(@SessionUserId() userId: string) {
     try {
-      if (!userId) {
-        throw new CRUDError();
-      }
-
       const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
         const user = await this.usersService.getUserById(transaction, userId);
 
@@ -111,12 +107,18 @@ export class PlacesController {
   }
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
+  @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createPlace(@Body() placeDto: CreatePlaceDto): Promise<Place> {
+  public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place> {
     try {
       const place = await this.sequelize.transaction(async (transaction) => {
+        const user = await this.usersService.getUserById(transaction, userId);
+        if (!user || user.role !== UserRole.ADMIN) {
+          throw new CRUDError();
+        }
+
         return await this.placesService.createPlace(transaction, placeDto);
       });
 
@@ -131,12 +133,36 @@ export class PlacesController {
   }
 
   @ApiResponse({ type: Place, description: 'updates place and returns updated entity' })
+  @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updatePlace(@Param('id') id: string, @Body() placeDto: UpdatePlaceDto): Promise<Place> {
+  public async updatePlace(
+    @SessionUserId() userId: string,
+    @Param('id') id: string,
+    @Body() placeDto: UpdatePlaceDto,
+  ): Promise<Place> {
     try {
+      if (!userId) {
+        throw new CRUDError();
+      }
+
       const place = await this.sequelize.transaction(async (transaction) => {
+        const user = await this.usersService.getUserById(transaction, userId);
+
+        if (!user) {
+          throw new CRUDError();
+        }
+
+        if (user.role !== UserRole.ADMIN) {
+          const userPlaces = await this.placesService.getUserPlaces(transaction, userId);
+          const userPlacesIds = userPlaces.map((place) => place.id);
+
+          if (!userPlacesIds.includes(id)) {
+            throw new CRUDError();
+          }
+        }
+
         return await this.placesService.updatePlace(transaction, id, placeDto);
       });
 
