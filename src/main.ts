@@ -10,13 +10,14 @@ async function bootstrap() {
   const configService: ConfigService = app.get(ConfigService);
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
     .setTitle('Copotrzebne.pl API')
     .setDescription('Description of copotrzebne.pl API')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(configService.get<number>('PORT', 3000));
 }
