@@ -43,7 +43,7 @@ export class DemandsController {
 
       return demand;
     } catch (error) {
-      throw new HttpException('Cannot create Demand', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_CREATE_DEMAND', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -62,7 +62,7 @@ export class DemandsController {
 
       return demand;
     } catch (error) {
-      throw new HttpException('Cannot create Demand', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_UPDATE_DEMAND', HttpStatus.BAD_REQUEST);
     }
   }
 }

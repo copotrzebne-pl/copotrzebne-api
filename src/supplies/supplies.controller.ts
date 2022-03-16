@@ -33,7 +33,7 @@ export class SuppliesController {
         return await this.suppliesService.getAllSupplies(transaction);
       });
     } catch (error) {
-      throw new HttpException('Cannot get supplies', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_GET_SUPPLIES', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -52,7 +52,7 @@ export class SuppliesController {
 
       return supply;
     } catch (error) {
-      throw new HttpException('Cannot create Supply', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_CREATE_SUPPLY', HttpStatus.BAD_REQUEST);
     }
   }
 }

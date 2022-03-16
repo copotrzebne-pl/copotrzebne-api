@@ -14,6 +14,10 @@ export class DemandsService {
     private readonly demandModel: typeof Demand,
   ) {}
 
+  public async getDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
+    return await this.demandModel.findAll({ where: { placeId }, transaction });
+  }
+
   public async getDetailedDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
     return await this.demandModel.findAll({ include: [Supply, Priority], where: { placeId }, transaction });
   }
@@ -25,5 +29,17 @@ export class DemandsService {
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
     await this.demandModel.update({ ...demandDto }, { where: { id }, transaction });
     return this.demandModel.findByPk(id, { transaction });
+  }
+
+  public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
+    const demands = await this.getDemandsForPlace(transaction, placeId);
+
+    if (!demands || !demands.length) {
+      return;
+    }
+
+    const demandsIds = demands.map((demand) => demand.id);
+
+    await Demand.destroy({ where: { id: demandsIds } });
   }
 }
