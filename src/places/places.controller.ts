@@ -95,8 +95,8 @@ export class PlacesController {
 
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
-  @Delete(':id/demands')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id/demands')
   public async deleteDemandsForPlace(@Param('id') id: string): Promise<void> {
     try {
       await this.sequelize.transaction(async (transaction): Promise<void> => {
