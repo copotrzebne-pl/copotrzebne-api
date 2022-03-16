@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Injectable,
@@ -87,7 +89,21 @@ export class PlacesController {
         return await this.demandsService.getDetailedDemandsForPlace(transaction, id);
       });
     } catch (error) {
-      throw new HttpException('Cannot get demands for place', HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Cannot get demands for place ${id}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @Delete(':id/demands')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteDemandsForPlace(@Param('id') id: string): Promise<void> {
+    try {
+      await this.sequelize.transaction(async (transaction): Promise<void> => {
+        await this.demandsService.deleteAllDemandsForPlace(transaction, id);
+      });
+    } catch (error) {
+      throw new HttpException(`Cannot delete demands for place ${id}`, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -106,7 +122,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw new HttpException('Cannot create Place', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Cannot create place', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -125,7 +141,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw new HttpException('Cannot create Place', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Cannot update place', HttpStatus.BAD_REQUEST);
     }
   }
 }
