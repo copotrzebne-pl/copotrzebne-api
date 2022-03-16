@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
@@ -31,6 +31,7 @@ import { UpdateSupplyDto } from './dto/updateSupplyDto';
 export class SuppliesController {
   constructor(private readonly sequelize: Sequelize, private readonly suppliesService: SuppliesService) {}
 
+  @ApiResponse({ isArray: true, type: Supply, description: 'returns all supplies' })
   @Get('/')
   public async getSupplies(): Promise<Supply[]> {
     try {
@@ -42,6 +43,7 @@ export class SuppliesController {
     }
   }
 
+  @ApiResponse({ type: Supply, description: 'creates supply and returns created entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
@@ -61,6 +63,7 @@ export class SuppliesController {
     }
   }
 
+  @ApiResponse({ type: Supply, description: 'updates supply and returns updated entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Patch('/:id')
@@ -80,6 +83,7 @@ export class SuppliesController {
     }
   }
 
+  @ApiResponse({ status: 204, description: 'deletes supply and returns empty response' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -40,6 +40,7 @@ export class PlacesController {
     private readonly usersService: UsersService,
   ) {}
 
+  @ApiResponse({ isArray: true, type: Place, description: 'returns all places' })
   @Get('/')
   public async getPlaces(): Promise<Place[]> {
     try {
@@ -82,6 +83,7 @@ export class PlacesController {
     }
   }
 
+  @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
   public async getDemandsForPlace(@Param('id') id: string): Promise<Demand[]> {
     try {
@@ -93,6 +95,7 @@ export class PlacesController {
     }
   }
 
+  @ApiResponse({ status: 204, description: 'deletes all demands for place' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -107,6 +110,7 @@ export class PlacesController {
     }
   }
 
+  @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
@@ -126,6 +130,7 @@ export class PlacesController {
     }
   }
 
+  @ApiResponse({ type: Place, description: 'updates place and returns updated entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')

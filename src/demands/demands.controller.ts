@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/createDemandDto';
@@ -28,6 +28,7 @@ import { UpdateDemandDto } from './dto/updateDemandDto';
 export class DemandsController {
   constructor(private readonly sequelize: Sequelize, private readonly demandsService: DemandsService) {}
 
+  @ApiResponse({ type: Demand, description: 'creates demand and returns created entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
@@ -47,6 +48,7 @@ export class DemandsController {
     }
   }
 
+  @ApiResponse({ type: Demand, description: 'updates demand and returns updated entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
