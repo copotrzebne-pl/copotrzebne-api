@@ -47,7 +47,7 @@ export class PlacesController {
         return await this.placesService.getAllPlaces(transaction);
       });
     } catch (error) {
-      throw new HttpException('Cannot get places', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_GET_PLACES', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -89,7 +89,7 @@ export class PlacesController {
         return await this.demandsService.getDetailedDemandsForPlace(transaction, id);
       });
     } catch (error) {
-      throw new HttpException(`Cannot get demands for place ${id}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_GET_DEMANDS', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -103,7 +103,7 @@ export class PlacesController {
         await this.demandsService.deleteAllDemandsForPlace(transaction, id);
       });
     } catch (error) {
-      throw new HttpException(`Cannot delete demands for place ${id}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_DELETE_DEMANDS', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -122,7 +122,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw new HttpException('Cannot create place', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_CREATE_PLACE', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -141,7 +141,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw new HttpException('Cannot update place', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_UPDATE_PLACE', HttpStatus.BAD_REQUEST);
     }
   }
 }
