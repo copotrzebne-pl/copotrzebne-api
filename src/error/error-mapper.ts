@@ -4,7 +4,7 @@ import NotFoundError from './not-found.error';
 import CRUDError from './CRUDError';
 import { AuthorizationError } from './authorization.error';
 
-export const errorHandler = (error: unknown): void => {
+export const errorHandler = (error: unknown): never => {
   if (error instanceof AuthorizationError) {
     throw new HttpException(error.message, HttpStatus.FORBIDDEN);
   }
