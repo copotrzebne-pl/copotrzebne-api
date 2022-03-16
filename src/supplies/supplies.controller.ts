@@ -1,10 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Injectable,
+  Param,
+  Patch,
   Post,
   SetMetadata,
   UseGuards,
@@ -19,6 +22,7 @@ import { CreateSupplyDto } from './dto/createSupplyDto';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
+import { UpdateSupplyDto } from './dto/updateSupplyDto';
 
 @ApiTags('supplies')
 @Controller('supplies')
@@ -37,7 +41,7 @@ export class SuppliesController {
     }
   }
 
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
   public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply> {
@@ -53,6 +57,40 @@ export class SuppliesController {
       return supply;
     } catch (error) {
       throw new HttpException('Cannot create Supply', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Patch('/:id')
+  public async updateSupply(@Param('id') id: string, @Body() supplyDto: UpdateSupplyDto): Promise<Supply> {
+    try {
+      const supply = await this.sequelize.transaction(async (transaction) => {
+        return this.suppliesService.updateSupply(transaction, id, supplyDto);
+      });
+
+      if (!supply) {
+        throw new CRUDError();
+      }
+
+      return supply;
+    } catch (error) {
+      throw new HttpException(`Cannot update Supply ${id}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  public async deleteSupply(@Param('id') id: string): Promise<string> {
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        await this.suppliesService.deleteSupply(transaction, id);
+      });
+
+      return `Supply ${id} deleted`;
+    } catch (error) {
+      throw new HttpException(`Cannot delete Supply ${id}`, HttpStatus.BAD_REQUEST);
     }
   }
 }

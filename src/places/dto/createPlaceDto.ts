@@ -35,9 +35,9 @@ export class CreatePlaceDto {
 
   @IsOptional()
   @IsNumber()
-  latitude?: string;
+  latitude?: number;
 
   @IsOptional()
   @IsNumber()
-  longitude?: string;
+  longitude?: number;
 }
