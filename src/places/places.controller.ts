@@ -62,7 +62,7 @@ export class PlacesController {
   @Get('/owned')
   public async getOwnedPlaces(@SessionUserId() userId: string) {
     try {
-      const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
+      const places = await this.sequelize.transaction(async (transaction): Promise<Place[] | void> => {
         const user = await this.usersService.getUserById(transaction, userId);
 
         if (!user) {
@@ -114,7 +114,7 @@ export class PlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place> {
+  public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
     try {
       const place = await this.sequelize.transaction(async (transaction) => {
         const user = await this.usersService.getUserById(transaction, userId);
@@ -144,7 +144,7 @@ export class PlacesController {
     @SessionUserId() userId: string,
     @Param('id') id: string,
     @Body() placeDto: UpdatePlaceDto,
-  ): Promise<Place> {
+  ): Promise<Place | void> {
     try {
       const place = await this.sequelize.transaction(async (transaction) => {
         const user = await this.usersService.getUserById(transaction, userId);

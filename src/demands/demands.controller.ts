@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Param,
-  Patch,
-  Post,
-  SetMetadata,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Injectable, Param, Patch, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -21,6 +10,7 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateDemandDto } from './dto/updateDemandDto';
+import { errorHandler } from '../error/error-mapper';
 
 @ApiTags('demands')
 @Controller('demands')
@@ -32,19 +22,19 @@ export class DemandsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createDemand(@Body() demandDto: CreateDemandDto): Promise<Demand> {
+  public async createDemand(@Body() demandDto: CreateDemandDto): Promise<Demand | void> {
     try {
       const demand = await this.sequelize.transaction(async (transaction) => {
         return await this.demandsService.createDemand(transaction, demandDto);
       });
 
       if (!demand) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_CREATE_DEMAND');
       }
 
       return demand;
     } catch (error) {
-      throw new HttpException('CANNOT_CREATE_DEMAND', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
@@ -52,19 +42,19 @@ export class DemandsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updateDemand(@Param('id') id: string, @Body() demandDto: UpdateDemandDto): Promise<Demand> {
+  public async updateDemand(@Param('id') id: string, @Body() demandDto: UpdateDemandDto): Promise<Demand | void> {
     try {
       const demand = await this.sequelize.transaction(async (transaction) => {
         return await this.demandsService.updateDemand(transaction, id, demandDto);
       });
 
       if (!demand) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_UPDATE_DEMAND');
       }
 
       return demand;
     } catch (error) {
-      throw new HttpException('CANNOT_UPDATE_DEMAND', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 }

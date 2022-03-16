@@ -24,6 +24,7 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateSupplyDto } from './dto/updateSupplyDto';
+import { errorHandler } from '../error/error-mapper';
 
 @ApiTags('supplies')
 @Controller('supplies')
@@ -47,19 +48,19 @@ export class SuppliesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply> {
+  public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply | void> {
     try {
       const supply = await this.sequelize.transaction(async (transaction) => {
         return await this.suppliesService.createSupply(transaction, createSupplyDto);
       });
 
       if (!supply) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_CREATE_SUPPLY');
       }
 
       return supply;
     } catch (error) {
-      throw new HttpException('CANNOT_CREATE_SUPPLY', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
@@ -67,19 +68,19 @@ export class SuppliesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updateSupply(@Param('id') id: string, @Body() supplyDto: UpdateSupplyDto): Promise<Supply> {
+  public async updateSupply(@Param('id') id: string, @Body() supplyDto: UpdateSupplyDto): Promise<Supply | void> {
     try {
       const supply = await this.sequelize.transaction(async (transaction) => {
         return this.suppliesService.updateSupply(transaction, id, supplyDto);
       });
 
       if (!supply) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_UPDATE_SUPPLY');
       }
 
       return supply;
     } catch (error) {
-      throw new HttpException(`Cannot update Supply ${id}`, HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 

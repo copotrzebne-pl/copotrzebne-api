@@ -63,7 +63,9 @@ export class UsersController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  public async whoami(@SessionUserId() userId: string | null): Promise<{ login: string; id: string; role: string }> {
+  public async whoami(
+    @SessionUserId() userId: string | null,
+  ): Promise<{ login: string; id: string; role: string } | void> {
     if (!userId) {
       throw new AuthorizationError('ACCESS_FORBIDDEN');
     }

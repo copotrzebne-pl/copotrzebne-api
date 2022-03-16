@@ -30,7 +30,7 @@ export class SuppliesService {
     const supply = await this.supplyModel.findByPk(id, { transaction });
 
     if (!supply) {
-      throw new NotFoundError(`Supply ${id} not found`);
+      throw new NotFoundError(`SUPPLY_NOT_FOUND`);
     }
 
     await supply.destroy();
