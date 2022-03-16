@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { AuthorizationError } from '../error/authorization.error';
-import { mapErrorToHttpException } from '../error/error-mapper';
+import { errorHandler } from '../error/error-mapper';
 
 @ApiTags('users')
 @Controller('users')
@@ -78,7 +78,7 @@ export class UsersController {
 
       return { login: user.login, id: user.id, role: user.role };
     } catch (error) {
-      throw mapErrorToHttpException(error);
+      errorHandler(error);
     }
   }
 }

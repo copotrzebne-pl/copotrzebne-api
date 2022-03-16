@@ -28,7 +28,7 @@ import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { UsersService } from '../users/users.service';
-import { mapErrorToHttpException } from '../error/error-mapper';
+import { errorHandler } from '../error/error-mapper';
 import { AuthorizationError } from '../error/authorization.error';
 import NotFoundError from '../error/not-found.error';
 
@@ -78,7 +78,7 @@ export class PlacesController {
 
       return places;
     } catch (error) {
-      throw mapErrorToHttpException(error);
+      errorHandler(error);
     }
   }
 
@@ -131,7 +131,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw mapErrorToHttpException(error);
+      errorHandler(error);
     }
   }
 
@@ -171,7 +171,7 @@ export class PlacesController {
 
       return place;
     } catch (error) {
-      throw mapErrorToHttpException(error);
+      errorHandler(error);
     }
   }
 }
