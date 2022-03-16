@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode,
   HttpException,
   HttpStatus,
   Injectable,
@@ -81,14 +81,13 @@ export class SuppliesController {
 
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  public async deleteSupply(@Param('id') id: string): Promise<string> {
+  public async deleteSupply(@Param('id') id: string): Promise<void> {
     try {
       await this.sequelize.transaction(async (transaction) => {
         await this.suppliesService.deleteSupply(transaction, id);
       });
-
-      return `Supply ${id} deleted`;
     } catch (error) {
       throw new HttpException(`Cannot delete Supply ${id}`, HttpStatus.BAD_REQUEST);
     }
