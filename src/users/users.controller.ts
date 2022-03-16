@@ -9,7 +9,8 @@ import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
-import CRUDError from '../error/CRUDError';
+import { AuthorizationError } from '../error/authorization.error';
+import { mapErrorToHttpException } from '../error/error-mapper';
 
 @ApiTags('users')
 @Controller('users')
@@ -64,7 +65,7 @@ export class UsersController {
   @Get('/whoami')
   public async whoami(@SessionUserId() userId: string | null): Promise<{ login: string; id: string; role: string }> {
     if (!userId) {
-      throw new CRUDError('ACCESS_FORBIDDEN');
+      throw new AuthorizationError('ACCESS_FORBIDDEN');
     }
     try {
       const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
@@ -72,12 +73,12 @@ export class UsersController {
       });
 
       if (!user) {
-        throw new CRUDError('ACCESS_FORBIDDEN');
+        throw new AuthorizationError('ACCESS_FORBIDDEN');
       }
 
       return { login: user.login, id: user.id, role: user.role };
     } catch (error) {
-      throw new HttpException('ACCESS_FORBIDDEN', HttpStatus.FORBIDDEN);
+      throw mapErrorToHttpException(error);
     }
   }
 }

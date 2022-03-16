@@ -4,7 +4,7 @@ import { Transaction } from 'sequelize';
 import { Supply } from '../models/supplies.model';
 import { CreateSupplyDto } from '../dto/createSupplyDto';
 import { UpdateSupplyDto } from '../dto/updateSupplyDto';
-import NotFoundError from '../../error/NotFoundError';
+import NotFoundError from '../../error/not-found.error';
 
 @Injectable()
 export class SuppliesService {

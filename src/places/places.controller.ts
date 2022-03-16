@@ -28,6 +28,9 @@ import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { UsersService } from '../users/users.service';
+import { mapErrorToHttpException } from '../error/error-mapper';
+import { AuthorizationError } from '../error/authorization.error';
+import NotFoundError from '../error/not-found.error';
 
 @ApiTags('places')
 @Controller('places')
@@ -63,7 +66,7 @@ export class PlacesController {
         const user = await this.usersService.getUserById(transaction, userId);
 
         if (!user) {
-          throw new CRUDError();
+          throw new AuthorizationError();
         }
 
         if (user.role === UserRole.ADMIN) {
@@ -75,7 +78,7 @@ export class PlacesController {
 
       return places;
     } catch (error) {
-      throw new HttpException('ACCESS_FORBIDDEN', HttpStatus.FORBIDDEN);
+      throw mapErrorToHttpException(error);
     }
   }
 
@@ -116,19 +119,19 @@ export class PlacesController {
       const place = await this.sequelize.transaction(async (transaction) => {
         const user = await this.usersService.getUserById(transaction, userId);
         if (!user || user.role !== UserRole.ADMIN) {
-          throw new CRUDError();
+          throw new AuthorizationError();
         }
 
         return await this.placesService.createPlace(transaction, placeDto);
       });
 
       if (!place) {
-        throw new CRUDError();
+        throw new NotFoundError();
       }
 
       return place;
     } catch (error) {
-      throw new HttpException('CANNOT_CREATE_PLACE', HttpStatus.BAD_REQUEST);
+      throw mapErrorToHttpException(error);
     }
   }
 
@@ -143,15 +146,11 @@ export class PlacesController {
     @Body() placeDto: UpdatePlaceDto,
   ): Promise<Place> {
     try {
-      if (!userId) {
-        throw new CRUDError();
-      }
-
       const place = await this.sequelize.transaction(async (transaction) => {
         const user = await this.usersService.getUserById(transaction, userId);
 
         if (!user) {
-          throw new CRUDError();
+          throw new AuthorizationError();
         }
 
         if (user.role !== UserRole.ADMIN) {
@@ -159,7 +158,7 @@ export class PlacesController {
           const userPlacesIds = userPlaces.map((place) => place.id);
 
           if (!userPlacesIds.includes(id)) {
-            throw new CRUDError();
+            throw new AuthorizationError();
           }
         }
 
@@ -167,12 +166,12 @@ export class PlacesController {
       });
 
       if (!place) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_UPDATE_PLACE');
       }
 
       return place;
     } catch (error) {
-      throw new HttpException('CANNOT_UPDATE_PLACE', HttpStatus.BAD_REQUEST);
+      throw mapErrorToHttpException(error);
     }
   }
 }
