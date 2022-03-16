@@ -1,24 +1,22 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateDemandDto {
+export class UpdateSupplyDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  comment?: string;
-
-  @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  placeId!: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  supplyId!: string;
+  namePl?: string;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  priorityId!: string;
+  @IsNotEmpty()
+  cityEn?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  streetUa?: string;
 }
