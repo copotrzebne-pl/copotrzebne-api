@@ -13,7 +13,7 @@ export class CreateDemandDto {
   @IsNotEmpty()
   supplyId!: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   priorityId!: string;
 }

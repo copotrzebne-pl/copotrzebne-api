@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: [ "Run Tests" ]
     branches: [ 'master' ]
-    types: 
+    types:
       - completed
 
 jobs:
@@ -17,3 +17,4 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_TOKEN}}
         heroku_app_name: ${{secrets.HEROKU_APP_STAGING}}
         heroku_email: ${{secrets.HEROKU_EMAIL}}
+        usedocker: true

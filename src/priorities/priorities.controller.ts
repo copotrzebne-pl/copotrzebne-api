@@ -18,7 +18,7 @@ export class PrioritiesController {
         return await this.prioritiesService.getAllPriorities(transaction);
       });
     } catch (error) {
-      throw new HttpException('Cannot get priorities', HttpStatus.BAD_REQUEST);
+      throw new HttpException('CANNOT_GET_PRIORITIES', HttpStatus.BAD_REQUEST);
     }
   }
 }
