@@ -28,6 +28,9 @@ import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { UsersService } from '../users/users.service';
+import { errorHandler } from '../error/error-mapper';
+import { AuthorizationError } from '../error/authorization.error';
+import NotFoundError from '../error/not-found.error';
 
 @ApiTags('places')
 @Controller('places')
@@ -52,22 +55,18 @@ export class PlacesController {
     }
   }
 
-  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
   @ApiHeader({ name: 'authorization' })
+  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/owned')
-  public async getOwnedPlaces(@SessionUserId() userId: string | null) {
+  public async getOwnedPlaces(@SessionUserId() userId: string) {
     try {
-      if (!userId) {
-        throw new CRUDError();
-      }
-
-      const places = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
+      const places = await this.sequelize.transaction(async (transaction): Promise<Place[] | void> => {
         const user = await this.usersService.getUserById(transaction, userId);
 
         if (!user) {
-          throw new CRUDError();
+          throw new AuthorizationError();
         }
 
         if (user.role === UserRole.ADMIN) {
@@ -79,7 +78,7 @@ export class PlacesController {
 
       return places;
     } catch (error) {
-      throw new HttpException('ACCESS_FORBIDDEN', HttpStatus.FORBIDDEN);
+      errorHandler(error);
     }
   }
 
@@ -111,42 +110,68 @@ export class PlacesController {
   }
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
+  @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createPlace(@Body() placeDto: CreatePlaceDto): Promise<Place> {
+  public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
     try {
       const place = await this.sequelize.transaction(async (transaction) => {
+        const user = await this.usersService.getUserById(transaction, userId);
+        if (!user || user.role !== UserRole.ADMIN) {
+          throw new AuthorizationError();
+        }
+
         return await this.placesService.createPlace(transaction, placeDto);
       });
 
       if (!place) {
-        throw new CRUDError();
+        throw new NotFoundError();
       }
 
       return place;
     } catch (error) {
-      throw new HttpException('CANNOT_CREATE_PLACE', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
   @ApiResponse({ type: Place, description: 'updates place and returns updated entity' })
+  @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updatePlace(@Param('id') id: string, @Body() placeDto: UpdatePlaceDto): Promise<Place> {
+  public async updatePlace(
+    @SessionUserId() userId: string,
+    @Param('id') id: string,
+    @Body() placeDto: UpdatePlaceDto,
+  ): Promise<Place | void> {
     try {
       const place = await this.sequelize.transaction(async (transaction) => {
+        const user = await this.usersService.getUserById(transaction, userId);
+
+        if (!user) {
+          throw new AuthorizationError();
+        }
+
+        if (user.role !== UserRole.ADMIN) {
+          const userPlaces = await this.placesService.getUserPlaces(transaction, userId);
+          const userPlacesIds = userPlaces.map((place) => place.id);
+
+          if (!userPlacesIds.includes(id)) {
+            throw new AuthorizationError();
+          }
+        }
+
         return await this.placesService.updatePlace(transaction, id, placeDto);
       });
 
       if (!place) {
-        throw new CRUDError();
+        throw new CRUDError('CANNOT_UPDATE_PLACE');
       }
 
       return place;
     } catch (error) {
-      throw new HttpException('CANNOT_UPDATE_PLACE', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 }

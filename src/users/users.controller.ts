@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiTags } from '@nestjs/swagger';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './models/user.model';
@@ -9,18 +8,14 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
-import { JwtService } from '../jwt/jwt.service';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
-import CRUDError from '../error/CRUDError';
+import { AuthorizationError } from '../error/authorization.error';
+import { errorHandler } from '../error/error-mapper';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly sequelize: Sequelize,
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly sequelize: Sequelize, private readonly usersService: UsersService) {}
 
   @ApiResponse({
     schema: {
@@ -55,6 +50,7 @@ export class UsersController {
     }
   }
 
+  @ApiHeader({ name: 'authorization' })
   @ApiResponse({
     schema: {
       properties: {
@@ -67,9 +63,11 @@ export class UsersController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  public async whoami(@SessionUserId() userId: string | null): Promise<{ login: string; id: string; role: string }> {
+  public async whoami(
+    @SessionUserId() userId: string | null,
+  ): Promise<{ login: string; id: string; role: string } | void> {
     if (!userId) {
-      throw new CRUDError('ACCESS_FORBIDDEN');
+      throw new AuthorizationError('ACCESS_FORBIDDEN');
     }
     try {
       const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
@@ -77,12 +75,12 @@ export class UsersController {
       });
 
       if (!user) {
-        throw new CRUDError('ACCESS_FORBIDDEN');
+        throw new AuthorizationError('ACCESS_FORBIDDEN');
       }
 
       return { login: user.login, id: user.id, role: user.role };
     } catch (error) {
-      throw new HttpException('ACCESS_FORBIDDEN', HttpStatus.FORBIDDEN);
+      errorHandler(error);
     }
   }
 }

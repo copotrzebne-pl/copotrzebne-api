@@ -1,5 +1,5 @@
 export default class CRUDError extends Error {
-  constructor(message = 'Cannot create entity') {
+  constructor(message = 'CANNOT_CREATE_ENTITY') {
     super(message);
   }
 }

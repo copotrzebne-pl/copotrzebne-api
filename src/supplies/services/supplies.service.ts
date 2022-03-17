@@ -4,7 +4,7 @@ import { Transaction } from 'sequelize';
 import { Supply } from '../models/supplies.model';
 import { CreateSupplyDto } from '../dto/createSupplyDto';
 import { UpdateSupplyDto } from '../dto/updateSupplyDto';
-import NotFoundError from '../../error/NotFoundError';
+import NotFoundError from '../../error/not-found.error';
 
 @Injectable()
 export class SuppliesService {
@@ -30,7 +30,7 @@ export class SuppliesService {
     const supply = await this.supplyModel.findByPk(id, { transaction });
 
     if (!supply) {
-      throw new NotFoundError(`Supply ${id} not found`);
+      throw new NotFoundError(`SUPPLY_NOT_FOUND`);
     }
 
     await supply.destroy();
