@@ -22,12 +22,12 @@ export class SuppliesService {
   }
 
   public async createSupply(transaction: Transaction, supplyDto: CreateSupplyDto): Promise<Supply> {
-    return this.supplyModel.create({ ...supplyDto }, { transaction });
+    return await this.supplyModel.create({ ...supplyDto }, { transaction });
   }
 
   public async updateSupply(transaction: Transaction, id: string, supplyDto: UpdateSupplyDto): Promise<Supply | null> {
     await this.supplyModel.update({ ...supplyDto }, { where: { id }, transaction });
-    return this.getSupplyById(transaction, id);
+    return await this.getSupplyById(transaction, id);
   }
 
   public async deleteSupply(transaction: Transaction, id: string): Promise<void> {

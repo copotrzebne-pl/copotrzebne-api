@@ -32,7 +32,7 @@ export class DemandsService {
 
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
     await this.demandModel.update({ ...demandDto }, { where: { id }, transaction });
-    return this.demandModel.findByPk(id, { transaction });
+    return await this.getDemandById(transaction, id);
   }
 
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {

@@ -68,15 +68,15 @@ export class SuppliesController {
   @Post('/')
   public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply | void> {
     try {
-      const supply = await this.sequelize.transaction(async (transaction) => {
-        return await this.suppliesService.createSupply(transaction, createSupplyDto);
+      return await this.sequelize.transaction(async (transaction) => {
+        const supply = await this.suppliesService.createSupply(transaction, createSupplyDto);
+
+        if (!supply) {
+          throw new CRUDError('CANNOT_CREATE_SUPPLY');
+        }
+
+        return supply;
       });
-
-      if (!supply) {
-        throw new CRUDError('CANNOT_CREATE_SUPPLY');
-      }
-
-      return supply;
     } catch (error) {
       errorHandler(error);
     }
@@ -88,15 +88,15 @@ export class SuppliesController {
   @Patch('/:id')
   public async updateSupply(@Param('id') id: string, @Body() supplyDto: UpdateSupplyDto): Promise<Supply | void> {
     try {
-      const supply = await this.sequelize.transaction(async (transaction) => {
-        return this.suppliesService.updateSupply(transaction, id, supplyDto);
+      return await this.sequelize.transaction(async (transaction) => {
+        const supply = await this.suppliesService.updateSupply(transaction, id, supplyDto);
+
+        if (!supply) {
+          throw new CRUDError('CANNOT_UPDATE_SUPPLY');
+        }
+
+        return supply;
       });
-
-      if (!supply) {
-        throw new CRUDError('CANNOT_UPDATE_SUPPLY');
-      }
-
-      return supply;
     } catch (error) {
       errorHandler(error);
     }
