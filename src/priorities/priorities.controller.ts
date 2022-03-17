@@ -1,9 +1,10 @@
-import { Controller, Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Controller, Get, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { Priority } from './models/priorities.model';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PrioritiesService } from './services/priorities.service';
+import { errorHandler } from '../error/error-mapper';
 
 @ApiTags('priorities')
 @Controller('priorities')
@@ -13,13 +14,13 @@ export class PrioritiesController {
 
   @ApiResponse({ isArray: true, type: Priority, description: 'returns all priorities' })
   @Get('/')
-  public async getSupplies(): Promise<Priority[]> {
+  public async getPriorities(): Promise<Priority[] | void> {
     try {
       return await this.sequelize.transaction(async (transaction): Promise<Priority[]> => {
         return await this.prioritiesService.getAllPriorities(transaction);
       });
     } catch (error) {
-      throw new HttpException('CANNOT_GET_PRIORITIES', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 }

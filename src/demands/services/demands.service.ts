@@ -14,6 +14,10 @@ export class DemandsService {
     private readonly demandModel: typeof Demand,
   ) {}
 
+  public async getDemandById(transaction: Transaction, id: string): Promise<Demand | null> {
+    return await this.demandModel.findByPk(id, { transaction });
+  }
+
   public async getDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
     return await this.demandModel.findAll({ where: { placeId }, transaction });
   }

@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Injectable,
   Param,
@@ -45,13 +44,13 @@ export class PlacesController {
 
   @ApiResponse({ isArray: true, type: Place, description: 'returns all places' })
   @Get('/')
-  public async getPlaces(): Promise<Place[]> {
+  public async getPlaces(): Promise<Place[] | void> {
     try {
       return await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
         return await this.placesService.getAllPlaces(transaction);
       });
     } catch (error) {
-      throw new HttpException('CANNOT_GET_PLACES', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
@@ -84,13 +83,13 @@ export class PlacesController {
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
-  public async getDemandsForPlace(@Param('id') id: string): Promise<Demand[]> {
+  public async getDemandsForPlace(@Param('id') id: string): Promise<Demand[] | void> {
     try {
       return await this.sequelize.transaction(async (transaction): Promise<Demand[]> => {
         return await this.demandsService.getDetailedDemandsForPlace(transaction, id);
       });
     } catch (error) {
-      throw new HttpException('CANNOT_GET_DEMANDS', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
@@ -105,7 +104,7 @@ export class PlacesController {
         await this.demandsService.deleteAllDemandsForPlace(transaction, id);
       });
     } catch (error) {
-      throw new HttpException('CANNOT_DELETE_DEMANDS', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
