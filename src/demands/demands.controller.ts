@@ -1,4 +1,15 @@
-import { Body, Controller, Injectable, Param, Patch, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Injectable,
+  Param,
+  Patch,
+  Post,
+  SetMetadata,
+  UseGuards,
+} from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -53,6 +64,21 @@ export class DemandsController {
       }
 
       return demand;
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
+
+  @ApiResponse({ status: 204, description: 'deletes demand and returns empty response' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch('/:id')
+  public async deleteDemand(@Param('id') id: string): Promise<void> {
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        await this.demandsService.deleteDemand(transaction, id);
+      });
     } catch (error) {
       errorHandler(error);
     }
