@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Post, SetMetadata, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  SetMetadata,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
 
@@ -76,5 +88,50 @@ export class UsersController {
     }
 
     return { login: user.login, id: user.id, role: user.role };
+  }
+
+  @ApiResponse({ status: 204, description: 'Assign place to user. Only admin can assign places.' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Post('/:userId/assign-place/:placeId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async assignPlaceToUser(@Param('userId') userId: string, @Param('placeId') placeId: string): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      await this.usersService.assignPlaceToUser(transaction, placeId, userId);
+    });
+  }
+
+  @ApiResponse({ status: 204, description: 'Removes place - user relation. Only admin can user it.' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Delete('/:userId/assign-place/:placeId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async removePlaceAssignmentFromUser(
+    @Param('userId') userId: string,
+    @Param('placeId') placeId: string,
+  ): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      await this.usersService.removePlaceAssignmentFromUser(transaction, placeId, userId);
+    });
+  }
+
+  @ApiResponse({ type: User, isArray: true, description: 'Returns list of users. Access for admins only.' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Get('/')
+  public async getUsers(): Promise<User[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.usersService.getAllUsers(transaction);
+    });
+  }
+
+  @ApiResponse({ status: 204, description: 'Removes a user. Access for admins only.' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  public async deleteUser(@Param('id') userId: string): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      return await this.usersService.removeUserById(transaction, userId);
+    });
   }
 }
