@@ -14,6 +14,10 @@ export class DemandsService {
     private readonly demandModel: typeof Demand,
   ) {}
 
+  public async getDemandById(transaction: Transaction, id: string): Promise<Demand | null> {
+    return await this.demandModel.findByPk(id, { transaction });
+  }
+
   public async getDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
     return await this.demandModel.findAll({ where: { placeId }, transaction });
   }
@@ -28,7 +32,7 @@ export class DemandsService {
 
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
     await this.demandModel.update({ ...demandDto }, { where: { id }, transaction });
-    return this.demandModel.findByPk(id, { transaction });
+    return await this.getDemandById(transaction, id);
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
