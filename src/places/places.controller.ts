@@ -50,7 +50,7 @@ export class PlacesController {
         const place = await this.placesService.getPlaceById(transaction, id);
 
         if (!place) {
-          throw new NotFoundError(`Place ${id} not found`);
+          throw new NotFoundError('PLACE_NOT_FOUND');
         }
 
         return place;

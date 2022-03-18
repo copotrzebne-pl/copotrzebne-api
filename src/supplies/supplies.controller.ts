@@ -40,7 +40,7 @@ export class SuppliesController {
         const supply = await this.suppliesService.getSupplyById(transaction, id);
 
         if (!supply) {
-          throw new NotFoundError(`Supply ${id} not found`);
+          throw new NotFoundError(`SUPPLY_NOT_FOUND`);
         }
 
         return supply;

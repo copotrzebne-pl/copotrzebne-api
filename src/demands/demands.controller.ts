@@ -27,7 +27,7 @@ export class DemandsController {
         const demand = await this.demandsService.getDemandById(transaction, id);
 
         if (!demand) {
-          throw new NotFoundError(`Demand ${id} not found`);
+          throw new NotFoundError(`DEMAND_NOT_FOUND`);
         }
 
         return demand;
