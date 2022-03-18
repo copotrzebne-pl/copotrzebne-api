@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.createTable(
-        'supply_categories',
+        'categories',
         {
           id: {
             type: Sequelize.UUID,
@@ -34,7 +34,7 @@ module.exports = {
 
       await queryInterface.addColumn(
         'supplies',
-        'supply_category_id',
+        'category_id',
         {
           type: Sequelize.UUID,
           allowNull: true,
@@ -44,10 +44,10 @@ module.exports = {
 
       await queryInterface.addConstraint('supplies', {
         type: 'foreign key',
-        name: 'supplies_supply_category_id_fkey',
-        fields: ['supply_category_id'],
+        name: 'supplies_category_id_fkey',
+        fields: ['category_id'],
         references: {
-          table: 'supply_categories',
+          table: 'categories',
           field: 'id',
         },
         onDelete: 'set null',
@@ -58,15 +58,15 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.removeConstraint('supplies', 'supplies_supply_category_id_fkey', {
+      await queryInterface.removeConstraint('supplies', 'supplies_category_id_fkey', {
         transaction,
       });
 
-      await queryInterface.removeColumn('supplies', 'supply_category_id', {
+      await queryInterface.removeColumn('supplies', 'category_id', {
         transaction,
       });
 
-      await queryInterface.dropTable('supply_categories', { transaction });
+      await queryInterface.dropTable('categories', { transaction });
     });
   },
 };
