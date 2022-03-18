@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, SetMetadata, UseFilters, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
 
@@ -10,9 +10,10 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { AuthorizationError } from '../error/authorization.error';
-import { errorHandler } from '../error/error-mapper';
+import { ErrorHandler } from '../error/errorHandler';
 
 @ApiTags('users')
+@UseFilters(ErrorHandler)
 @Controller('users')
 export class UsersController {
   constructor(private readonly sequelize: Sequelize, private readonly usersService: UsersService) {}
@@ -31,23 +32,19 @@ export class UsersController {
   @Post('/')
   public async createUser(@Body() createUserDto: CreateUserDto): Promise<{ login: string; id: string; role: string }> {
     const { login, password, role } = createUserDto;
-    try {
-      const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
-        return await this.usersService.createUser(transaction, {
-          login,
-          password,
-          role,
-        });
+    const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
+      return await this.usersService.createUser(transaction, {
+        login,
+        password,
+        role,
       });
+    });
 
-      if (!user) {
-        throw new Error('USER_CREATION_FAILED');
-      }
-
-      return { login: user.login, id: user.id, role: user.role };
-    } catch (error) {
-      throw new HttpException('USER_CREATION_FAILED', HttpStatus.BAD_REQUEST);
+    if (!user) {
+      throw new Error('USER_CREATION_FAILED');
     }
+
+    return { login: user.login, id: user.id, role: user.role };
   }
 
   @ApiHeader({ name: 'authorization' })
@@ -69,18 +66,15 @@ export class UsersController {
     if (!userId) {
       throw new AuthorizationError('ACCESS_FORBIDDEN');
     }
-    try {
-      const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
-        return await this.usersService.getUserById(transaction, userId);
-      });
 
-      if (!user) {
-        throw new AuthorizationError('ACCESS_FORBIDDEN');
-      }
+    const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
+      return await this.usersService.getUserById(transaction, userId);
+    });
 
-      return { login: user.login, id: user.id, role: user.role };
-    } catch (error) {
-      errorHandler(error);
+    if (!user) {
+      throw new AuthorizationError('ACCESS_FORBIDDEN');
     }
+
+    return { login: user.login, id: user.id, role: user.role };
   }
 }

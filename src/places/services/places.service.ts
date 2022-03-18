@@ -6,7 +6,7 @@ import { Place } from '../models/places.model';
 import { CreatePlaceDto } from '../dto/createPlaceDto';
 import { UpdatePlaceDto } from '../dto/updatePlaceDto';
 import { UsersService } from '../../users/users.service';
-import CRUDError from '../../error/CRUDError';
+import CRUDError from '../../error/CRUD.error';
 
 @Injectable()
 export class PlacesService {

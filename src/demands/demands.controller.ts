@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   SetMetadata,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
@@ -17,36 +18,33 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/createDemandDto';
 import { Demand } from './models/demands.model';
-import CRUDError from '../error/CRUDError';
+import CRUDError from '../error/CRUD.error';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateDemandDto } from './dto/updateDemandDto';
-import { errorHandler } from '../error/error-mapper';
 import NotFoundError from '../error/not-found.error';
+import { ErrorHandler } from '../error/errorHandler';
 
 @ApiTags('demands')
-@Controller('demands')
 @Injectable()
+@UseFilters(ErrorHandler)
+@Controller('demands')
 export class DemandsController {
   constructor(private readonly sequelize: Sequelize, private readonly demandsService: DemandsService) {}
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns single demand' })
   @Get('/:id')
   public async getDemand(@Param('id') id: string): Promise<Demand | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        const demand = await this.demandsService.getDemandById(transaction, id);
+    return await this.sequelize.transaction(async (transaction) => {
+      const demand = await this.demandsService.getDemandById(transaction, id);
 
-        if (!demand) {
-          throw new NotFoundError(`DEMAND_NOT_FOUND`);
-        }
+      if (!demand) {
+        throw new NotFoundError(`DEMAND_NOT_FOUND`);
+      }
 
-        return demand;
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+      return demand;
+    });
   }
 
   @ApiResponse({ type: Demand, description: 'creates demand and returns created entity' })
@@ -54,19 +52,15 @@ export class DemandsController {
   @UseGuards(AuthGuard)
   @Post('/')
   public async createDemand(@Body() demandDto: CreateDemandDto): Promise<Demand | void> {
-    try {
-      const demand = await this.sequelize.transaction(async (transaction) => {
-        return await this.demandsService.createDemand(transaction, demandDto);
-      });
+    const demand = await this.sequelize.transaction(async (transaction) => {
+      return await this.demandsService.createDemand(transaction, demandDto);
+    });
 
-      if (!demand) {
-        throw new CRUDError('CANNOT_CREATE_DEMAND');
-      }
-
-      return demand;
-    } catch (error) {
-      errorHandler(error);
+    if (!demand) {
+      throw new CRUDError('CANNOT_CREATE_DEMAND');
     }
+
+    return demand;
   }
 
   @ApiResponse({ type: Demand, description: 'updates demand and returns updated entity' })
@@ -74,19 +68,15 @@ export class DemandsController {
   @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updateDemand(@Param('id') id: string, @Body() demandDto: UpdateDemandDto): Promise<Demand | void> {
-    try {
-      const demand = await this.sequelize.transaction(async (transaction) => {
-        return await this.demandsService.updateDemand(transaction, id, demandDto);
-      });
+    const demand = await this.sequelize.transaction(async (transaction) => {
+      return await this.demandsService.updateDemand(transaction, id, demandDto);
+    });
 
-      if (!demand) {
-        throw new CRUDError('CANNOT_UPDATE_DEMAND');
-      }
-
-      return demand;
-    } catch (error) {
-      errorHandler(error);
+    if (!demand) {
+      throw new CRUDError('CANNOT_UPDATE_DEMAND');
     }
+
+    return demand;
   }
 
   @ApiResponse({ status: 204, description: 'deletes demand and returns empty response' })
@@ -95,12 +85,8 @@ export class DemandsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Patch('/:id')
   public async deleteDemand(@Param('id') id: string): Promise<void> {
-    try {
-      await this.sequelize.transaction(async (transaction) => {
-        await this.demandsService.deleteDemand(transaction, id);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      await this.demandsService.deleteDemand(transaction, id);
+    });
   }
 }
