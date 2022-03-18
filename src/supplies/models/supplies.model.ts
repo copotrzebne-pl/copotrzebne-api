@@ -1,6 +1,7 @@
-import { Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demands.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { Category } from '../../categories/models/categories.model';
 
 @Table({ tableName: 'supplies', underscored: true, timestamps: false })
 export class Supply extends Model {
@@ -22,4 +23,13 @@ export class Supply extends Model {
 
   @HasMany(() => Demand)
   demand!: Demand[];
+
+  @ApiProperty({ type: 'string', nullable: true })
+  @Column({ allowNull: true, type: DataType.UUID })
+  @ForeignKey(() => Category)
+  categoryId!: string | null;
+
+  @ApiProperty({ type: Category, nullable: true })
+  @BelongsTo(() => Category)
+  category!: Category | null;
 }
