@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { AddCacheHeaderToResponseInterceptor } from './interceptors/cache-header.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,6 +17,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
+  app.useGlobalInterceptors(new AddCacheHeaderToResponseInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('Copotrzebne.pl API')
