@@ -6,6 +6,7 @@ import { Supply } from '../../supplies/models/supplies.model';
 import { Priority } from '../../priorities/models/priorities.model';
 import { CreateDemandDto } from '../dto/createDemandDto';
 import { UpdateDemandDto } from '../dto/updateDemandDto';
+import { Category } from '../../categories/models/categories.model';
 
 @Injectable()
 export class DemandsService {
@@ -23,7 +24,11 @@ export class DemandsService {
   }
 
   public async getDetailedDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
-    return await this.demandModel.findAll({ include: [Supply, Priority], where: { placeId }, transaction });
+    return await this.demandModel.findAll({
+      include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
+      where: { placeId },
+      transaction,
+    });
   }
 
   public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand> {
