@@ -35,6 +35,10 @@ export class DemandsService {
     return await this.getDemandById(transaction, id);
   }
 
+  public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
+    await Demand.destroy({ where: { id } });
+  }
+
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
     const demands = await this.getDemandsForPlace(transaction, placeId);
 
