@@ -163,4 +163,18 @@ export class PlacesController {
       return place;
     });
   }
+
+  @ApiResponse({
+    type: Place,
+    isArray: true,
+    description: 'Returns list of owned places for user. Only accessibe by admins.',
+  })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Get('/owned/:userId')
+  public async getOwnedPlacesByUserId(@Param('userId') userId: string): Promise<Place[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.placesService.getUserPlaces(transaction, userId);
+    });
+  }
 }
