@@ -6,7 +6,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: ['http://localhost:3000', 'https://copotrzebne.pl', 'https://www.copotrzebne.pl'],
+      credentials: true,
+    },
+  });
   const configService: ConfigService = app.get(ConfigService);
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe());
