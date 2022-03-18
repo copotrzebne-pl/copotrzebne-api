@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   SetMetadata,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
@@ -22,18 +23,19 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { Demand } from '../demands/models/demands.model';
 import { DemandsService } from '../demands/services/demands.service';
-import CRUDError from '../error/CRUDError';
+import CRUDError from '../error/CRUD.error';
 import { CreatePlaceDto } from './dto/createPlaceDto';
 import { UpdatePlaceDto } from './dto/updatePlaceDto';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { UsersService } from '../users/users.service';
-import { errorHandler } from '../error/error-mapper';
 import { AuthorizationError } from '../error/authorization.error';
 import NotFoundError from '../error/not-found.error';
+import { ErrorHandler } from '../error/errorHandler';
 
 @ApiTags('places')
-@Controller('places')
 @Injectable()
+@UseFilters(ErrorHandler)
+@Controller('places')
 export class PlacesController {
   constructor(
     private readonly sequelize: Sequelize,
@@ -45,31 +47,23 @@ export class PlacesController {
   @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
   @Get('/:id')
   public async getPlace(@Param('id') id: string): Promise<Place | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        const place = await this.placesService.getPlaceById(transaction, id);
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placesService.getPlaceById(transaction, id);
 
-        if (!place) {
-          throw new NotFoundError('PLACE_NOT_FOUND');
-        }
+      if (!place) {
+        throw new NotFoundError('PLACE_NOT_FOUND');
+      }
 
-        return place;
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+      return place;
+    });
   }
 
   @ApiResponse({ isArray: true, type: Place, description: 'returns all places' })
   @Get('/')
   public async getPlaces(): Promise<Place[] | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        return await this.placesService.getAllPlaces(transaction);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.placesService.getAllPlaces(transaction);
+    });
   }
 
   @ApiHeader({ name: 'authorization' })
@@ -78,35 +72,27 @@ export class PlacesController {
   @UseGuards(AuthGuard)
   @Get('/owned')
   public async getOwnedPlaces(@SessionUserId() userId: string): Promise<Place[] | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        const user = await this.usersService.getUserById(transaction, userId);
+    return await this.sequelize.transaction(async (transaction) => {
+      const user = await this.usersService.getUserById(transaction, userId);
 
-        if (!user) {
-          throw new AuthorizationError();
-        }
+      if (!user) {
+        throw new AuthorizationError();
+      }
 
-        if (user.role === UserRole.ADMIN) {
-          return await this.placesService.getAllPlaces(transaction);
-        }
+      if (user.role === UserRole.ADMIN) {
+        return await this.placesService.getAllPlaces(transaction);
+      }
 
-        return await this.placesService.getUserPlaces(transaction, userId);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+      return await this.placesService.getUserPlaces(transaction, userId);
+    });
   }
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
   public async getDemandsForPlace(@Param('id') id: string): Promise<Demand[] | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        return await this.demandsService.getDetailedDemandsForPlace(transaction, id);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.demandsService.getDetailedDemandsForPlace(transaction, id);
+    });
   }
 
   @ApiResponse({ status: 204, description: 'deletes all demands for place' })
@@ -115,13 +101,9 @@ export class PlacesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id/demands')
   public async deleteDemandsForPlace(@Param('id') id: string): Promise<void> {
-    try {
-      await this.sequelize.transaction(async (transaction) => {
-        await this.demandsService.deleteAllDemandsForPlace(transaction, id);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      await this.demandsService.deleteAllDemandsForPlace(transaction, id);
+    });
   }
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
@@ -130,24 +112,20 @@ export class PlacesController {
   @UseGuards(AuthGuard)
   @Post('/')
   public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        const user = await this.usersService.getUserById(transaction, userId);
-        if (!user || user.role !== UserRole.ADMIN) {
-          throw new AuthorizationError();
-        }
+    return await this.sequelize.transaction(async (transaction) => {
+      const user = await this.usersService.getUserById(transaction, userId);
+      if (!user || user.role !== UserRole.ADMIN) {
+        throw new AuthorizationError();
+      }
 
-        const place = await this.placesService.createPlace(transaction, placeDto);
+      const place = await this.placesService.createPlace(transaction, placeDto);
 
-        if (!place) {
-          throw new NotFoundError();
-        }
+      if (!place) {
+        throw new NotFoundError();
+      }
 
-        return place;
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+      return place;
+    });
   }
 
   @ApiResponse({ type: Place, description: 'updates place and returns updated entity' })
@@ -160,33 +138,29 @@ export class PlacesController {
     @Param('id') id: string,
     @Body() placeDto: UpdatePlaceDto,
   ): Promise<Place | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        const user = await this.usersService.getUserById(transaction, userId);
+    return await this.sequelize.transaction(async (transaction) => {
+      const user = await this.usersService.getUserById(transaction, userId);
 
-        if (!user) {
+      if (!user) {
+        throw new AuthorizationError();
+      }
+
+      if (user.role !== UserRole.ADMIN) {
+        const userPlaces = await this.placesService.getUserPlaces(transaction, userId);
+        const userPlacesIds = userPlaces.map((place) => place.id);
+
+        if (!userPlacesIds.includes(id)) {
           throw new AuthorizationError();
         }
+      }
 
-        if (user.role !== UserRole.ADMIN) {
-          const userPlaces = await this.placesService.getUserPlaces(transaction, userId);
-          const userPlacesIds = userPlaces.map((place) => place.id);
+      const place = await this.placesService.updatePlace(transaction, id, placeDto);
 
-          if (!userPlacesIds.includes(id)) {
-            throw new AuthorizationError();
-          }
-        }
+      if (!place) {
+        throw new CRUDError('CANNOT_UPDATE_PLACE');
+      }
 
-        const place = await this.placesService.updatePlace(transaction, id, placeDto);
-
-        if (!place) {
-          throw new CRUDError('CANNOT_UPDATE_PLACE');
-        }
-
-        return place;
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+      return place;
+    });
   }
 }
