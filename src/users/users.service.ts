@@ -26,12 +26,7 @@ export class UsersService {
 
   public async getUserById(transaction: Transaction, id: string): Promise<User | null> {
     try {
-      const user = await this.userModel.findByPk(id, { transaction });
-      if (!user) {
-        return null;
-      }
-
-      return user;
+      return await this.userModel.findByPk(id, { transaction });
     } catch (_) {
       return null;
     }
