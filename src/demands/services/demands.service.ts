@@ -7,6 +7,7 @@ import { Priority } from '../../priorities/models/priorities.model';
 import { CreateDemandDto } from '../dto/createDemandDto';
 import { UpdateDemandDto } from '../dto/updateDemandDto';
 import { Category } from '../../categories/models/categories.model';
+import { Language } from '../../types/language.type';
 
 @Injectable()
 export class DemandsService {
@@ -23,10 +24,18 @@ export class DemandsService {
     return await this.demandModel.findAll({ where: { placeId }, transaction });
   }
 
-  public async getDetailedDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
+  public async getDetailedDemandsForPlace(
+    transaction: Transaction,
+    placeId: string,
+    sort: Language = 'pl',
+  ): Promise<Demand[]> {
     return await this.demandModel.findAll({
       include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
       where: { placeId },
+      order: [
+        [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `name_${sort}`, 'ASC'],
+        [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
+      ],
       transaction,
     });
   }
