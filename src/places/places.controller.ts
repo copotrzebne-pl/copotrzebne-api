@@ -173,12 +173,8 @@ export class PlacesController {
   @UseGuards(AuthGuard)
   @Get('/owned/:userId')
   public async getOwnedPlacesByUserId(@Param('userId') userId: string): Promise<Place[] | void> {
-    try {
-      return await this.sequelize.transaction(async (transaction) => {
-        return await this.placesService.getUserPlaces(transaction, userId);
-      });
-    } catch (error) {
-      errorHandler(error);
-    }
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.placesService.getUserPlaces(transaction, userId);
+    });
   }
 }
