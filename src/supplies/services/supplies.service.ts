@@ -13,17 +13,21 @@ export class SuppliesService {
     private readonly supplyModel: typeof Supply,
   ) {}
 
+  public async getSupplyById(transaction: Transaction, id: string): Promise<Supply | null> {
+    return await this.supplyModel.findByPk(id, { transaction });
+  }
+
   public async getAllSupplies(transaction: Transaction): Promise<Supply[]> {
     return await this.supplyModel.findAll({ transaction });
   }
 
   public async createSupply(transaction: Transaction, supplyDto: CreateSupplyDto): Promise<Supply> {
-    return this.supplyModel.create({ ...supplyDto }, { transaction });
+    return await this.supplyModel.create({ ...supplyDto }, { transaction });
   }
 
   public async updateSupply(transaction: Transaction, id: string, supplyDto: UpdateSupplyDto): Promise<Supply | null> {
     await this.supplyModel.update({ ...supplyDto }, { where: { id }, transaction });
-    return this.supplyModel.findByPk(id, { transaction });
+    return await this.getSupplyById(transaction, id);
   }
 
   public async deleteSupply(transaction: Transaction, id: string): Promise<void> {

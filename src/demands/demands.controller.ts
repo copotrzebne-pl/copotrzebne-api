@@ -1,4 +1,4 @@
-import { Body, Controller, Injectable, Param, Patch, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Injectable, Param, Patch, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -11,12 +11,31 @@ import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateDemandDto } from './dto/updateDemandDto';
 import { errorHandler } from '../error/error-mapper';
+import NotFoundError from '../error/not-found.error';
 
 @ApiTags('demands')
 @Controller('demands')
 @Injectable()
 export class DemandsController {
   constructor(private readonly sequelize: Sequelize, private readonly demandsService: DemandsService) {}
+
+  @ApiResponse({ isArray: true, type: Demand, description: 'returns single demand' })
+  @Get('/:id')
+  public async getDemand(@Param('id') id: string): Promise<Demand | void> {
+    try {
+      return await this.sequelize.transaction(async (transaction) => {
+        const demand = await this.demandsService.getDemandById(transaction, id);
+
+        if (!demand) {
+          throw new NotFoundError(`DEMAND_NOT_FOUND`);
+        }
+
+        return demand;
+      });
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
 
   @ApiResponse({ type: Demand, description: 'creates demand and returns created entity' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])

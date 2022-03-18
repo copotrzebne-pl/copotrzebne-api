@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Injectable,
   Param,
@@ -25,6 +24,7 @@ import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateSupplyDto } from './dto/updateSupplyDto';
 import { errorHandler } from '../error/error-mapper';
+import NotFoundError from '../error/not-found.error';
 
 @ApiTags('supplies')
 @Controller('supplies')
@@ -32,15 +32,33 @@ import { errorHandler } from '../error/error-mapper';
 export class SuppliesController {
   constructor(private readonly sequelize: Sequelize, private readonly suppliesService: SuppliesService) {}
 
+  @ApiResponse({ isArray: true, type: Supply, description: 'returns single supply' })
+  @Get('/:id')
+  public async getSupply(@Param('id') id: string): Promise<Supply | void> {
+    try {
+      return await this.sequelize.transaction(async (transaction) => {
+        const supply = await this.suppliesService.getSupplyById(transaction, id);
+
+        if (!supply) {
+          throw new NotFoundError(`SUPPLY_NOT_FOUND`);
+        }
+
+        return supply;
+      });
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
+
   @ApiResponse({ isArray: true, type: Supply, description: 'returns all supplies' })
   @Get('/')
-  public async getSupplies(): Promise<Supply[]> {
+  public async getSupplies(): Promise<Supply[] | void> {
     try {
-      return await this.sequelize.transaction(async (transaction): Promise<Supply[]> => {
+      return await this.sequelize.transaction(async (transaction) => {
         return await this.suppliesService.getAllSupplies(transaction);
       });
     } catch (error) {
-      throw new HttpException('CANNOT_GET_SUPPLIES', HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 
@@ -50,15 +68,15 @@ export class SuppliesController {
   @Post('/')
   public async createSupply(@Body() createSupplyDto: CreateSupplyDto): Promise<Supply | void> {
     try {
-      const supply = await this.sequelize.transaction(async (transaction) => {
-        return await this.suppliesService.createSupply(transaction, createSupplyDto);
+      return await this.sequelize.transaction(async (transaction) => {
+        const supply = await this.suppliesService.createSupply(transaction, createSupplyDto);
+
+        if (!supply) {
+          throw new CRUDError('CANNOT_CREATE_SUPPLY');
+        }
+
+        return supply;
       });
-
-      if (!supply) {
-        throw new CRUDError('CANNOT_CREATE_SUPPLY');
-      }
-
-      return supply;
     } catch (error) {
       errorHandler(error);
     }
@@ -70,15 +88,15 @@ export class SuppliesController {
   @Patch('/:id')
   public async updateSupply(@Param('id') id: string, @Body() supplyDto: UpdateSupplyDto): Promise<Supply | void> {
     try {
-      const supply = await this.sequelize.transaction(async (transaction) => {
-        return this.suppliesService.updateSupply(transaction, id, supplyDto);
+      return await this.sequelize.transaction(async (transaction) => {
+        const supply = await this.suppliesService.updateSupply(transaction, id, supplyDto);
+
+        if (!supply) {
+          throw new CRUDError('CANNOT_UPDATE_SUPPLY');
+        }
+
+        return supply;
       });
-
-      if (!supply) {
-        throw new CRUDError('CANNOT_UPDATE_SUPPLY');
-      }
-
-      return supply;
     } catch (error) {
       errorHandler(error);
     }
@@ -95,7 +113,7 @@ export class SuppliesController {
         await this.suppliesService.deleteSupply(transaction, id);
       });
     } catch (error) {
-      throw new HttpException(`Cannot delete Supply ${id}`, HttpStatus.BAD_REQUEST);
+      errorHandler(error);
     }
   }
 }

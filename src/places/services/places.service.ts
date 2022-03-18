@@ -16,6 +16,10 @@ export class PlacesService {
     private readonly usersService: UsersService,
   ) {}
 
+  public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
+    return await this.placeModel.findByPk(id, { transaction });
+  }
+
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
     return await this.placeModel.findAll({ transaction });
   }
@@ -26,7 +30,7 @@ export class PlacesService {
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
     await this.placeModel.update({ ...placeDto }, { where: { id }, transaction });
-    return this.placeModel.findByPk(id, { transaction });
+    return await this.getPlaceById(transaction, id);
   }
 
   public async getUserPlaces(transaction: Transaction, userId: string): Promise<Place[]> {
