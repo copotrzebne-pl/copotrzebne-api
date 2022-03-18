@@ -16,21 +16,21 @@ import {
 import { Sequelize } from 'sequelize-typescript';
 import { ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { PlacesService } from './services/places.service';
-import { Place } from './models/places.model';
-import { AuthGuard } from '../guards/authentication.guard';
-import { MetadataKey } from '../types/metadata-key.enum';
-import { UserRole } from '../users/types/user-role.enum';
-import { Demand } from '../demands/models/demands.model';
-import { DemandsService } from '../demands/services/demands.service';
-import CRUDError from '../error/CRUD.error';
-import { CreatePlaceDto } from './dto/createPlaceDto';
-import { UpdatePlaceDto } from './dto/updatePlaceDto';
-import { SessionUserId } from '../decorators/session-user-id.decorator';
-import { UsersService } from '../users/users.service';
-import { AuthorizationError } from '../error/authorization.error';
-import NotFoundError from '../error/not-found.error';
-import { ErrorHandler } from '../error/errorHandler';
+import { PlacesService } from '../services/places.service';
+import { Place } from '../models/places.model';
+import { AuthGuard } from '../../guards/authentication.guard';
+import { MetadataKey } from '../../types/metadata-key.enum';
+import { UserRole } from '../../users/types/user-role.enum';
+import { Demand } from '../../demands/models/demands.model';
+import { DemandsService } from '../../demands/services/demands.service';
+import CRUDError from '../../error/CRUD.error';
+import { CreatePlaceDto } from '../dto/createPlaceDto';
+import { UpdatePlaceDto } from '../dto/updatePlaceDto';
+import { SessionUserId } from '../../decorators/session-user-id.decorator';
+import { UsersService } from '../../users/users.service';
+import { AuthorizationError } from '../../error/authorization.error';
+import NotFoundError from '../../error/not-found.error';
+import { ErrorHandler } from '../../error/errorHandler';
 
 @ApiTags('places')
 @Injectable()
@@ -63,27 +63,6 @@ export class PlacesController {
   public async getPlaces(): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       return await this.placesService.getAllPlaces(transaction);
-    });
-  }
-
-  @ApiHeader({ name: 'authorization' })
-  @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
-  @UseGuards(AuthGuard)
-  @Get('/owned')
-  public async getOwnedPlaces(@SessionUserId() userId: string): Promise<Place[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      const user = await this.usersService.getUserById(transaction, userId);
-
-      if (!user) {
-        throw new AuthorizationError();
-      }
-
-      if (user.role === UserRole.ADMIN) {
-        return await this.placesService.getAllPlaces(transaction);
-      }
-
-      return await this.placesService.getUserPlaces(transaction, userId);
     });
   }
 
