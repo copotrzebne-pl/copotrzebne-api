@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Injectable,
@@ -10,7 +11,6 @@ import {
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
-import { Body, Controller, Get, Injectable, Param, Patch, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
