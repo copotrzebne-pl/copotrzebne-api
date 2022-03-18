@@ -10,6 +10,7 @@ import { SuppliesModule } from './supplies/supplies.module';
 import { PrioritiesModule } from './priorities/priorities.module';
 import { DemandsModule } from './demands/demands.module';
 import { JwtModule } from './jwt/jwt.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { JwtModule } from './jwt/jwt.module';
     SuppliesModule,
     PrioritiesModule,
     DemandsModule,
+    CategoriesModule,
     JwtModule,
   ],
 })
