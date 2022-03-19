@@ -19,23 +19,37 @@ export class ErrorHandler implements ExceptionFilter {
   }
 
   getResponseBody(error: unknown): { statusCode: HttpStatus; message: string } {
-    let message = 'INTERNAL_SERVER_ERROR';
-    let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-
     if (error instanceof AuthorizationError) {
-      message = error.message;
-      statusCode = HttpStatus.FORBIDDEN;
-    } else if (error instanceof NotFoundError) {
-      message = error.message;
-      statusCode = HttpStatus.NOT_FOUND;
-    } else if (error instanceof CRUDError) {
-      message = error.message;
-      statusCode = HttpStatus.BAD_REQUEST;
-    } else if (error instanceof HttpException) {
-      message = error.message;
-      statusCode = error.getStatus();
+      return {
+        message: error.message,
+        statusCode: HttpStatus.FORBIDDEN,
+      };
     }
 
-    return { statusCode, message };
+    if (error instanceof NotFoundError) {
+      return {
+        message: error.message,
+        statusCode: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (error instanceof CRUDError) {
+      return {
+        message: error.message,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    if (error instanceof HttpException) {
+      return {
+        message: error.message,
+        statusCode: error.getStatus(),
+      };
+    }
+
+    return {
+      message: 'INTERNAL_SERVER_ERROR',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    };
   }
 }
