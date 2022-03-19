@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AuthorizationError } from './authorization.error';
 import NotFoundError from './not-found.error';
@@ -35,6 +35,11 @@ export class ErrorHandler implements ExceptionFilter {
     if (error instanceof CRUDError) {
       message = error.message;
       statusCode = HttpStatus.BAD_REQUEST;
+    }
+
+    if (error instanceof HttpException) {
+      message = error.message;
+      statusCode = error.getStatus();
     }
 
     return { statusCode, message };
