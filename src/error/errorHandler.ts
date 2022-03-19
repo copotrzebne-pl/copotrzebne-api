@@ -25,19 +25,13 @@ export class ErrorHandler implements ExceptionFilter {
     if (error instanceof AuthorizationError) {
       message = error.message;
       statusCode = HttpStatus.FORBIDDEN;
-    }
-
-    if (error instanceof NotFoundError) {
+    } else if (error instanceof NotFoundError) {
       message = error.message;
       statusCode = HttpStatus.NOT_FOUND;
-    }
-
-    if (error instanceof CRUDError) {
+    } else if (error instanceof CRUDError) {
       message = error.message;
       statusCode = HttpStatus.BAD_REQUEST;
-    }
-
-    if (error instanceof HttpException) {
+    } else if (error instanceof HttpException) {
       message = error.message;
       statusCode = error.getStatus();
     }
