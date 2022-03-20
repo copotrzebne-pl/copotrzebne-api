@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PlacesService } from '../services/places.service';
 import { Place } from '../models/places.model';
@@ -32,7 +32,7 @@ import { UsersService } from '../../users/users.service';
 import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/errorHandler';
-import { Language } from '../../types/language.type';
+import { Language } from '../../types/language.type.enum';
 
 @ApiTags('places')
 @Injectable()
@@ -68,6 +68,7 @@ export class PlacesController {
     });
   }
 
+  @ApiQuery({ name: 'sort', enum: Language })
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
   public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Language): Promise<Demand[] | void> {

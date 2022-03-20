@@ -7,7 +7,8 @@ import { Priority } from '../../priorities/models/priorities.model';
 import { CreateDemandDto } from '../dto/createDemandDto';
 import { UpdateDemandDto } from '../dto/updateDemandDto';
 import { Category } from '../../categories/models/categories.model';
-import { Language } from '../../types/language.type';
+import { Language } from '../../types/language.type.enum';
+import IncorrectValueError from '../../error/incorrectValue.error';
 
 @Injectable()
 export class DemandsService {
@@ -27,8 +28,12 @@ export class DemandsService {
   public async getDetailedDemandsForPlace(
     transaction: Transaction,
     placeId: string,
-    sort: Language = 'pl',
+    sort: Language = Language.PL,
   ): Promise<Demand[]> {
+    if (!Object.values(Language).includes(sort)) {
+      throw new IncorrectValueError();
+    }
+
     return await this.demandModel.findAll({
       include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
       where: { placeId },
