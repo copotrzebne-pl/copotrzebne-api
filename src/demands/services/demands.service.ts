@@ -6,6 +6,9 @@ import { Supply } from '../../supplies/models/supplies.model';
 import { Priority } from '../../priorities/models/priorities.model';
 import { CreateDemandDto } from '../dto/createDemandDto';
 import { UpdateDemandDto } from '../dto/updateDemandDto';
+import { Category } from '../../categories/models/categories.model';
+import { Language } from '../../types/language.type.enum';
+import IncorrectValueError from '../../error/incorrectValue.error';
 
 @Injectable()
 export class DemandsService {
@@ -22,8 +25,24 @@ export class DemandsService {
     return await this.demandModel.findAll({ where: { placeId }, transaction });
   }
 
-  public async getDetailedDemandsForPlace(transaction: Transaction, placeId: string): Promise<Demand[]> {
-    return await this.demandModel.findAll({ include: [Supply, Priority], where: { placeId }, transaction });
+  public async getDetailedDemandsForPlace(
+    transaction: Transaction,
+    placeId: string,
+    sort: Language = Language.PL,
+  ): Promise<Demand[]> {
+    if (!Object.values(Language).includes(sort)) {
+      throw new IncorrectValueError();
+    }
+
+    return await this.demandModel.findAll({
+      include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
+      where: { placeId },
+      order: [
+        [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `name_${sort}`, 'ASC'],
+        [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
+      ],
+      transaction,
+    });
   }
 
   public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand> {

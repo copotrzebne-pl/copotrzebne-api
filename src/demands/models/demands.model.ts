@@ -29,12 +29,15 @@ export class Demand extends Model {
   @ForeignKey(() => Priority)
   priorityId!: string | null;
 
+  @ApiProperty({ type: Place, nullable: true })
   @BelongsTo(() => Place)
   place!: Place | null;
 
+  @ApiProperty({ type: Supply, nullable: true })
   @BelongsTo(() => Supply)
   supply!: Supply | null;
 
+  @ApiProperty({ type: Priority, nullable: true })
   @BelongsTo(() => Priority)
   priority!: Priority | null;
 }
