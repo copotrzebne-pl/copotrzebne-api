@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AuthorizationError } from './authorization.error';
 import NotFoundError from './not-found.error';
@@ -19,24 +19,37 @@ export class ErrorHandler implements ExceptionFilter {
   }
 
   getResponseBody(error: unknown): { statusCode: HttpStatus; message: string } {
-    let message = 'INTERNAL_SERVER_ERROR';
-    let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-
     if (error instanceof AuthorizationError) {
-      message = error.message;
-      statusCode = HttpStatus.FORBIDDEN;
+      return {
+        message: error.message,
+        statusCode: HttpStatus.FORBIDDEN,
+      };
     }
 
     if (error instanceof NotFoundError) {
-      message = error.message;
-      statusCode = HttpStatus.NOT_FOUND;
+      return {
+        message: error.message,
+        statusCode: HttpStatus.NOT_FOUND,
+      };
     }
 
     if (error instanceof CRUDError) {
-      message = error.message;
-      statusCode = HttpStatus.BAD_REQUEST;
+      return {
+        message: error.message,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
     }
 
-    return { statusCode, message };
+    if (error instanceof HttpException) {
+      return {
+        message: error.message,
+        statusCode: error.getStatus(),
+      };
+    }
+
+    return {
+      message: 'INTERNAL_SERVER_ERROR',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    };
   }
 }
