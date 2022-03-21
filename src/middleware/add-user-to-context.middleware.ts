@@ -6,7 +6,7 @@ import { UsersService } from '../users/users.service';
 import { getAuthHeaderFromContextRequest } from '../helpers/get-auth-header-from-context-request';
 import { JwtService } from '../jwt/jwt.service';
 
-// when meta WITH_USER is present in the request, it fetches and attaches a user based on the auth header
+// when authorization header is present in the request, it fetches and attaches a user based on the auth header
 @Injectable()
 export class AddUserToContextMiddleware implements NestMiddleware {
   constructor(private readonly usersService: UsersService, private readonly sequelize: Sequelize) {}
