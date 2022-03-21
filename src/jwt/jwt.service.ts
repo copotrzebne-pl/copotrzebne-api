@@ -25,7 +25,7 @@ export class JwtService {
     return token;
   }
 
-  public getPayloadFromToken(token: string): ApiJwtPayload | null {
+  public validateTokenAndGetPayload(token: string): ApiJwtPayload | null {
     try {
       return verify(token, this.jwtSignature) as ApiJwtPayload;
     } catch (_) {
@@ -47,6 +47,7 @@ export class JwtService {
 
   public static getUserIdFromJwt(jwt: string): string | null {
     const token = JwtService.getAuthorizationToken(jwt);
+
     if (!token) {
       throw new Error('ACCESS_FORBIDDEN');
     }

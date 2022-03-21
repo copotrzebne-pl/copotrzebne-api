@@ -8,9 +8,9 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
-import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { AuthorizationError } from '../error/authorization.error';
 import { ErrorHandler } from '../error/error-handler';
+import { SessionUser } from '../decorators/session-user.decorator';
 
 @ApiTags('users')
 @UseFilters(ErrorHandler)
@@ -60,17 +60,7 @@ export class UsersController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  public async whoami(
-    @SessionUserId() userId: string | null,
-  ): Promise<{ login: string; id: string; role: string } | void> {
-    if (!userId) {
-      throw new AuthorizationError('ACCESS_FORBIDDEN');
-    }
-
-    const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
-      return await this.usersService.getUserById(transaction, userId);
-    });
-
+  public async whoami(@SessionUser() user: User | null): Promise<{ login: string; id: string; role: string } | void> {
     if (!user) {
       throw new AuthorizationError('ACCESS_FORBIDDEN');
     }

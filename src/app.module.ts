@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -11,6 +11,7 @@ import { PrioritiesModule } from './priorities/priorities.module';
 import { DemandsModule } from './demands/demands.module';
 import { JwtModule } from './jwt/jwt.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
 
 @Module({
   imports: [
@@ -29,4 +30,8 @@ import { CategoriesModule } from './categories/categories.module';
     JwtModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AddUserToContextMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
