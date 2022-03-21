@@ -9,12 +9,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   SetMetadata,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
@@ -26,6 +27,7 @@ import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateSupplyDto } from './dto/updateSupplyDto';
 import NotFoundError from '../error/not-found.error';
 import { ErrorHandler } from '../error/errorHandler';
+import { Language } from '../types/language.type.enum';
 
 @ApiTags('supplies')
 @Injectable()
@@ -48,11 +50,12 @@ export class SuppliesController {
     });
   }
 
+  @ApiQuery({ name: 'sort', enum: Language })
   @ApiResponse({ isArray: true, type: Supply, description: 'returns all supplies' })
   @Get('/')
-  public async getSupplies(): Promise<Supply[] | void> {
+  public async getSupplies(@Query('sort') sort?: Language): Promise<Supply[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      return await this.suppliesService.getAllSupplies(transaction);
+      return await this.suppliesService.getDetailedSupplies(transaction, sort);
     });
   }
 
