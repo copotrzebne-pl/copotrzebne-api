@@ -20,10 +20,6 @@ export class SuppliesService {
     return await this.supplyModel.findByPk(id, { transaction });
   }
 
-  public async getAllSupplies(transaction: Transaction): Promise<Supply[]> {
-    return await this.supplyModel.findAll({ transaction });
-  }
-
   public async getDetailedSupplies(transaction: Transaction, sort: Language = Language.PL): Promise<Supply[]> {
     if (!Object.values(Language).includes(sort)) {
       throw new IncorrectValueError();
