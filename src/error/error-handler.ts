@@ -1,10 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { AuthorizationError } from './authorization.error';
-import NotFoundError from './not-found.error';
-import CRUDError from './CRUD.error';
-import IncorrectValueError from './incorrect-value.error';
-import ForbiddenOperationError from './forbidden-operation.error';
+import ServerError from './server.error';
 
 @Catch()
 export class ErrorHandler implements ExceptionFilter {
@@ -21,32 +17,7 @@ export class ErrorHandler implements ExceptionFilter {
   }
 
   getResponseBody(error: unknown): { statusCode: HttpStatus; message: string } {
-    if (error instanceof AuthorizationError) {
-      return {
-        message: error.message,
-        statusCode: HttpStatus.FORBIDDEN,
-      };
-    }
-
-    if (error instanceof NotFoundError) {
-      return {
-        message: error.message,
-        statusCode: HttpStatus.NOT_FOUND,
-      };
-    }
-
-    if (
-      error instanceof CRUDError ||
-      error instanceof IncorrectValueError ||
-      error instanceof ForbiddenOperationError
-    ) {
-      return {
-        message: error.message,
-        statusCode: HttpStatus.BAD_REQUEST,
-      };
-    }
-
-    if (error instanceof HttpException) {
+    if (error instanceof ServerError || error instanceof HttpException) {
       return {
         message: error.message,
         statusCode: error.getStatus(),
