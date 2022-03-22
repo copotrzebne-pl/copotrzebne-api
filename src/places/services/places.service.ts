@@ -8,6 +8,7 @@ import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { UsersService } from '../../users/users.service';
 import CRUDError from '../../error/CRUD.error';
 import { Demand } from '../../demands/models/demands.model';
+import { User } from '../../users/models/user.model';
 
 @Injectable()
 export class PlacesService {
@@ -18,16 +19,14 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    return await this.placeModel.findByPk(id, { transaction });
+    const place = await this.placeModel.findByPk(id, { include: [Demand], transaction });
+    return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
-    // we are loading places with demands to calculate the virtual lastUpdatedAt field
-    // and then removing demands from the actual response
     const places = await this.placeModel.findAll({ include: [Demand], transaction });
     return places.map((place) => {
-      const { demands = [], ...rawPlace } = { ...place.get() };
-      return rawPlace;
+      return this.getRawPlaceWithoutAssociations(place);
     });
   }
 
@@ -47,8 +46,28 @@ export class PlacesService {
       throw new CRUDError();
     }
 
-    // TODO: skip "UserPlace" from output
-    const places = await user.$get('places');
-    return places;
+    const places = await this.placeModel.findAll({
+      include: [
+        {
+          model: User,
+          where: { id: userId },
+          through: { attributes: [] },
+        },
+        {
+          model: Demand,
+        },
+      ],
+      transaction,
+    });
+
+    return places.map((place) => {
+      return this.getRawPlaceWithoutAssociations(place);
+    });
+  }
+
+  private getRawPlaceWithoutAssociations(place: Place): Place {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { demands = [], users = [], ...rawPlace } = place.get();
+    return rawPlace as Place;
   }
 }
