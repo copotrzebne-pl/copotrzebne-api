@@ -12,7 +12,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { ErrorHandler } from '../../error/errorHandler';
+import { ErrorHandler } from '../../error/error-handler';
 import { Sequelize } from 'sequelize-typescript';
 import { PlacesService } from '../services/places.service';
 import { DemandsService } from '../../demands/services/demands.service';

@@ -16,15 +16,15 @@ import { Sequelize } from 'sequelize-typescript';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DemandsService } from './services/demands.service';
-import { CreateDemandDto } from './dto/createDemandDto';
+import { CreateDemandDto } from './dto/create-demand.dto';
 import { Demand } from './models/demands.model';
 import CRUDError from '../error/CRUD.error';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
-import { UpdateDemandDto } from './dto/updateDemandDto';
+import { UpdateDemandDto } from './dto/update-demand.dto';
 import NotFoundError from '../error/not-found.error';
-import { ErrorHandler } from '../error/errorHandler';
+import { ErrorHandler } from '../error/error-handler';
 
 @ApiTags('demands')
 @Injectable()

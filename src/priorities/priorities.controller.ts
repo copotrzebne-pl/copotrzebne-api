@@ -4,7 +4,7 @@ import { Priority } from './models/priorities.model';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PrioritiesService } from './services/priorities.service';
-import { ErrorHandler } from '../error/errorHandler';
+import { ErrorHandler } from '../error/error-handler';
 
 @ApiTags('priorities')
 @Injectable()

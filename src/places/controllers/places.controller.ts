@@ -25,13 +25,13 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { Demand } from '../../demands/models/demands.model';
 import { DemandsService } from '../../demands/services/demands.service';
 import CRUDError from '../../error/CRUD.error';
-import { CreatePlaceDto } from '../dto/createPlaceDto';
-import { UpdatePlaceDto } from '../dto/updatePlaceDto';
+import { CreatePlaceDto } from '../dto/create-place.dto';
+import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { SessionUserId } from '../../decorators/session-user-id.decorator';
 import { UsersService } from '../../users/users.service';
 import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
-import { ErrorHandler } from '../../error/errorHandler';
+import { ErrorHandler } from '../../error/error-handler';
 import { Language } from '../../types/language.type.enum';
 
 @ApiTags('places')

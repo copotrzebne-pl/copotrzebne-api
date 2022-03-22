@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 import { Supply } from '../models/supplies.model';
-import { CreateSupplyDto } from '../dto/createSupplyDto';
-import { UpdateSupplyDto } from '../dto/updateSupplyDto';
+import { CreateSupplyDto } from '../dto/create-supply.dto';
+import { UpdateSupplyDto } from '../dto/update-supply.dto';
 import NotFoundError from '../../error/not-found.error';
 import { Category } from '../../categories/models/categories.model';
 import { Language } from '../../types/language.type.enum';
-import IncorrectValueError from '../../error/incorrectValue.error';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class SuppliesService {

@@ -3,7 +3,8 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { AuthorizationError } from './authorization.error';
 import NotFoundError from './not-found.error';
 import CRUDError from './CRUD.error';
-import IncorrectValueError from './incorrectValue.error';
+import IncorrectValueError from './incorrect-value.error';
+import ForbiddenOperationError from './forbidden-operation.error';
 
 @Catch()
 export class ErrorHandler implements ExceptionFilter {
@@ -34,7 +35,11 @@ export class ErrorHandler implements ExceptionFilter {
       };
     }
 
-    if (error instanceof CRUDError || error instanceof IncorrectValueError) {
+    if (
+      error instanceof CRUDError ||
+      error instanceof IncorrectValueError ||
+      error instanceof ForbiddenOperationError
+    ) {
       return {
         message: error.message,
         statusCode: HttpStatus.BAD_REQUEST,
