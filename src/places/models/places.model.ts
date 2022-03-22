@@ -60,6 +60,7 @@ export class Place extends Model {
     type: DataType.VIRTUAL,
     get() {
       const demands: Demand[] = this.getDataValue('demands');
+
       if (!demands || !demands.length) {
         return null;
       }
