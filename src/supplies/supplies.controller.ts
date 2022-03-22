@@ -20,13 +20,13 @@ import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
 import CRUDError from '../error/CRUD.error';
-import { CreateSupplyDto } from './dto/createSupplyDto';
+import { CreateSupplyDto } from './dto/create-supply.dto';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
-import { UpdateSupplyDto } from './dto/updateSupplyDto';
+import { UpdateSupplyDto } from './dto/update-supply.dto';
 import NotFoundError from '../error/not-found.error';
-import { ErrorHandler } from '../error/errorHandler';
+import { ErrorHandler } from '../error/error-handler';
 import { Language } from '../types/language.type.enum';
 
 @ApiTags('supplies')

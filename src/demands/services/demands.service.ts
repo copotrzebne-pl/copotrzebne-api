@@ -4,11 +4,11 @@ import { Transaction } from 'sequelize';
 import { Demand } from '../models/demands.model';
 import { Supply } from '../../supplies/models/supplies.model';
 import { Priority } from '../../priorities/models/priorities.model';
-import { CreateDemandDto } from '../dto/createDemandDto';
-import { UpdateDemandDto } from '../dto/updateDemandDto';
+import { CreateDemandDto } from '../dto/create-demand.dto';
+import { UpdateDemandDto } from '../dto/update-demand.dto';
 import { Category } from '../../categories/models/categories.model';
 import { Language } from '../../types/language.type.enum';
-import IncorrectValueError from '../../error/incorrectValue.error';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class DemandsService {

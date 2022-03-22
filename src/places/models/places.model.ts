@@ -55,4 +55,21 @@ export class Place extends Model {
 
   @BelongsToMany(() => User, { through: () => UserPlace })
   users?: User[];
+
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      const demands: Demand[] = this.getDataValue('demands');
+      if (!demands || !demands.length) {
+        return null;
+      }
+
+      const [newestDemand] = demands.sort((demand1, demand2) => {
+        return demand2.updatedAt.getTime() - demand1.updatedAt.getTime();
+      });
+
+      return newestDemand.updatedAt;
+    },
+  })
+  lastUpdatedAt!: Date | null;
 }

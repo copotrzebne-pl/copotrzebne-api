@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
 import { SessionUserId } from '../decorators/session-user-id.decorator';
 import { AuthorizationError } from '../error/authorization.error';
-import { ErrorHandler } from '../error/errorHandler';
+import { ErrorHandler } from '../error/error-handler';
 
 @ApiTags('users')
 @UseFilters(ErrorHandler)

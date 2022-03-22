@@ -3,10 +3,11 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 
 import { Place } from '../models/places.model';
-import { CreatePlaceDto } from '../dto/createPlaceDto';
-import { UpdatePlaceDto } from '../dto/updatePlaceDto';
+import { CreatePlaceDto } from '../dto/create-place.dto';
+import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { UsersService } from '../../users/users.service';
 import CRUDError from '../../error/CRUD.error';
+import { Demand } from '../../demands/models/demands.model';
 
 @Injectable()
 export class PlacesService {
@@ -21,7 +22,13 @@ export class PlacesService {
   }
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
-    return await this.placeModel.findAll({ transaction });
+    // we are loading places with demands to calculate the virtual lastUpdatedAt field
+    // and then removing demands from the actual response
+    const places = await this.placeModel.findAll({ include: [Demand], transaction });
+    return places.map((place) => {
+      const { demands = [], ...rawPlace } = { ...place.get() };
+      return rawPlace;
+    });
   }
 
   public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place> {

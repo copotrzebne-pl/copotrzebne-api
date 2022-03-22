@@ -1,8 +1,8 @@
 import ServerError from './server.error';
 import { HttpStatus } from '@nestjs/common';
 
-export default class CRUDError extends ServerError {
-  constructor(message = 'CANNOT_CREATE_ENTITY') {
+export default class IncorrectValueError extends ServerError {
+  constructor(message = 'INCORRECT_VALUE') {
     super(message, HttpStatus.BAD_REQUEST);
   }
 }

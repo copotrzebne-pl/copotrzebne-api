@@ -29,6 +29,14 @@ export class Demand extends Model {
   @ForeignKey(() => Priority)
   priorityId!: string | null;
 
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  createdAt!: Date;
+
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  updatedAt!: Date;
+
   @ApiProperty({ type: Place, nullable: true })
   @BelongsTo(() => Place)
   place!: Place | null;

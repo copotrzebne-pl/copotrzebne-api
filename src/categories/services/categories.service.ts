@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 import { Category } from '../models/categories.model';
 import { Language } from '../../types/language.type.enum';
-import IncorrectValueError from '../../error/incorrectValue.error';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class CategoriesService {
