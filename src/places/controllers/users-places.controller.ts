@@ -21,8 +21,8 @@ import { Place } from '../models/places.model';
 import { MetadataKey } from '../../types/metadata-key.enum';
 import { UserRole } from '../../users/types/user-role.enum';
 import { AuthGuard } from '../../guards/authentication.guard';
-import { SessionUserId } from '../../decorators/session-user-id.decorator';
-import { AuthorizationError } from '../../error/authorization.error';
+import { SessionUser } from '../../decorators/session-user.decorator';
+import { User } from '../../users/models/user.model';
 
 @ApiTags('users-places')
 @Injectable()
@@ -41,19 +41,13 @@ export class UsersPlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/owned')
-  public async getOwnedPlaces(@SessionUserId() userId: string): Promise<Place[] | void> {
+  public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const user = await this.usersService.getUserById(transaction, userId);
-
-      if (!user) {
-        throw new AuthorizationError();
-      }
-
       if (user.role === UserRole.ADMIN) {
         return await this.placesService.getAllPlaces(transaction);
       }
 
-      return await this.placesService.getUserPlaces(transaction, userId);
+      return await this.placesService.getUserPlaces(transaction, user.id);
     });
   }
 
