@@ -9,6 +9,7 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { User } from '../users/models/user.model';
 import { ApiJwtPayload } from '../types/api-jwt-payload.type';
 import { JwtService } from '../jwt/jwt.service';
+import { ContextRequestWithUser } from '../types/context-request-with-user.type';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,14 +21,14 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<ContextRequestWithUser>();
     const authorizationToken = JwtService.getAuthorizationToken(AuthGuard.getAuthorizationHeaderFromRequest(request));
 
     if (!authorizationToken) {
       return false;
     }
 
-    const payload = this.jwtService.getPayloadFromToken(authorizationToken);
+    const payload = this.jwtService.validateTokenAndGetPayload(authorizationToken);
 
     if (!payload) {
       return false;
@@ -37,19 +38,9 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    try {
-      const isAuthorized = await this.sequelize.transaction(async (transaction): Promise<boolean> => {
-        const user = await this.usersService.getUserById(transaction, payload.user.id);
-
-        const allowedRoles = this.reflector.get<UserRole[]>(MetadataKey.ALLOWED_ROLES, context.getHandler());
-
-        return user instanceof User && allowedRoles.includes(user.role);
-      });
-
-      return isAuthorized;
-    } catch (_) {
-      return false;
-    }
+    const user = request.contextUser;
+    const allowedRoles = this.reflector.get<UserRole[]>(MetadataKey.ALLOWED_ROLES, context.getHandler());
+    return user instanceof User && allowedRoles.includes(user.role);
   }
 
   private static getAuthorizationHeaderFromRequest(request?: { headers?: { authorization?: string } }): string | null {

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -25,6 +26,9 @@ import { AuthGuard } from '../guards/authentication.guard';
 import { UpdateDemandDto } from './dto/update-demand.dto';
 import NotFoundError from '../error/not-found.error';
 import { ErrorHandler } from '../error/error-handler';
+import { AuthorizationError } from '../error/authorization.error';
+import { SessionUser } from '../decorators/session-user.decorator';
+import { User } from '../users/models/user.model';
 
 @ApiTags('demands')
 @Injectable()
@@ -51,7 +55,11 @@ export class DemandsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createDemand(@Body() demandDto: CreateDemandDto): Promise<Demand | void> {
+  public async createDemand(@SessionUser() user: User, @Body() demandDto: CreateDemandDto): Promise<Demand | void> {
+    if (!(await DemandsController.isPlaceAccessibleForUser(user, demandDto.placeId))) {
+      throw new AuthorizationError();
+    }
+
     const demand = await this.sequelize.transaction(async (transaction) => {
       return await this.demandsService.createDemand(transaction, demandDto);
     });
@@ -67,8 +75,21 @@ export class DemandsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updateDemand(@Param('id') id: string, @Body() demandDto: UpdateDemandDto): Promise<Demand | void> {
+  public async updateDemand(
+    @SessionUser() user: User,
+    @Param('id') id: string,
+    @Body() demandDto: UpdateDemandDto,
+  ): Promise<Demand | void> {
     const demand = await this.sequelize.transaction(async (transaction) => {
+      const demand = await this.demandsService.getDemandById(transaction, id);
+      if (!demand) {
+        throw new NotFoundError('DEMAND_NOT_FOUND');
+      }
+
+      if (!(await DemandsController.isPlaceAccessibleForUser(user, demand.placeId))) {
+        throw new AuthorizationError();
+      }
+
       return await this.demandsService.updateDemand(transaction, id, demandDto);
     });
 
@@ -83,10 +104,30 @@ export class DemandsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Patch('/:id')
-  public async deleteDemand(@Param('id') id: string): Promise<void> {
+  @Delete('/:id')
+  public async deleteDemand(@SessionUser() user: User, @Param('id') id: string): Promise<void> {
     await this.sequelize.transaction(async (transaction) => {
+      const demand = await this.demandsService.getDemandById(transaction, id);
+      if (!demand) {
+        throw new NotFoundError('DEMAND_NOT_FOUND');
+      }
+
+      if (!(await DemandsController.isPlaceAccessibleForUser(user, demand.placeId))) {
+        throw new AuthorizationError();
+      }
+
       await this.demandsService.deleteDemand(transaction, id);
     });
+  }
+
+  private static async isPlaceAccessibleForUser(user: User, placeId: string) {
+    if (user.role !== UserRole.ADMIN) {
+      const userPlaces = await user.$get('places');
+      const placesIds = userPlaces ? userPlaces.map((place) => place.id) : [];
+
+      return placesIds.includes(placeId);
+    }
+
+    return true;
   }
 }
