@@ -19,7 +19,7 @@ import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Supply } from './models/supplies.model';
 import { SuppliesService } from './services/supplies.service';
-import CRUDError from '../error/CRUD.error';
+import CRUDError from '../error/crud.error';
 import { CreateSupplyDto } from './dto/create-supply.dto';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';

@@ -2,6 +2,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
 import ServerError from './server.error';
+import { isErrorResponse } from './helpers/is-error-response.helper';
 
 @Catch()
 export class ErrorHandler implements ExceptionFilter {
@@ -22,22 +23,13 @@ export class ErrorHandler implements ExceptionFilter {
     if (error instanceof BadRequestException) {
       const errorResponse = error.getResponse();
 
-      if (
-        typeof errorResponse === 'object' &&
-        errorResponse.hasOwnProperty('message') &&
-        errorResponse.hasOwnProperty('statusCode')
-      ) {
+      if (isErrorResponse(errorResponse)) {
         return {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          message: errorResponse?.message || 'VALIDATION_ERROR',
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          statusCode: errorResponse?.statusCode || HttpStatus.BAD_REQUEST,
+          message: errorResponse.message,
+          statusCode: errorResponse.statusCode,
         };
       }
 
-      // in case of unexpected error structure
       return {
         message: 'VALIDATION_ERROR',
         statusCode: HttpStatus.BAD_REQUEST,

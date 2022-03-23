@@ -19,7 +19,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/create-demand.dto';
 import { Demand } from './models/demands.model';
-import CRUDError from '../error/CRUD.error';
+import CRUDError from '../error/crud.error';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
 import { AuthGuard } from '../guards/authentication.guard';
