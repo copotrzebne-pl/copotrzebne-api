@@ -8,6 +8,7 @@ import { User } from '../users/models/user.model';
 import { DemandsService } from './services/demands.service';
 import { DemandsController } from './demands.controller';
 import { JwtService } from '../jwt/jwt.service';
+import { PlacesService } from '../places/services/places.service';
 
 describe('PlacesController', () => {
   let controller: DemandsController;
@@ -38,6 +39,10 @@ describe('PlacesController', () => {
         },
         {
           provide: JwtService,
+          useValue: jest.fn(),
+        },
+        {
+          provide: PlacesService,
           useValue: jest.fn(),
         },
       ],

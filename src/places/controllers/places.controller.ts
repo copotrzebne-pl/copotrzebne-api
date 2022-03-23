@@ -27,12 +27,13 @@ import { DemandsService } from '../../demands/services/demands.service';
 import CRUDError from '../../error/CRUD.error';
 import { CreatePlaceDto } from '../dto/create-place.dto';
 import { UpdatePlaceDto } from '../dto/update-place.dto';
-import { SessionUserId } from '../../decorators/session-user-id.decorator';
 import { UsersService } from '../../users/users.service';
 import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
 import { Language } from '../../types/language.type.enum';
+import { SessionUser } from '../../decorators/session-user.decorator';
+import { User } from '../../users/models/user.model';
 
 @ApiTags('places')
 @Injectable()
@@ -82,24 +83,24 @@ export class PlacesController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id/demands')
-  public async deleteDemandsForPlace(@Param('id') id: string): Promise<void> {
+  public async deleteDemandsForPlace(@SessionUser() user: User, @Param('id') placeId: string): Promise<void> {
     await this.sequelize.transaction(async (transaction) => {
-      await this.demandsService.deleteAllDemandsForPlace(transaction, id);
+      const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(transaction, user, placeId);
+      if (!isPlaceManageableByUser) {
+        throw new AuthorizationError();
+      }
+
+      await this.demandsService.deleteAllDemandsForPlace(transaction, placeId);
     });
   }
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
   @ApiHeader({ name: 'authorization' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createPlace(@SessionUserId() userId: string, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
+  public async createPlace(@SessionUser() user: User, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const user = await this.usersService.getUserById(transaction, userId);
-      if (!user || user.role !== UserRole.ADMIN) {
-        throw new AuthorizationError();
-      }
-
       const place = await this.placesService.createPlace(transaction, placeDto);
 
       if (!place) {
@@ -116,27 +117,18 @@ export class PlacesController {
   @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updatePlace(
-    @SessionUserId() userId: string,
-    @Param('id') id: string,
+    @SessionUser() user: User,
+    @Param('id') placeId: string,
     @Body() placeDto: UpdatePlaceDto,
   ): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const user = await this.usersService.getUserById(transaction, userId);
+      const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(transaction, user, placeId);
 
-      if (!user) {
+      if (!isPlaceManageableByUser) {
         throw new AuthorizationError();
       }
 
-      if (user.role !== UserRole.ADMIN) {
-        const userPlaces = await this.placesService.getUserPlaces(transaction, userId);
-        const userPlacesIds = userPlaces.map((place) => place.id);
-
-        if (!userPlacesIds.includes(id)) {
-          throw new AuthorizationError();
-        }
-      }
-
-      const place = await this.placesService.updatePlace(transaction, id, placeDto);
+      const place = await this.placesService.updatePlace(transaction, placeId, placeDto);
 
       if (!place) {
         throw new CRUDError('CANNOT_UPDATE_PLACE');

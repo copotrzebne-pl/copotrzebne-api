@@ -9,6 +9,7 @@ import { UsersService } from '../../users/users.service';
 import CRUDError from '../../error/CRUD.error';
 import { Demand } from '../../demands/models/demands.model';
 import { User } from '../../users/models/user.model';
+import { UserRole } from '../../users/types/user-role.enum';
 
 @Injectable()
 export class PlacesService {
@@ -63,6 +64,17 @@ export class PlacesService {
     return places.map((place) => {
       return this.getRawPlaceWithoutAssociations(place);
     });
+  }
+
+  public async isPlaceManageableByUser(transaction: Transaction, user: User, placeId: string): Promise<boolean> {
+    if (user.role !== UserRole.ADMIN) {
+      const userPlaces = await user.$get('places', { transaction });
+      const placesIds = userPlaces ? userPlaces.map((place) => place.id) : [];
+
+      return placesIds.includes(placeId);
+    }
+
+    return true;
   }
 
   private getRawPlaceWithoutAssociations(place: Place): Place {

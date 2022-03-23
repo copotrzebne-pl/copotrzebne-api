@@ -29,13 +29,18 @@ import { ErrorHandler } from '../error/error-handler';
 import { AuthorizationError } from '../error/authorization.error';
 import { SessionUser } from '../decorators/session-user.decorator';
 import { User } from '../users/models/user.model';
+import { PlacesService } from '../places/services/places.service';
 
 @ApiTags('demands')
 @Injectable()
 @UseFilters(ErrorHandler)
 @Controller('demands')
 export class DemandsController {
-  constructor(private readonly sequelize: Sequelize, private readonly demandsService: DemandsService) {}
+  constructor(
+    private readonly sequelize: Sequelize,
+    private readonly demandsService: DemandsService,
+    private readonly placesService: PlacesService,
+  ) {}
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns single demand' })
   @Get('/:id')
@@ -56,11 +61,11 @@ export class DemandsController {
   @UseGuards(AuthGuard)
   @Post('/')
   public async createDemand(@SessionUser() user: User, @Body() demandDto: CreateDemandDto): Promise<Demand | void> {
-    if (!(await DemandsController.isPlaceAccessibleForUser(user, demandDto.placeId))) {
-      throw new AuthorizationError();
-    }
-
     const demand = await this.sequelize.transaction(async (transaction) => {
+      if (!(await this.placesService.isPlaceManageableByUser(transaction, user, demandDto.placeId))) {
+        throw new AuthorizationError();
+      }
+
       return await this.demandsService.createDemand(transaction, demandDto);
     });
 
@@ -86,7 +91,7 @@ export class DemandsController {
         throw new NotFoundError('DEMAND_NOT_FOUND');
       }
 
-      if (!(await DemandsController.isPlaceAccessibleForUser(user, demand.placeId))) {
+      if (!(await this.placesService.isPlaceManageableByUser(transaction, user, demand.placeId))) {
         throw new AuthorizationError();
       }
 
@@ -112,22 +117,11 @@ export class DemandsController {
         throw new NotFoundError('DEMAND_NOT_FOUND');
       }
 
-      if (!(await DemandsController.isPlaceAccessibleForUser(user, demand.placeId))) {
+      if (!(await this.placesService.isPlaceManageableByUser(transaction, user, demand.placeId))) {
         throw new AuthorizationError();
       }
 
       await this.demandsService.deleteDemand(transaction, id);
     });
-  }
-
-  private static async isPlaceAccessibleForUser(user: User, placeId: string) {
-    if (user.role !== UserRole.ADMIN) {
-      const userPlaces = await user.$get('places');
-      const placesIds = userPlaces ? userPlaces.map((place) => place.id) : [];
-
-      return placesIds.includes(placeId);
-    }
-
-    return true;
   }
 }
