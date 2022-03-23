@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 import { Category } from '../models/categories.model';
-import { Language } from '../../types/language.type.enum';
-import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class CategoriesService {
@@ -12,11 +10,7 @@ export class CategoriesService {
     private readonly categoryModel: typeof Category,
   ) {}
 
-  public async getAllCategories(transaction: Transaction, sort: Language = Language.PL): Promise<Category[]> {
-    if (!Object.values(Language).includes(sort)) {
-      throw new IncorrectValueError();
-    }
-
+  public async getAllCategories(transaction: Transaction): Promise<Category[]> {
     return await this.categoryModel.findAll({ order: [[`priority`, 'ASC']], transaction });
   }
 }
