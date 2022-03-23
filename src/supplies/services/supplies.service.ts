@@ -28,7 +28,7 @@ export class SuppliesService {
     return await this.supplyModel.findAll({
       include: [{ model: Category }],
       order: [
-        [{ model: Category, as: 'category' }, `name_${sort}`, 'ASC'],
+        [{ model: Category, as: 'category' }, `priority`, 'ASC'],
         [`name_${sort}`, 'ASC'],
       ],
       transaction,

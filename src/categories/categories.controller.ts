@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, Query, UseFilters } from '@nestjs/common';
+import { Controller, Get, Injectable, UseFilters } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -14,12 +14,11 @@ import { Language } from '../types/language.type.enum';
 export class CategoriesController {
   constructor(private readonly sequelize: Sequelize, private readonly categoriesService: CategoriesService) {}
 
-  @ApiQuery({ name: 'sort', enum: Language })
   @ApiResponse({ isArray: true, type: Category, description: 'returns all categories' })
   @Get('/')
-  public async getCategories(@Query('sort') sort?: Language): Promise<Category[] | void> {
+  public async getCategories(): Promise<Category[] | void> {
     return await this.sequelize.transaction(async (transaction): Promise<Category[]> => {
-      return await this.categoriesService.getAllCategories(transaction, sort);
+      return await this.categoriesService.getAllCategories(transaction);
     });
   }
 }
