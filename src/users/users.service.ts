@@ -8,7 +8,7 @@ import { User } from './models/user.model';
 import { UserRole } from './types/user-role.enum';
 import NotFoundError from '../error/not-found.error';
 import { UserPlace } from './models/user-place.model';
-import CRUDError from '../error/CRUD.error';
+import CRUDError from '../error/crud.error';
 
 @Injectable()
 export class UsersService {

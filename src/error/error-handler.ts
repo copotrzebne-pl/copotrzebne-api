@@ -1,6 +1,8 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+
 import ServerError from './server.error';
+import { isErrorResponse } from './helpers/is-error-response.helper';
 
 @Catch()
 export class ErrorHandler implements ExceptionFilter {
@@ -17,6 +19,23 @@ export class ErrorHandler implements ExceptionFilter {
   }
 
   getResponseBody(error: unknown): { statusCode: HttpStatus; message: string } {
+    // forward class validation errors
+    if (error instanceof BadRequestException) {
+      const errorResponse = error.getResponse();
+
+      if (isErrorResponse(errorResponse)) {
+        return {
+          message: errorResponse.message,
+          statusCode: errorResponse.statusCode,
+        };
+      }
+
+      return {
+        message: 'VALIDATION_ERROR',
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
     if (error instanceof ServerError || error instanceof HttpException) {
       return {
         message: error.message,

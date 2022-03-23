@@ -6,7 +6,7 @@ import { Place } from '../models/places.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
 import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { UsersService } from '../../users/users.service';
-import CRUDError from '../../error/CRUD.error';
+import CRUDError from '../../error/crud.error';
 import { Demand } from '../../demands/models/demands.model';
 import { User } from '../../users/models/user.model';
 

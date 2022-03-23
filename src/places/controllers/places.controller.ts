@@ -24,7 +24,7 @@ import { MetadataKey } from '../../types/metadata-key.enum';
 import { UserRole } from '../../users/types/user-role.enum';
 import { Demand } from '../../demands/models/demands.model';
 import { DemandsService } from '../../demands/services/demands.service';
-import CRUDError from '../../error/CRUD.error';
+import CRUDError from '../../error/crud.error';
 import { CreatePlaceDto } from '../dto/create-place.dto';
 import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { SessionUserId } from '../../decorators/session-user-id.decorator';
