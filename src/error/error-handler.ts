@@ -1,5 +1,6 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+
 import ServerError from './server.error';
 
 @Catch()
@@ -17,6 +18,32 @@ export class ErrorHandler implements ExceptionFilter {
   }
 
   getResponseBody(error: unknown): { statusCode: HttpStatus; message: string } {
+    // forward class validation errors
+    if (error instanceof BadRequestException) {
+      const errorResponse = error.getResponse();
+
+      if (
+        typeof errorResponse === 'object' &&
+        errorResponse.hasOwnProperty('message') &&
+        errorResponse.hasOwnProperty('statusCode')
+      ) {
+        return {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          message: errorResponse?.message || 'VALIDATION_ERROR',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          statusCode: errorResponse?.statusCode || HttpStatus.BAD_REQUEST,
+        };
+      }
+
+      // in case of unexpected error structure
+      return {
+        message: 'VALIDATION_ERROR',
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
     if (error instanceof ServerError || error instanceof HttpException) {
       return {
         message: error.message,
