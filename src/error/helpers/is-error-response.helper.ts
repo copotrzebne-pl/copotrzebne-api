@@ -5,7 +5,7 @@ export const isErrorResponse = (error: string | { message?: string; statusCode?:
     return false;
   }
 
-  if (typeof error.message !== 'string' && typeof error.statusCode !== 'number') {
+  if (typeof error.message !== 'string' || typeof error.statusCode !== 'number') {
     return false;
   }
 
