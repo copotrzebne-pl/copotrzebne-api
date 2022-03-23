@@ -20,6 +20,10 @@ export class Category extends Model {
   @Column({ allowNull: false, type: DataType.STRING })
   nameEn!: string;
 
+  @ApiProperty()
+  @Column({ allowNull: true, type: DataType.INTEGER })
+  priority!: number | null;
+
   @HasMany(() => Supply)
   supplies!: Supply[];
 }

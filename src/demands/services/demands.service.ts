@@ -38,7 +38,7 @@ export class DemandsService {
       include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
       where: { placeId },
       order: [
-        [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `name_${sort}`, 'ASC'],
+        [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
         [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
       ],
       transaction,

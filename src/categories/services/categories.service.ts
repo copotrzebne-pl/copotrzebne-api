@@ -17,6 +17,6 @@ export class CategoriesService {
       throw new IncorrectValueError();
     }
 
-    return await this.categoryModel.findAll({ order: [[`name_${sort}`, 'ASC']], transaction });
+    return await this.categoryModel.findAll({ order: [[`priority`, 'ASC']], transaction });
   }
 }
