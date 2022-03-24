@@ -8,7 +8,7 @@ import { User } from '../users/models/user.model';
 import { AuthenticationService } from './authentication.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '../jwt/jwt.service';
-import { UserPlace } from '../users/models/user-place.model';
+import { UsersPlaces } from '../users/models/user-place.model';
 
 describe('AuthenticationController', () => {
   let controller: AuthenticationController;
@@ -29,7 +29,7 @@ describe('AuthenticationController', () => {
           useValue: jest.fn(),
         },
         {
-          provide: getModelToken(UserPlace),
+          provide: getModelToken(UsersPlaces),
           useValue: jest.fn(),
         },
         {

@@ -2,7 +2,7 @@ import { BelongsToMany, Column, DataType, Model, Sequelize, Table } from 'sequel
 
 import { UserRole } from '../types/user-role.enum';
 import { Place } from '../../places/models/places.model';
-import { UserPlace } from './user-place.model';
+import { UsersPlaces } from './user-place.model';
 
 @Table({ tableName: 'users', underscored: true })
 export class User extends Model {
@@ -18,6 +18,6 @@ export class User extends Model {
   @Column({ allowNull: false, type: DataType.ENUM(UserRole.ADMIN.toString(), UserRole.PLACE_MANAGER.toString()) })
   role!: UserRole;
 
-  @BelongsToMany(() => Place, { through: () => UserPlace })
+  @BelongsToMany(() => Place, { through: () => UsersPlaces })
   places?: Place[];
 }

@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './models/user.model';
 import { UserRole } from './types/user-role.enum';
 import NotFoundError from '../error/not-found.error';
-import { UserPlace } from './models/user-place.model';
+import { UsersPlaces } from './models/user-place.model';
 import CRUDError from '../error/crud.error';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class UsersService {
     private readonly configService: ConfigService,
     @InjectModel(User)
     private readonly userModel: typeof User,
-    @InjectModel(UserPlace)
+    @InjectModel(UsersPlaces)
     private readonly userPlaceModel: typeof User,
   ) {
     this.passwordSalt = configService.get<string>('API_PASSWORD_SALT', '');
