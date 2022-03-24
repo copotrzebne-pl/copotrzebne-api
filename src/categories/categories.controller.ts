@@ -1,11 +1,10 @@
 import { Controller, Get, Injectable, UseFilters } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ErrorHandler } from '../error/error-handler';
 import { CategoriesService } from './services/categories.service';
 import { Category } from './models/categories.model';
-import { Language } from '../types/language.type.enum';
 
 @ApiTags('categories')
 @Injectable()
