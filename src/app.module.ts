@@ -12,6 +12,7 @@ import { DemandsModule } from './demands/demands.module';
 import { JwtModule } from './jwt/jwt.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AddUserToContextMiddleware } from './middleware/add-user-to-context.mid
     PrioritiesModule,
     DemandsModule,
     CategoriesModule,
+    CommentsModule,
     JwtModule,
   ],
 })

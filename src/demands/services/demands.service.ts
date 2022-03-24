@@ -55,7 +55,7 @@ export class DemandsService {
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
-    await Demand.destroy({ where: { id } });
+    await Demand.destroy({ where: { id }, transaction });
   }
 
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
@@ -67,6 +67,6 @@ export class DemandsService {
 
     const demandsIds = demands.map((demand) => demand.id);
 
-    await Demand.destroy({ where: { id: demandsIds } });
+    await Demand.destroy({ where: { id: demandsIds }, transaction });
   }
 }

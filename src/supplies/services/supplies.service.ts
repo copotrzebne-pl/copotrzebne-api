@@ -51,6 +51,6 @@ export class SuppliesService {
       throw new NotFoundError(`SUPPLY_NOT_FOUND`);
     }
 
-    await supply.destroy();
+    await supply.destroy({ transaction });
   }
 }

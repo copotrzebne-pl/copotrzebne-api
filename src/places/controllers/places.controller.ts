@@ -33,6 +33,8 @@ import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
 import { Language } from '../../types/language.type.enum';
+import { Comment } from '../../comments/models/comments.model';
+import { CommentsService } from '../../comments/services/comments.service';
 
 @ApiTags('places')
 @Injectable()
@@ -44,6 +46,7 @@ export class PlacesController {
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
+    private readonly commentsService: CommentsService,
   ) {}
 
   @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
@@ -74,6 +77,14 @@ export class PlacesController {
   public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Language): Promise<Demand[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       return await this.demandsService.getDetailedDemandsForPlace(transaction, id, sort);
+    });
+  }
+
+  @ApiResponse({ isArray: true, type: Comment, description: 'returns all comments for place' })
+  @Get(':id/comments')
+  public async getCommentsForPlace(@Param('id') id: string): Promise<Comment[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.commentsService.getCommentsForPlace(transaction, id);
     });
   }
 

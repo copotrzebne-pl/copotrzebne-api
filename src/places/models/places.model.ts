@@ -3,6 +3,7 @@ import { Demand } from '../../demands/models/demands.model';
 import { User } from '../../users/models/user.model';
 import { UserPlace } from '../../users/models/user-place.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { Comment } from '../../comments/models/comments.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -55,6 +56,9 @@ export class Place extends Model {
 
   @BelongsToMany(() => User, { through: () => UserPlace })
   users?: User[];
+
+  @HasMany(() => Comment)
+  comments!: Comment[];
 
   @Column({
     type: DataType.VIRTUAL,
