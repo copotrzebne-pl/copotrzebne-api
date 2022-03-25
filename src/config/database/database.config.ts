@@ -7,14 +7,14 @@ import { User } from '../../users/models/user.model';
 import { Demand } from '../../demands/models/demands.model';
 import { Supply } from '../../supplies/models/supplies.model';
 import { Priority } from '../../priorities/models/priorities.model';
-import { UserPlace } from '../../users/models/user-place.model';
+import { UsersPlaces } from '../../users/models/user-place.model';
 import { Category } from '../../categories/models/categories.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
     dialect: 'postgres',
     synchronize: false,
-    models: [Place, User, Demand, Supply, Priority, UserPlace, Category],
+    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category],
   };
   // Heroku
   const databaseUrl = configService.get<string>('DATABASE_URL', '');
