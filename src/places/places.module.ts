@@ -12,5 +12,6 @@ import { UsersPlacesController } from './controllers/users-places.controller';
   imports: [SequelizeModule.forFeature([Place, Demand])],
   providers: [PlacesService, DemandsService],
   controllers: [PlacesController, UsersPlacesController],
+  exports: [PlacesService],
 })
 export class PlacesModule {}
