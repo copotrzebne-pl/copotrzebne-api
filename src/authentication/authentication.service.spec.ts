@@ -7,7 +7,7 @@ import { AuthenticationService } from './authentication.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '../jwt/jwt.service';
-import { UserPlace } from '../users/models/user-place.model';
+import { UsersPlaces } from '../users/models/user-place.model';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -20,7 +20,7 @@ describe('AuthenticationService', () => {
         ConfigService,
         { provide: JwtService, useValue: jest.fn() },
         { provide: getModelToken(User), useValue: jest.fn() },
-        { provide: getModelToken(UserPlace), useValue: jest.fn() },
+        { provide: getModelToken(UsersPlaces), useValue: jest.fn() },
         {
           provide: Sequelize,
           useValue: jest.fn(),

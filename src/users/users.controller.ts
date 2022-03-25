@@ -8,7 +8,6 @@ import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from './types/user-role.enum';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/authentication.guard';
-import { AuthorizationError } from '../error/authorization.error';
 import { ErrorHandler } from '../error/error-handler';
 import { SessionUser } from '../decorators/session-user.decorator';
 
@@ -60,11 +59,7 @@ export class UsersController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  public async whoami(@SessionUser() user: User | null): Promise<{ login: string; id: string; role: string } | void> {
-    if (!user) {
-      throw new AuthorizationError('ACCESS_FORBIDDEN');
-    }
-
+  public async whoami(@SessionUser() user: User): Promise<{ login: string; id: string; role: string } | void> {
     return { login: user.login, id: user.id, role: user.role };
   }
 

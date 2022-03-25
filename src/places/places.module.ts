@@ -14,5 +14,6 @@ import { Comment } from '../comments/models/comments.model';
   imports: [SequelizeModule.forFeature([Place, Demand, Comment])],
   providers: [PlacesService, DemandsService, CommentsService],
   controllers: [PlacesController, UsersPlacesController],
+  exports: [PlacesService],
 })
 export class PlacesModule {}
