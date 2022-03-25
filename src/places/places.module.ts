@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { PlacesService } from './services/places.service';
@@ -10,6 +10,7 @@ import { UsersPlacesController } from './controllers/users-places.controller';
 import { CommentsService } from '../comments/services/comments.service';
 import { Comment } from '../comments/models/comments.model';
 
+@Global()
 @Module({
   imports: [SequelizeModule.forFeature([Place, Demand, Comment])],
   providers: [PlacesService, DemandsService, CommentsService],
