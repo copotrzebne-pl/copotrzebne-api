@@ -7,7 +7,7 @@ import { AuthenticationService } from './authentication.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '../jwt/jwt.service';
-import { UsersPlaces } from '../users/models/user-place.model';
+import { UsersPlaces } from '../users/models/users-places.model';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;

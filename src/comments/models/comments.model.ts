@@ -20,12 +20,12 @@ export class Comment extends Model {
   @Column({ allowNull: true, type: DataType.ARRAY(DataType.STRING), defaultValue: [] })
   links!: string[];
 
-  @ApiProperty({ type: 'string', nullable: true })
-  @Column({ allowNull: true, type: DataType.UUID })
+  @ApiProperty({ type: 'string', nullable: false })
+  @Column({ allowNull: false, type: DataType.UUID })
   @ForeignKey(() => Place)
-  placeId!: string | null;
+  placeId!: string;
 
-  @ApiProperty({ type: Place, nullable: true })
+  @ApiProperty({ type: Place, nullable: false })
   @BelongsTo(() => Place)
-  place!: Place | null;
+  place!: Place;
 }

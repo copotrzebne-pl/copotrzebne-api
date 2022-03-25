@@ -25,13 +25,21 @@ import { CommentsService } from './services/comments.service';
 import { Comment } from './models/comments.model';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { PlacesService } from '../places/services/places.service';
+import { AuthorizationError } from '../error/authorization.error';
+import { SessionUser } from '../decorators/session-user.decorator';
+import { User } from '../users/models/user.model';
 
 @ApiTags('comments')
 @Injectable()
 @UseFilters(ErrorHandler)
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly sequelize: Sequelize, private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly sequelize: Sequelize,
+    private readonly commentsService: CommentsService,
+    private readonly placesService: PlacesService,
+  ) {}
 
   @ApiResponse({ isArray: true, type: Comment, description: 'returns single comment' })
   @Get('/:id')
@@ -51,8 +59,18 @@ export class CommentsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
-  public async createComment(@Body() commentDto: CreateCommentDto): Promise<Comment | void> {
+  public async createComment(@SessionUser() user: User, @Body() commentDto: CreateCommentDto): Promise<Comment | void> {
     return await this.sequelize.transaction(async (transaction) => {
+      const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(
+        transaction,
+        user,
+        commentDto.placeId,
+      );
+
+      if (!isPlaceManageableByUser) {
+        throw new AuthorizationError();
+      }
+
       const comment = await this.commentsService.createComment(transaction, commentDto);
 
       if (!comment) {
@@ -67,15 +85,35 @@ export class CommentsController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  public async updateComment(@Param('id') id: string, @Body() commentDto: UpdateCommentDto): Promise<Comment | void> {
+  public async updateComment(
+    @SessionUser() user: User,
+    @Param('id') id: string,
+    @Body() commentDto: UpdateCommentDto,
+  ): Promise<Comment | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const comment = await this.commentsService.updateComment(transaction, id, commentDto);
+      const comment = await this.commentsService.getCommentById(transaction, id);
 
       if (!comment) {
+        throw new NotFoundError('COMMENT_NOT_FOUND');
+      }
+
+      const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(
+        transaction,
+        user,
+        comment.placeId,
+      );
+
+      if (!isPlaceManageableByUser) {
+        throw new AuthorizationError();
+      }
+
+      const updatedComment = await this.commentsService.updateComment(transaction, id, commentDto);
+
+      if (!updatedComment) {
         throw new CRUDError('CANNOT_UPDATE_COMMENT');
       }
 
-      return comment;
+      return updatedComment;
     });
   }
 
@@ -84,8 +122,24 @@ export class CommentsController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  public async deleteComment(@Param('id') id: string): Promise<void> {
+  public async deleteComment(@SessionUser() user: User, @Param('id') id: string): Promise<void> {
     await this.sequelize.transaction(async (transaction) => {
+      const comment = await this.commentsService.getCommentById(transaction, id);
+
+      if (!comment) {
+        throw new NotFoundError('COMMENT_NOT_FOUND');
+      }
+
+      const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(
+        transaction,
+        user,
+        comment.placeId,
+      );
+
+      if (!isPlaceManageableByUser) {
+        throw new AuthorizationError();
+      }
+
       await this.commentsService.deleteComment(transaction, id);
     });
   }

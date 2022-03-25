@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersService } from './users.service';
 import { User } from './models/user.model';
 import { UsersController } from './users.controller';
-import { UsersPlaces } from './models/user-place.model';
+import { UsersPlaces } from './models/users-places.model';
 
 @Global()
 @Module({

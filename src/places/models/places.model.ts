@@ -1,7 +1,7 @@
 import { BelongsToMany, Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demands.model';
 import { User } from '../../users/models/user.model';
-import { UsersPlaces } from '../../users/models/user-place.model';
+import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comments.model';
 

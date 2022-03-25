@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './models/user.model';
 import { UserRole } from './types/user-role.enum';
 import NotFoundError from '../error/not-found.error';
-import { UsersPlaces } from './models/user-place.model';
+import { UsersPlaces } from './models/users-places.model';
 import CRUDError from '../error/crud.error';
 
 @Injectable()

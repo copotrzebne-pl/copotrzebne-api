@@ -8,7 +8,7 @@ import { User } from '../users/models/user.model';
 import { AuthenticationService } from './authentication.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '../jwt/jwt.service';
-import { UsersPlaces } from '../users/models/user-place.model';
+import { UsersPlaces } from '../users/models/users-places.model';
 
 describe('AuthenticationController', () => {
   let controller: AuthenticationController;
