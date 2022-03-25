@@ -4,7 +4,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ErrorHandler } from '../error/error-handler';
 import { CategoriesService } from './services/categories.service';
-import { Category } from './models/categories.model';
+import { Category } from './models/category.model';
 
 @ApiTags('categories')
 @Injectable()

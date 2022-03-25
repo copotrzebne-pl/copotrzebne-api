@@ -1,8 +1,8 @@
 import { BelongsToMany, Column, DataType, Model, Sequelize, Table } from 'sequelize-typescript';
 
 import { UserRole } from '../types/user-role.enum';
-import { Place } from '../../places/models/places.model';
-import { UsersPlaces } from './user-place.model';
+import { Place } from '../../places/models/place.model';
+import { UsersPlaces } from './users-places.model';
 
 @Table({ tableName: 'users', underscored: true })
 export class User extends Model {

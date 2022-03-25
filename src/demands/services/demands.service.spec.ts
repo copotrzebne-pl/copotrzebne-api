@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
 import { DemandsService } from './demands.service';
-import { Demand } from '../models/demands.model';
+import { Demand } from '../models/demand.model';
 
 describe('DemandsService', () => {
   let service: DemandsService;

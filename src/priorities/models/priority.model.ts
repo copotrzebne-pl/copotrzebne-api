@@ -1,5 +1,5 @@
 import { Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
-import { Demand } from '../../demands/models/demands.model';
+import { Demand } from '../../demands/models/demand.model';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Table({ tableName: 'priorities', underscored: true, timestamps: false })

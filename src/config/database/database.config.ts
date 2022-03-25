@@ -2,19 +2,20 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize/dist/interfaces/sequel
 import { ConfigService } from '@nestjs/config';
 import { URL } from 'url';
 
-import { Place } from '../../places/models/places.model';
+import { Place } from '../../places/models/place.model';
 import { User } from '../../users/models/user.model';
-import { Demand } from '../../demands/models/demands.model';
-import { Supply } from '../../supplies/models/supplies.model';
-import { Priority } from '../../priorities/models/priorities.model';
-import { UsersPlaces } from '../../users/models/user-place.model';
-import { Category } from '../../categories/models/categories.model';
+import { Demand } from '../../demands/models/demand.model';
+import { Supply } from '../../supplies/models/supply.model';
+import { Priority } from '../../priorities/models/priority.model';
+import { UsersPlaces } from '../../users/models/users-places.model';
+import { Category } from '../../categories/models/category.model';
+import { Comment } from '../../comments/models/comment.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
     dialect: 'postgres',
     synchronize: false,
-    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category],
+    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category, Comment],
   };
   // Heroku
   const databaseUrl = configService.get<string>('DATABASE_URL', '');

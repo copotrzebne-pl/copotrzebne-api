@@ -1,6 +1,6 @@
 import { ForeignKey, Model, Table } from 'sequelize-typescript';
 
-import { Place } from '../../places/models/places.model';
+import { Place } from '../../places/models/place.model';
 import { User } from './user.model';
 
 @Table({ tableName: 'users_places', underscored: true, timestamps: false })

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
 import { PrioritiesService } from './priorities.service';
-import { Priority } from '../models/priorities.model';
+import { Priority } from '../models/priority.model';
 
 describe('PrioritiesService', () => {
   let service: PrioritiesService;

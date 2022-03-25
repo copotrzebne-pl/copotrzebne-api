@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './models/user.model';
 import { UserRole } from './types/user-role.enum';
 import NotFoundError from '../error/not-found.error';
-import { UsersPlaces } from './models/user-place.model';
+import { UsersPlaces } from './models/users-places.model';
 import CRUDError from '../error/crud.error';
 
 @Injectable()
@@ -61,7 +61,7 @@ export class UsersService {
   }
 
   public async removePlaceAssignmentFromUser(transaction: Transaction, placeId: string, userId: string): Promise<void> {
-    const removedCount = await this.userPlaceModel.destroy({ where: { userId, placeId } });
+    const removedCount = await this.userPlaceModel.destroy({ where: { userId, placeId }, transaction });
 
     if (removedCount === 0) {
       throw new NotFoundError('USER_PLACE_ASSIGNMENT_NOT_FOUND');
@@ -73,7 +73,7 @@ export class UsersService {
   }
 
   public async removeUserById(transaction: Transaction, id: string): Promise<void> {
-    const removedRowsCount = await this.userModel.destroy({ where: { id } });
+    const removedRowsCount = await this.userModel.destroy({ where: { id }, transaction });
 
     if (removedRowsCount === 0) {
       throw new CRUDError('FAILED_TO_REMOVE_USER');

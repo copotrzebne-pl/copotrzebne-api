@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
-import { Demand } from '../models/demands.model';
-import { Supply } from '../../supplies/models/supplies.model';
-import { Priority } from '../../priorities/models/priorities.model';
+import { Demand } from '../models/demand.model';
+import { Supply } from '../../supplies/models/supply.model';
+import { Priority } from '../../priorities/models/priority.model';
 import { CreateDemandDto } from '../dto/create-demand.dto';
 import { UpdateDemandDto } from '../dto/update-demand.dto';
-import { Category } from '../../categories/models/categories.model';
+import { Category } from '../../categories/models/category.model';
 import { Language } from '../../types/language.type.enum';
 import IncorrectValueError from '../../error/incorrect-value.error';
 
@@ -55,7 +55,7 @@ export class DemandsService {
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
-    await Demand.destroy({ where: { id } });
+    await Demand.destroy({ where: { id }, transaction });
   }
 
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
@@ -67,6 +67,6 @@ export class DemandsService {
 
     const demandsIds = demands.map((demand) => demand.id);
 
-    await Demand.destroy({ where: { id: demandsIds } });
+    await Demand.destroy({ where: { id: demandsIds }, transaction });
   }
 }

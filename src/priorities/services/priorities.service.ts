@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
-import { Priority } from '../models/priorities.model';
+import { Priority } from '../models/priority.model';
 
 @Injectable()
 export class PrioritiesService {

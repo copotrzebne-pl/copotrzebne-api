@@ -1,29 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
+import { CommentsService } from './comments.service';
+import { Comment } from '../models/comment.model';
+import { PlacesService } from '../../places/services/places.service';
 
-import { PlacesService } from './places.service';
-import { Place } from '../models/place.model';
-import { UsersService } from '../../users/users.service';
-
-describe('PlacesService', () => {
-  let service: PlacesService;
+describe('CommentsService', () => {
+  let service: CommentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PlacesService,
+        CommentsService,
         {
-          provide: getModelToken(Place),
+          provide: getModelToken(Comment),
           useValue: jest.fn(),
         },
         {
-          provide: UsersService,
+          provide: PlacesService,
           useValue: jest.fn(),
         },
       ],
     }).compile();
 
-    service = module.get<PlacesService>(PlacesService);
+    service = module.get<CommentsService>(CommentsService);
   });
 
   it('is defined', () => {

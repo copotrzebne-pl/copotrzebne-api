@@ -1,6 +1,6 @@
 import { Controller, Get, Injectable, UseFilters } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { Priority } from './models/priorities.model';
+import { Priority } from './models/priority.model';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PrioritiesService } from './services/priorities.service';

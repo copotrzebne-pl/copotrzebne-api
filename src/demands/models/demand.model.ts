@@ -1,7 +1,7 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
-import { Supply } from '../../supplies/models/supplies.model';
-import { Priority } from '../../priorities/models/priorities.model';
-import { Place } from '../../places/models/places.model';
+import { Supply } from '../../supplies/models/supply.model';
+import { Priority } from '../../priorities/models/priority.model';
+import { Place } from '../../places/models/place.model';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Table({ tableName: 'demands', underscored: true })

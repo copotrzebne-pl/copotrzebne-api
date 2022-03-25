@@ -1,8 +1,9 @@
 import { BelongsToMany, Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
-import { Demand } from '../../demands/models/demands.model';
+import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
-import { UsersPlaces } from '../../users/models/user-place.model';
+import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { Comment } from '../../comments/models/comment.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -55,6 +56,9 @@ export class Place extends Model {
 
   @BelongsToMany(() => User, { through: () => UsersPlaces })
   users?: User[];
+
+  @HasMany(() => Comment)
+  comments!: Comment[];
 
   @Column({
     type: DataType.VIRTUAL,

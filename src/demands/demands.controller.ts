@@ -18,7 +18,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DemandsService } from './services/demands.service';
 import { CreateDemandDto } from './dto/create-demand.dto';
-import { Demand } from './models/demands.model';
+import { Demand } from './models/demand.model';
 import CRUDError from '../error/crud.error';
 import { MetadataKey } from '../types/metadata-key.enum';
 import { UserRole } from '../users/types/user-role.enum';
