@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
 
-import { Place } from '../models/places.model';
+import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
 import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { UsersService } from '../../users/users.service';
 import CRUDError from '../../error/crud.error';
-import { Demand } from '../../demands/models/demands.model';
+import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UserRole } from '../../users/types/user-role.enum';
 

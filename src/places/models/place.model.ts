@@ -1,9 +1,9 @@
 import { BelongsToMany, Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
-import { Demand } from '../../demands/models/demands.model';
+import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
-import { Comment } from '../../comments/models/comments.model';
+import { Comment } from '../../comments/models/comment.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {

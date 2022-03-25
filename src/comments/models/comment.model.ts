@@ -1,6 +1,6 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Place } from '../../places/models/places.model';
+import { Place } from '../../places/models/place.model';
 
 @Table({ tableName: 'comments', underscored: true })
 export class Comment extends Model {
@@ -25,7 +25,6 @@ export class Comment extends Model {
   @ForeignKey(() => Place)
   placeId!: string;
 
-  @ApiProperty({ type: Place, nullable: false })
   @BelongsTo(() => Place)
   place!: Place;
 }

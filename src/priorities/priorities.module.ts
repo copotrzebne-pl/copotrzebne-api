@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Priority } from './models/priorities.model';
+import { Priority } from './models/priority.model';
 import { PrioritiesService } from './services/priorities.service';
 import { PrioritiesController } from './priorities.controller';
 

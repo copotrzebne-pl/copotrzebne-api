@@ -22,7 +22,7 @@ import { AuthGuard } from '../guards/authentication.guard';
 import NotFoundError from '../error/not-found.error';
 import { ErrorHandler } from '../error/error-handler';
 import { CommentsService } from './services/comments.service';
-import { Comment } from './models/comments.model';
+import { Comment } from './models/comment.model';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PlacesService } from '../places/services/places.service';

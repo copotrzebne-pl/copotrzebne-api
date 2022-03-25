@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Comment } from '../models/comments.model';
+import { Comment } from '../models/comment.model';
 import { Transaction } from 'sequelize';
 import { PlacesService } from '../../places/services/places.service';
 import NotFoundError from '../../error/not-found.error';

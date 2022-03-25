@@ -1,6 +1,6 @@
 import { Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Supply } from '../../supplies/models/supplies.model';
+import { Supply } from '../../supplies/models/supply.model';
 
 @Table({ tableName: 'categories', underscored: true, timestamps: false })
 export class Category extends Model {

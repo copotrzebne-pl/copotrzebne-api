@@ -17,7 +17,7 @@ import {
 import { Sequelize } from 'sequelize-typescript';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Supply } from './models/supplies.model';
+import { Supply } from './models/supply.model';
 import { SuppliesService } from './services/supplies.service';
 import CRUDError from '../error/crud.error';
 import { CreateSupplyDto } from './dto/create-supply.dto';

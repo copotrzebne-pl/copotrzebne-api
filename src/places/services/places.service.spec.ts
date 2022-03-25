@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
 
 import { PlacesService } from './places.service';
-import { Place } from '../models/places.model';
+import { Place } from '../models/place.model';
 import { UsersService } from '../../users/users.service';
 
 describe('PlacesService', () => {

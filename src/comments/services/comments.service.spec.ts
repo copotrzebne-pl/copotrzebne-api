@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
 import { CommentsService } from './comments.service';
-import { Comment } from '../models/comments.model';
+import { Comment } from '../models/comment.model';
 import { PlacesService } from '../../places/services/places.service';
 
 describe('CommentsService', () => {

@@ -17,7 +17,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { PlacesService } from '../services/places.service';
 import { DemandsService } from '../../demands/services/demands.service';
 import { UsersService } from '../../users/users.service';
-import { Place } from '../models/places.model';
+import { Place } from '../models/place.model';
 import { MetadataKey } from '../../types/metadata-key.enum';
 import { UserRole } from '../../users/types/user-role.enum';
 import { AuthGuard } from '../../guards/authentication.guard';

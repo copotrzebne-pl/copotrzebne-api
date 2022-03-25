@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/sequelize';
 import { CategoriesService } from './categories.service';
-import { Category } from '../models/categories.model';
+import { Category } from '../models/category.model';
 
 describe('CategoriesService', () => {
   let service: CategoriesService;

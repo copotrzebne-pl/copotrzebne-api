@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
 import { SuppliesController } from './supplies.controller';
 import { SuppliesService } from './services/supplies.service';
-import { Supply } from './models/supplies.model';
+import { Supply } from './models/supply.model';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '../jwt/jwt.service';
 
