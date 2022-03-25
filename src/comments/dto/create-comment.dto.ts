@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCommentDto {
@@ -13,6 +13,7 @@ export class CreateCommentDto {
   message!: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsArray()
   links!: string[];
 

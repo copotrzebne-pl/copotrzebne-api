@@ -18,5 +18,5 @@ export class UpdateCommentDto {
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
-  links?: string;
+  links?: string[];
 }

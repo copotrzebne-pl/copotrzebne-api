@@ -17,7 +17,7 @@ export class Comment extends Model {
   message!: string;
 
   @ApiProperty()
-  @Column({ allowNull: true, type: DataType.ARRAY(DataType.STRING) })
+  @Column({ allowNull: true, type: DataType.ARRAY(DataType.STRING), defaultValue: [] })
   links!: string[];
 
   @ApiProperty({ type: 'string', nullable: true })

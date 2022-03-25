@@ -24,17 +24,18 @@ module.exports = {
           },
           links: {
             type: Sequelize.ARRAY(Sequelize.TEXT),
+            defaultValue: [],
             allowNull: true,
           },
           place_id: {
             type: Sequelize.UUID,
-            allowNull: true,
+            allowNull: false,
             references: {
               model: 'places',
               key: 'id',
             },
-            onUpdate: 'set null',
-            onDelete: 'set null',
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
           },
           created_at: {
             type: Sequelize.DATE,
