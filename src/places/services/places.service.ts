@@ -26,9 +26,14 @@ export class PlacesService {
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
     const places = await this.placeModel.findAll({ include: [Demand], transaction });
-    return places.map((place) => {
-      return this.getRawPlaceWithoutAssociations(place);
-    });
+    return places
+      .map((place) => this.getRawPlaceWithoutAssociations(place))
+      .sort((place1, place2) => {
+        const place1LastUpdatedAt = place1.lastUpdatedAt ? place1.lastUpdatedAt.getTime() : 0;
+        const place2LastUpdatedAt = place2.lastUpdatedAt ? place2.lastUpdatedAt.getTime() : 0;
+
+        return place2LastUpdatedAt - place1LastUpdatedAt;
+      });
   }
 
   public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place> {
