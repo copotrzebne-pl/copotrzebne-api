@@ -51,6 +51,10 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.DECIMAL })
   longitude!: number | null;
 
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  workingHours!: number | null;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 
