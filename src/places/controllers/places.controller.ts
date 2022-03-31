@@ -39,6 +39,8 @@ import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
 import { PlaceScope } from '../types/placeScope';
+import { JournalsService } from '../../journals/services/journals.service';
+import { Action } from '../../journals/types/action.enum';
 
 @ApiTags('places')
 @Injectable()
@@ -52,6 +54,7 @@ export class PlacesController {
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
     private readonly placeStateMachine: PlacesStateMachine,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiResponse({ type: Place, description: 'finds place by slug and returns it' })
@@ -150,6 +153,12 @@ export class PlacesController {
 
       await this.demandsService.deleteAllDemandsForPlace(transaction, placeId);
     });
+
+    this.journalsService.logInJournal({
+      action: Action.DELETE_ALL_DEMANDS,
+      userId: user.id,
+      details: `All demands removed from place ${placeId}`,
+    });
   }
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
@@ -191,6 +200,12 @@ export class PlacesController {
       if (!place) {
         throw new CRUDError('CANNOT_UPDATE_PLACE');
       }
+
+      this.journalsService.logInJournal({
+        action: Action.EDIT_PLACE,
+        userId: user.id,
+        details: `Place ${placeId} updated by user with role ${user.role}`,
+      });
 
       return place;
     });

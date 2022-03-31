@@ -29,6 +29,8 @@ import { PlacesService } from '../places/services/places.service';
 import { AuthorizationError } from '../error/authorization.error';
 import { SessionUser } from '../decorators/session-user.decorator';
 import { User } from '../users/models/user.model';
+import { Action } from '../journals/types/action.enum';
+import { JournalsService } from '../journals/services/journals.service';
 
 @ApiTags('comments')
 @Injectable()
@@ -39,6 +41,7 @@ export class CommentsController {
     private readonly sequelize: Sequelize,
     private readonly commentsService: CommentsService,
     private readonly placesService: PlacesService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiResponse({ isArray: true, type: Comment, description: 'returns single comment' })
@@ -77,6 +80,12 @@ export class CommentsController {
         throw new CRUDError('CANNOT_CREATE_COMMENT');
       }
 
+      this.journalsService.logInJournal({
+        action: Action.ADD_COMMENT,
+        userId: user.id,
+        details: `New comment ${comment.id} added to place ${commentDto.placeId}`,
+      });
+
       return comment;
     });
   }
@@ -113,6 +122,12 @@ export class CommentsController {
         throw new CRUDError('CANNOT_UPDATE_COMMENT');
       }
 
+      this.journalsService.logInJournal({
+        action: Action.EDIT_COMMENT,
+        userId: user.id,
+        details: `Comment ${comment.id} for place ${updatedComment.placeId}`,
+      });
+
       return updatedComment;
     });
   }
@@ -139,6 +154,12 @@ export class CommentsController {
       if (!isPlaceManageableByUser) {
         throw new AuthorizationError();
       }
+
+      this.journalsService.logInJournal({
+        action: Action.DELETE_COMMENT,
+        userId: user.id,
+        details: `Comment ${id} removed from ${comment.placeId}`,
+      });
 
       await this.commentsService.deleteComment(transaction, id);
     });

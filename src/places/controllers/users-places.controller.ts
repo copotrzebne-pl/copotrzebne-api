@@ -23,6 +23,8 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { AuthGuard } from '../../guards/authentication.guard';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
+import { Action } from '../../journals/types/action.enum';
+import { JournalsService } from '../../journals/services/journals.service';
 
 @ApiTags('users-places')
 @Injectable()
@@ -34,6 +36,7 @@ export class UsersPlacesController {
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiHeader({ name: 'authorization' })
@@ -46,6 +49,12 @@ export class UsersPlacesController {
       if (user.role === UserRole.ADMIN) {
         return await this.placesService.getDetailedPlaces(transaction);
       }
+
+      this.journalsService.logInJournal({
+        action: Action.GET_OWNED_PLACES,
+        userId: user.id,
+        details: `Place manager fetched owned places`,
+      });
 
       return await this.placesService.getUserPlaces(transaction, user.id);
     });

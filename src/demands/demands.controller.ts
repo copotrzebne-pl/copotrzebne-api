@@ -30,6 +30,8 @@ import { AuthorizationError } from '../error/authorization.error';
 import { SessionUser } from '../decorators/session-user.decorator';
 import { User } from '../users/models/user.model';
 import { PlacesService } from '../places/services/places.service';
+import { Action } from '../journals/types/action.enum';
+import { JournalsService } from '../journals/services/journals.service';
 
 @ApiTags('demands')
 @Injectable()
@@ -40,6 +42,7 @@ export class DemandsController {
     private readonly sequelize: Sequelize,
     private readonly demandsService: DemandsService,
     private readonly placesService: PlacesService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns single demand' })
@@ -73,6 +76,12 @@ export class DemandsController {
       throw new CRUDError('CANNOT_CREATE_DEMAND');
     }
 
+    this.journalsService.logInJournal({
+      action: Action.ADD_DEMAND,
+      userId: user.id,
+      details: `Demand ${demand.id} added added to place ${demandDto.placeId}`,
+    });
+
     return demand;
   }
 
@@ -102,6 +111,12 @@ export class DemandsController {
       throw new CRUDError('CANNOT_UPDATE_DEMAND');
     }
 
+    this.journalsService.logInJournal({
+      action: Action.EDIT_DEMAND,
+      userId: user.id,
+      details: `Demand ${demand.id} edited for place ${demandDto.placeId}`,
+    });
+
     return demand;
   }
 
@@ -120,6 +135,12 @@ export class DemandsController {
       if (!(await this.placesService.isPlaceManageableByUser(transaction, user, demand.placeId))) {
         throw new AuthorizationError();
       }
+
+      this.journalsService.logInJournal({
+        action: Action.DELETE_DEMAND,
+        userId: user.id,
+        details: `Demand ${demand.id} edited from place ${demand.placeId}`,
+      });
 
       await this.demandsService.deleteDemand(transaction, id);
     });
