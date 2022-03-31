@@ -53,7 +53,7 @@ export class Place extends Model {
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
-  workingHours!: number | null;
+  workingHours!: string | null;
 
   @HasMany(() => Demand)
   demands!: Demand[];
