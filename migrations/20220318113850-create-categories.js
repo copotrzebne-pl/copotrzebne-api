@@ -62,7 +62,7 @@ module.exports = {
         transaction,
       });
 
-      await queryInterface.removeColumn('supplies', 'category_id', {
+      await queryInterface.umn('supplies', 'category_id', {
         transaction,
       });
 

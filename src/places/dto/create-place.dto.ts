@@ -51,4 +51,9 @@ export class CreatePlaceDto {
   @IsOptional()
   @IsNumber()
   longitude?: number;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  workingHours?: string;
 }
