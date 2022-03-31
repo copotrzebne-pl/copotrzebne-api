@@ -41,7 +41,9 @@ module.exports = {
         },
       );
 
-      await queryInterface.bulkInsert('users_places', usersPlaces, { transaction });
+      if (usersPlaces.length > 0) {
+        await queryInterface.bulkInsert('users_places', usersPlaces, { transaction });
+      }
     });
   },
 
@@ -85,7 +87,9 @@ module.exports = {
         },
       );
 
-      await queryInterface.bulkInsert('user_place', usersPlaces, { transaction });
+      if (usersPlaces.length > 0) {
+        await queryInterface.bulkInsert('user_place', usersPlaces, { transaction });
+      }
     });
   },
 };
