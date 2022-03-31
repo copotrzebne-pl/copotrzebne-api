@@ -136,6 +136,12 @@ export class DemandsController {
         throw new AuthorizationError();
       }
 
+      this.journalsService.logInJournal({
+        action: Action.DELETE_DEMAND,
+        user: user.login,
+        details: `Demand ${demand.id} edited from place ${demand.placeId}`,
+      });
+
       await this.demandsService.deleteDemand(transaction, id);
 
       return demand.placeId;

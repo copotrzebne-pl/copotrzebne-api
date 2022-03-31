@@ -50,6 +50,12 @@ export class UsersPlacesController {
         return await this.placesService.getDetailedPlaces(transaction);
       }
 
+      this.journalsService.logInJournal({
+        action: Action.GET_OWNED_PLACES,
+        userId: user.id,
+        details: `Place manager fetched owned places`,
+      });
+
       return await this.placesService.getUserPlaces(transaction, user.id);
     });
 

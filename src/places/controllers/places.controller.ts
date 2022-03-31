@@ -201,6 +201,12 @@ export class PlacesController {
         throw new CRUDError('CANNOT_UPDATE_PLACE');
       }
 
+      this.journalsService.logInJournal({
+        action: Action.EDIT_PLACE,
+        user: user.login,
+        details: `Place ${placeId} updated by user with role ${user.role}`,
+      });
+
       return place;
     });
 
