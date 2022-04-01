@@ -64,10 +64,20 @@ export class PlacesController {
     });
   }
 
-  @ApiResponse({ isArray: true, type: Place, description: 'returns all places' })
+  @ApiQuery({ name: 'supply', type: String })
+  @ApiResponse({
+    isArray: true,
+    type: Place,
+    description:
+      'if query param "supplyId" is given - returns all places with demands for specific supply; if not - returns all places',
+  })
   @Get('/')
-  public async getPlaces(): Promise<Place[] | void> {
+  public async getPlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
+      if (supplyId) {
+        return await this.placesService.getPlacesWithSupply(transaction, supplyId);
+      }
+
       return await this.placesService.getAllPlaces(transaction);
     });
   }
