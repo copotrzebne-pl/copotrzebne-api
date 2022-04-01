@@ -1,6 +1,5 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Sequelize, Table } from 'sequelize-typescript';
 
-import { User } from '../../users/models/user.model';
 import { Action } from '../types/action.enum';
 
 @Table({ tableName: 'journals', underscored: true, timestamps: true, updatedAt: false })
@@ -14,10 +13,6 @@ export class Journal extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   details!: string;
 
-  @Column({ allowNull: false, type: DataType.UUID })
-  @ForeignKey(() => User)
-  userId!: string;
-
-  @BelongsTo(() => User)
-  user?: User;
+  @Column({ allowNull: false, type: DataType.STRING })
+  user!: string;
 }

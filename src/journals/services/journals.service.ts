@@ -22,9 +22,9 @@ export class JournalsService {
 
   @OnEvent(JournalEvent.ADD_TO_JOURNAL)
   private async handleAddToJournalEvent(payload: AddToJournalEventPayload): Promise<void> {
-    const { userId, action, details, date } = payload;
+    const { user, action, details, date } = payload;
     await this.journalModel.create({
-      userId,
+      user,
       action,
       details,
       createdAt: date,

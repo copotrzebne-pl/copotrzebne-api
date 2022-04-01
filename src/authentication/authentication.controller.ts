@@ -6,6 +6,7 @@ import { AuthenticationService } from './authentication.service';
 import { LoginDto } from './dto/login.dto';
 import { JournalsService } from '../journals/services/journals.service';
 import { Action } from '../journals/types/action.enum';
+import { User } from '../users/models/user.model';
 
 @ApiTags('authentication')
 @Controller()
@@ -38,8 +39,8 @@ export class AuthenticationController {
   async login(@Body() loginDto: LoginDto): Promise<{ jwt: string }> {
     const { login, password } = loginDto;
 
-    const { jwt, userId } = await this.sequelize.transaction(
-      async (transaction): Promise<{ userId: string; jwt: string }> => {
+    const { jwt, user } = await this.sequelize.transaction(
+      async (transaction): Promise<{ user: User; jwt: string }> => {
         try {
           return await this.authenticationService.createSessionOrFail(transaction, { login, password });
         } catch (error) {
@@ -49,7 +50,7 @@ export class AuthenticationController {
     );
 
     this.journalsService.logInJournal({
-      userId: userId,
+      user: user.login,
       action: Action.LOGIN,
     });
 

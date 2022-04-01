@@ -30,20 +30,14 @@ module.exports = {
               'delete_all_demands',
             ],
           },
+          user: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
           details: {
             type: Sequelize.STRING,
             allowNull: true,
             defaultValue: null,
-          },
-          user_id: {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-              model: 'users',
-              key: 'id',
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE',
           },
           created_at: {
             type: Sequelize.DATE,

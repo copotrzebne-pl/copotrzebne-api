@@ -78,7 +78,7 @@ export class DemandsController {
 
     this.journalsService.logInJournal({
       action: Action.ADD_DEMAND,
-      userId: user.id,
+      user: user.login,
       details: `Demand ${demand.id} added added to place ${demandDto.placeId}`,
     });
 
@@ -113,7 +113,7 @@ export class DemandsController {
 
     this.journalsService.logInJournal({
       action: Action.EDIT_DEMAND,
-      userId: user.id,
+      user: user.login,
       details: `Demand ${demand.id} edited for place ${demandDto.placeId}`,
     });
 
@@ -126,7 +126,7 @@ export class DemandsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   public async deleteDemand(@SessionUser() user: User, @Param('id') id: string): Promise<void> {
-    await this.sequelize.transaction(async (transaction) => {
+    const placeId = await this.sequelize.transaction(async (transaction): Promise<string> => {
       const demand = await this.demandsService.getDemandById(transaction, id);
       if (!demand) {
         throw new NotFoundError('DEMAND_NOT_FOUND');
@@ -136,13 +136,15 @@ export class DemandsController {
         throw new AuthorizationError();
       }
 
-      this.journalsService.logInJournal({
-        action: Action.DELETE_DEMAND,
-        userId: user.id,
-        details: `Demand ${demand.id} edited from place ${demand.placeId}`,
-      });
-
       await this.demandsService.deleteDemand(transaction, id);
+
+      return demand.placeId;
+    });
+
+    this.journalsService.logInJournal({
+      action: Action.DELETE_DEMAND,
+      user: user.login,
+      details: `Demand ${id} edited from place ${placeId}`,
     });
   }
 }

@@ -156,7 +156,7 @@ export class PlacesController {
 
     this.journalsService.logInJournal({
       action: Action.DELETE_ALL_DEMANDS,
-      userId: user.id,
+      user: user.login,
       details: `All demands removed from place ${placeId}`,
     });
   }
@@ -188,7 +188,7 @@ export class PlacesController {
     @Param('id') placeId: string,
     @Body() placeDto: UpdatePlaceDto,
   ): Promise<Place | void> {
-    return await this.sequelize.transaction(async (transaction) => {
+    const place = await this.sequelize.transaction(async (transaction): Promise<Place> => {
       const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(transaction, user, placeId);
 
       if (!isPlaceManageableByUser) {
@@ -201,14 +201,16 @@ export class PlacesController {
         throw new CRUDError('CANNOT_UPDATE_PLACE');
       }
 
-      this.journalsService.logInJournal({
-        action: Action.EDIT_PLACE,
-        userId: user.id,
-        details: `Place ${placeId} updated by user with role ${user.role}`,
-      });
-
       return place;
     });
+
+    this.journalsService.logInJournal({
+      action: Action.EDIT_PLACE,
+      user: user.login,
+      details: `Place ${placeId} updated by user with role ${user.role}`,
+    });
+
+    return place;
   }
 
   @ApiResponse({ type: Place, description: 'performs state transition on place and returns updated entity' })

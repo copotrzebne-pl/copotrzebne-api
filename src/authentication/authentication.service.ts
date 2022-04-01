@@ -14,7 +14,7 @@ export class AuthenticationService {
   public async createSessionOrFail(
     transaction: Transaction,
     loginDetails: { login: string; password: string },
-  ): Promise<{ userId: string; jwt: string }> {
+  ): Promise<{ user: User; jwt: string }> {
     const { login, password } = loginDetails;
 
     const user = await this.usersService.getUserByLogin(transaction, login);
@@ -28,7 +28,7 @@ export class AuthenticationService {
     }
 
     return {
-      userId: user.id,
+      user,
       jwt: this.generateJWT(user),
     };
   }

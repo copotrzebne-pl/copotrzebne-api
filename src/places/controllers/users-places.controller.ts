@@ -45,19 +45,23 @@ export class UsersPlacesController {
   @UseGuards(AuthGuard)
   @Get('/owned')
   public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
+    const userPlaces = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
       if (user.role === UserRole.ADMIN) {
         return await this.placesService.getDetailedPlaces(transaction);
       }
 
-      this.journalsService.logInJournal({
-        action: Action.GET_OWNED_PLACES,
-        userId: user.id,
-        details: `Place manager fetched owned places`,
-      });
-
       return await this.placesService.getUserPlaces(transaction, user.id);
     });
+
+    if (user.role === UserRole.PLACE_MANAGER) {
+      this.journalsService.logInJournal({
+        action: Action.GET_OWNED_PLACES,
+        user: user.login,
+        details: `Place manager fetched owned places`,
+      });
+    }
+
+    return userPlaces;
   }
 
   @ApiResponse({ status: 204, description: 'Assign place to user. Only admin can assign places.' })
