@@ -80,12 +80,6 @@ export class CommentsController {
         throw new CRUDError('CANNOT_CREATE_COMMENT');
       }
 
-      this.journalsService.logInJournal({
-        action: Action.ADD_COMMENT,
-        userId: user.id,
-        details: `New comment ${comment.id} added to place ${commentDto.placeId}`,
-      });
-
       return comment;
     });
 
@@ -130,12 +124,6 @@ export class CommentsController {
         throw new CRUDError('CANNOT_UPDATE_COMMENT');
       }
 
-      this.journalsService.logInJournal({
-        action: Action.EDIT_COMMENT,
-        userId: user.id,
-        details: `Comment ${comment.id} for place ${updatedComment.placeId}`,
-      });
-
       return updatedComment;
     });
 
@@ -170,12 +158,6 @@ export class CommentsController {
       if (!isPlaceManageableByUser) {
         throw new AuthorizationError();
       }
-
-      this.journalsService.logInJournal({
-        action: Action.DELETE_COMMENT,
-        userId: user.id,
-        details: `Comment ${id} removed from ${comment.placeId}`,
-      });
 
       await this.commentsService.deleteComment(transaction, id);
 
