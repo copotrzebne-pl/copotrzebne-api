@@ -4,7 +4,7 @@ This is the API for copotrzebne.pl
 
 # important TODOS:
 - 
-- [x] Prepare Docker for hosting on heroku 
+- [ ] Prepare Docker for hosting on heroku 
 - [x] Configure Sequelize, so it can generate migration files based on models (currently must be done by hand)
 - [x] Host the app
 
