@@ -159,6 +159,23 @@ export class PlacesController {
     });
   }
 
+  @ApiResponse({ status: 204, description: 'deletes place and returns empty response. Allowed only for admin' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('/:id')
+  public async deletePlace(@Param('id') id: string): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placesService.getPlaceById(transaction, id);
+
+      if (!place) {
+        throw new NotFoundError('PLACE_NOT_FOUND');
+      }
+
+      await this.placesService.deletePlace(transaction, id);
+    });
+  }
+
   @ApiResponse({
     type: Place,
     isArray: true,

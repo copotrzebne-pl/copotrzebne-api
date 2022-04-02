@@ -55,6 +55,10 @@ export class PlacesService {
     return await this.getPlaceById(transaction, id);
   }
 
+  public async deletePlace(transaction: Transaction, id: string): Promise<void> {
+    await Place.destroy({ where: { id }, transaction });
+  }
+
   public async getUserPlaces(transaction: Transaction, userId: string): Promise<Place[]> {
     const user = await this.usersService.getUserById(transaction, userId);
 
