@@ -22,6 +22,7 @@ export class UsersController {
       properties: {
         id: { type: 'string' },
         login: { type: 'string' },
+        placeId: { type: 'string', nullable: true },
         role: { type: 'string', enum: [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER] },
       },
     },
@@ -31,17 +32,23 @@ export class UsersController {
   @Post('/')
   public async createUser(@Body() createUserDto: CreateUserDto): Promise<{ login: string; id: string; role: string }> {
     const { login, password, role } = createUserDto;
-    const user = await this.sequelize.transaction(async (transaction): Promise<User | null> => {
-      return await this.usersService.createUser(transaction, {
+    const user = await this.sequelize.transaction(async (transaction): Promise<User> => {
+      const user = await this.usersService.createUser(transaction, {
         login,
         password,
         role,
       });
-    });
 
-    if (!user) {
-      throw new Error('USER_CREATION_FAILED');
-    }
+      if (!user) {
+        throw new Error('USER_CREATION_FAILED');
+      }
+
+      if (createUserDto.placeId) {
+        await this.usersService.assignPlaceToUser(transaction, createUserDto.placeId, user.id);
+      }
+
+      return user;
+    });
 
     return { login: user.login, id: user.id, role: user.role };
   }
