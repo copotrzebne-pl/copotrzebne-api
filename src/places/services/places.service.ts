@@ -56,7 +56,7 @@ export class PlacesService {
   }
 
   public async deletePlace(transaction: Transaction, id: string): Promise<void> {
-    await Place.destroy({ where: { id }, transaction });
+    await this.placeModel.destroy({ where: { id }, transaction });
   }
 
   public async getUserPlaces(transaction: Transaction, userId: string): Promise<Place[]> {
