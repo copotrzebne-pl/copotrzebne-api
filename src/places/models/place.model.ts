@@ -63,9 +63,9 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   workingHours!: string | null;
 
-  @ApiProperty({ nullable: true, type: 'string', description: 'automatically slugified from name' })
+  @ApiProperty({ nullable: false, type: 'string', description: 'automatically slugified from name' })
   @Column({ allowNull: true, type: DataType.STRING })
-  nameSlug!: string | null;
+  nameSlug!: string;
 
   @HasMany(() => Demand)
   demands!: Demand[];

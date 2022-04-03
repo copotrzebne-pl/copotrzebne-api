@@ -23,6 +23,16 @@ module.exports = {
           { transaction },
         );
       }
+
+      await queryInterface.changeColumn(
+        'places',
+        'name_slug',
+        {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        { transaction },
+      );
     });
   },
 
@@ -47,7 +57,7 @@ function slugify(text) {
     { to: 'o', from: '[Ó]' },
     { to: 's', from: '[Ś]' },
     { to: 'z', from: '[ŹŻ]' },
-    { to: '-', from: "[·/_,:;']" },
+    { to: '-', from: "[·/_,:;'()]" },
   ];
 
   sets.forEach((set) => {

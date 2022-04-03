@@ -10,7 +10,7 @@ export function slugify(text: string): string {
     { to: 'o', from: '[Ó]' },
     { to: 's', from: '[Ś]' },
     { to: 'z', from: '[ŹŻ]' },
-    { to: '-', from: "[·/_,:;']" },
+    { to: '-', from: "[·/_,:;'()]" },
   ];
 
   sets.forEach((set) => {
