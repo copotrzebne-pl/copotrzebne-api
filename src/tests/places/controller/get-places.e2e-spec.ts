@@ -49,6 +49,7 @@ describe('PlacesController (e2e)', () => {
         longitude: 58,
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
+        nameSlug: 'zhp-test',
       });
 
       // WHEN
@@ -72,6 +73,7 @@ describe('PlacesController (e2e)', () => {
           street: 'Pawia',
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
+          nameSlug: 'zhp-test',
         },
       ]);
 
