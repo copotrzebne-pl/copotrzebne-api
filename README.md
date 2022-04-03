@@ -151,6 +151,19 @@ Run tests with the command:
 $ yarn test:e2e
 ```
 
+Add E2E tests files into src/tests/<module>/
+
+## Unit testing
+
+To run unit tests:
+```shell
+$ yarn test
+```
+
+To write unit test, name the file as <something-tested>.spec.ts.
+Add unit tests files into src/<module>/<functionality>/
+
+
 # User Roles
 
 ## Admin
