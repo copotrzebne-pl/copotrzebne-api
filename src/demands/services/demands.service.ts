@@ -45,8 +45,21 @@ export class DemandsService {
     });
   }
 
-  public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand> {
-    return await this.demandModel.create({ ...demandDto }, { transaction });
+  public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand | null> {
+    const demand = await this.demandModel.create({ ...demandDto }, { transaction });
+
+    return await this.demandModel.findByPk(demand.id, {
+      include: [
+        {
+          model: Priority,
+        },
+        {
+          model: Supply,
+          include: [Category],
+        },
+      ],
+      transaction,
+    });
   }
 
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
@@ -55,7 +68,7 @@ export class DemandsService {
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
-    await Demand.destroy({ where: { id }, transaction });
+    await this.demandModel.destroy({ where: { id }, transaction });
   }
 
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
@@ -67,6 +80,6 @@ export class DemandsService {
 
     const demandsIds = demands.map((demand) => demand.id);
 
-    await Demand.destroy({ where: { id: demandsIds }, transaction });
+    await this.demandModel.destroy({ where: { id: demandsIds }, transaction });
   }
 }

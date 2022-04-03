@@ -75,7 +75,8 @@ export class PlacesController {
   public async getPlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       if (supplyId) {
-        return await this.placesService.getPlacesWithSupply(transaction, supplyId);
+        const supplies = supplyId.split(',');
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies);
       }
 
       return await this.placesService.getAllPlaces(transaction);
