@@ -4,7 +4,6 @@ import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
-import { slugify } from '../../helpers/slugifier';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -14,14 +13,7 @@ export class Place extends Model {
 
   @ApiProperty()
   @Column({ allowNull: false })
-  get name(): string {
-    return this.getDataValue('name');
-  }
-
-  set name(value: string) {
-    this.setDataValue('name', value);
-    this.setDataValue('name_slug', slugify(value));
-  }
+  name!: string;
 
   @ApiProperty()
   @Column({ allowNull: false })
