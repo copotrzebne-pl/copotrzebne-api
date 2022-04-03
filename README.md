@@ -132,6 +132,24 @@ await this.sequelize.transaction(async (transaction) => {
 - every service method that is operating on database should accept transaction as first parameter
 - we can now use as many services as we want inside the controller and in case of any error, the whole transaction will roll back automatically
 
+# Testing
+
+## E2E tests
+
+To run e2e tests first you need to run test db container:
+
+```shell
+$ yarn start:docker:test-db
+```
+
+When db is running, you can run e2e tests many times. Tested api connects to the test db.
+Before tests migrations are runned.
+After tests db migrations are reverted to clean the db.
+
+Run tests with the command:
+```shell
+$ yarn test:e2e
+```
 
 # User Roles
 
