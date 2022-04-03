@@ -45,10 +45,8 @@ export class DemandsService {
     });
   }
 
-  public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand | null> {
-    const demand = await this.demandModel.create({ ...demandDto }, { transaction });
-
-    return await this.demandModel.findByPk(demand.id, {
+  public async getDetailedDemand(transaction: Transaction, id: string): Promise<Demand | null> {
+    return await this.demandModel.findByPk(id, {
       include: [
         {
           model: Priority,
@@ -62,9 +60,14 @@ export class DemandsService {
     });
   }
 
+  public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand | null> {
+    const demand = await this.demandModel.create({ ...demandDto }, { transaction });
+    return await this.getDetailedDemand(transaction, demand.id);
+  }
+
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
     await this.demandModel.update({ ...demandDto }, { where: { id }, transaction });
-    return await this.getDemandById(transaction, id);
+    return await this.getDetailedDemand(transaction, id);
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
