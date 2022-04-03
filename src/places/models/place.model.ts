@@ -4,6 +4,7 @@ import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
+import { slugify } from '../../helpers/slugifier';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -13,7 +14,14 @@ export class Place extends Model {
 
   @ApiProperty()
   @Column({ allowNull: false })
-  name!: string;
+  get name(): string {
+    return this.getDataValue('name');
+  }
+
+  set name(value: string) {
+    this.setDataValue('name', value);
+    this.setDataValue('name_slug', slugify(value));
+  }
 
   @ApiProperty()
   @Column({ allowNull: false })
@@ -54,6 +62,10 @@ export class Place extends Model {
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
   workingHours!: string | null;
+
+  @ApiProperty({ nullable: false, type: 'string', description: 'automatically slugified from name' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  nameSlug!: string;
 
   @HasMany(() => Demand)
   demands!: Demand[];
