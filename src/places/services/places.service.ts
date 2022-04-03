@@ -30,7 +30,7 @@ export class PlacesService {
     return places.map((place) => this.getRawPlaceWithoutAssociations(place)).sort(this.sortPlacesByLastUpdate);
   }
 
-  public async getPlacesWithSupply(transaction: Transaction, supplyId: string): Promise<Place[]> {
+  public async getPlacesWithSupplies(transaction: Transaction, suppliesIds: string[]): Promise<Place[]> {
     const places = await this.placeModel.findAll({
       include: [
         {
@@ -39,7 +39,7 @@ export class PlacesService {
         },
       ],
       where: {
-        '$demands->supply.id$': supplyId,
+        '$demands->supply.id$': suppliesIds,
       },
     });
 
