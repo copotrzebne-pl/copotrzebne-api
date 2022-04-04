@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2020",
-    "rootDir": ".",
+    "rootDir": "src",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
