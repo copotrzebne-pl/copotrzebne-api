@@ -25,7 +25,6 @@ export class OpeningHours extends Model {
   @ForeignKey(() => Place)
   placeId!: string;
 
-  @ApiProperty({ type: () => Place, nullable: false })
   @BelongsTo(() => Place)
   place!: Place;
 }
