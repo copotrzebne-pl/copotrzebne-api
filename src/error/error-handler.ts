@@ -1,5 +1,5 @@
 import { HttpAdapterHost } from '@nestjs/core';
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 
 import ServerError from './server.error';
 import { isErrorResponse } from './helpers/is-error-response.helper';
@@ -37,12 +37,14 @@ export class ErrorHandler implements ExceptionFilter {
     }
 
     if (error instanceof ServerError || error instanceof HttpException) {
+      Logger.error(`An error occured and was handled gracefully: ${error}`);
       return {
         message: error.message,
         statusCode: error.getStatus(),
       };
     }
 
+    Logger.error(`An unknown error has occurred: ${error}`);
     return {
       message: 'INTERNAL_SERVER_ERROR',
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
