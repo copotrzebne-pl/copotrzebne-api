@@ -13,6 +13,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
 import { CommentsModule } from './comments/comments.module';
+import { OpeningHoursModule } from './opening-hours/opening-hours.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CommentsModule } from './comments/comments.module';
     DemandsModule,
     CategoriesModule,
     CommentsModule,
+    OpeningHoursModule,
     JwtModule,
   ],
 })

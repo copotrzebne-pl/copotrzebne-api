@@ -13,6 +13,8 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { Supply } from '../../supplies/models/supply.model';
 import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
+import { OpeningHoursService } from '../../opening-hours/services/opening-hours.service';
+import { OpeningHours } from '../../opening-hours/models/opening-hours.model';
 
 @Injectable()
 export class PlacesService {
@@ -20,6 +22,7 @@ export class PlacesService {
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
     private readonly usersService: UsersService,
+    private readonly openingHoursService: OpeningHoursService,
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
@@ -48,9 +51,14 @@ export class PlacesService {
     return places.sort(this.sortPlacesByLastUpdate);
   }
 
-  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place> {
+  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place | null> {
     const nameSlug = slugify(placeDto.name);
-    return await this.placeModel.create({ nameSlug, ...placeDto }, { transaction });
+
+    const place = await this.placeModel.create({ nameSlug, ...placeDto }, { transaction });
+
+    await this.openingHoursService.createOpeningHoursForPlace(transaction, place.id, placeDto.openingHours);
+
+    return this.placeModel.findByPk(place.id, { include: [OpeningHours], transaction });
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {

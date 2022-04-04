@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/sequelize';
 import { PlacesService } from './places.service';
 import { Place } from '../models/place.model';
 import { UsersService } from '../../users/users.service';
+import { OpeningHoursService } from '../../opening-hours/services/opening-hours.service';
 
 describe('PlacesService', () => {
   let service: PlacesService;
@@ -14,6 +15,10 @@ describe('PlacesService', () => {
         PlacesService,
         {
           provide: getModelToken(Place),
+          useValue: jest.fn(),
+        },
+        {
+          provide: OpeningHoursService,
           useValue: jest.fn(),
         },
         {

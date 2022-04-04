@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateOpeningHoursDto } from '../../opening-hours/dto/create-opening-hours.dto';
 
 export class CreatePlaceDto {
   @ApiProperty()
@@ -52,8 +53,7 @@ export class CreatePlaceDto {
   @IsNumber()
   longitude?: number;
 
-  @ApiProperty({ nullable: true })
-  @IsOptional()
-  @IsString()
-  workingHours?: string;
+  @ApiProperty({ nullable: false })
+  @IsArray()
+  openingHours!: CreateOpeningHoursDto[];
 }
