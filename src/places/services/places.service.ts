@@ -71,6 +71,8 @@ export class PlacesService {
 
     await this.placeModel.update({ nameSlug, ...placeDto }, { where: { id }, transaction });
 
+    await this.openingHoursService.updateOpeningHoursForPlace(transaction, id, placeDto.openingHours);
+
     return await this.getPlaceById(transaction, id);
   }
 

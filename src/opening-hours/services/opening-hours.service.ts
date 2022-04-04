@@ -22,4 +22,28 @@ export class OpeningHoursService {
 
     return await this.openingHoursModel.findAll({ where: { placeId }, transaction });
   }
+
+  public async updateOpeningHoursForPlace(
+    transaction: Transaction,
+    placeId: string,
+    openingHoursList: CreateOpeningHoursDto[],
+  ): Promise<OpeningHours[]> {
+    for (const openingHours of openingHoursList) {
+      const currentOpeningHours = await this.openingHoursModel.findOne({
+        where: { placeId, day: openingHours.day },
+        transaction,
+      });
+
+      if (currentOpeningHours) {
+        await this.openingHoursModel.update(
+          { ...openingHours },
+          { where: { placeId, day: openingHours.day }, transaction },
+        );
+      } else {
+        await this.openingHoursModel.create({ placeId, ...openingHours }, { transaction });
+      }
+    }
+
+    return await this.openingHoursModel.findAll({ where: { placeId }, transaction });
+  }
 }
