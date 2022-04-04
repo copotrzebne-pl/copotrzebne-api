@@ -11,6 +11,8 @@ import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UserRole } from '../../users/types/user-role.enum';
 import { Supply } from '../../supplies/models/supply.model';
+import { slugify } from '../../helpers/slugifier';
+import NotFoundError from '../../error/not-found.error';
 
 @Injectable()
 export class PlacesService {
@@ -47,11 +49,21 @@ export class PlacesService {
   }
 
   public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place> {
-    return await this.placeModel.create({ ...placeDto }, { transaction });
+    const nameSlug = slugify(placeDto.name);
+    return await this.placeModel.create({ nameSlug, ...placeDto }, { transaction });
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
-    await this.placeModel.update({ ...placeDto }, { where: { id }, transaction });
+    const place = await this.getPlaceById(transaction, id);
+
+    if (!place) {
+      throw new NotFoundError();
+    }
+
+    const nameSlug = placeDto.name ? slugify(placeDto.name) : slugify(place.name);
+
+    await this.placeModel.update({ nameSlug, ...placeDto }, { where: { id }, transaction });
+
     return await this.getPlaceById(transaction, id);
   }
 
