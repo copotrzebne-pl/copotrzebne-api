@@ -14,7 +14,6 @@ import { Supply } from '../../supplies/models/supply.model';
 import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { OpeningHoursService } from '../../opening-hours/services/opening-hours.service';
-import { OpeningHours } from '../../opening-hours/models/opening-hours.model';
 
 @Injectable()
 export class PlacesService {
@@ -58,7 +57,7 @@ export class PlacesService {
 
     await this.openingHoursService.createOpeningHoursForPlace(transaction, place.id, placeDto.openingHours);
 
-    return this.placeModel.findByPk(place.id, { include: [OpeningHours], transaction });
+    return this.placeModel.findByPk(place.id, { transaction });
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
