@@ -4,6 +4,7 @@ import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
+import { OpeningHours } from '../../opening-hours/models/opening-hours.model';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -67,6 +68,10 @@ export class Place extends Model {
 
   @HasMany(() => Comment)
   comments!: Comment[];
+
+  @ApiProperty({ nullable: false, type: () => OpeningHours })
+  @HasMany(() => OpeningHours)
+  openingHours!: OpeningHours[];
 
   @Column({
     type: DataType.VIRTUAL,
