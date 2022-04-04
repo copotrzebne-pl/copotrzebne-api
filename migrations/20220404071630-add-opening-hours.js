@@ -41,12 +41,26 @@ module.exports = {
           transaction,
         },
       );
+
+      await queryInterface.removeColumn('places', 'working_hours', {
+        transaction,
+      });
     });
   },
 
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.dropTable('opening_hours', { transaction });
+
+      await queryInterface.addColumn(
+        'places',
+        'working_hours',
+        {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+        { transaction },
+      );
     });
   },
 };

@@ -53,10 +53,6 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.DECIMAL })
   longitude!: number | null;
 
-  @ApiProperty({ nullable: true, type: 'string' })
-  @Column({ allowNull: true, type: DataType.STRING })
-  workingHours!: string | null;
-
   @ApiProperty({ nullable: false, type: 'string', description: 'automatically slugified from name' })
   @Column({ allowNull: true, type: DataType.STRING })
   nameSlug!: string;
