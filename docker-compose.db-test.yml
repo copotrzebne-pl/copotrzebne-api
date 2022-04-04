@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: db_test_user
+      POSTGRES_PASSWORD: db_test_password
+      POSTGRES_DB: copotrzebne_db_test
+    ports:
+      - 5444:5432

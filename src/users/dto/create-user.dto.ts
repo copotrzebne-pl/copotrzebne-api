@@ -19,9 +19,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   role!: UserRole;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   placeId?: string;
 }
