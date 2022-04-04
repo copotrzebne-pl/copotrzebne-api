@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppModule } from '../../../app.module';
@@ -18,6 +18,8 @@ describe('PlacesController (e2e)', () => {
       }).compile();
 
       app = module.createNestApplication();
+      app.useGlobalPipes(new ValidationPipe());
+
       await app.init();
       dbHelper = new DatabaseHelper(module);
     });
@@ -37,7 +39,7 @@ describe('PlacesController (e2e)', () => {
 
     it('returns all active places', async (done) => {
       // GIVEN
-      await dbHelper.placeRepository.create({
+      const place = await dbHelper.placeRepository.create({
         name: 'ZHP Test',
         city: 'Krakow',
         street: 'Pawia',
@@ -90,6 +92,7 @@ describe('PlacesController (e2e)', () => {
       expect(typeof body[0].updatedAt).toBe('string');
       expect(typeof body[0].id).toBe('string');
 
+      await dbHelper.placeRepository.destroy({ where: { id: place.id } });
       done();
     });
   });
