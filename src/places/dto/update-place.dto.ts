@@ -1,6 +1,5 @@
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { OpeningHours } from '../../opening-hours/models/opening-hours.model';
 import { CreateOpeningHoursDto } from '../../opening-hours/dto/create-opening-hours.dto';
 
 export class UpdatePlaceDto {
