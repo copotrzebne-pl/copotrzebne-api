@@ -111,20 +111,25 @@ export class Place extends Model {
         return 0;
       }
 
-      const countedPrios = demands.reduce((counted: Record<number, number>, demand: Demand): Record<number, number> => {
-        if (demand.priority) {
-          counted[demand.priority.importance]
-            ? counted[demand.priority.importance]++
-            : (counted[demand.priority.importance] = 1);
-        }
+      const priosWithQuantities = demands.reduce(
+        (counted: Record<number, number>, demand: Demand): Record<number, number> => {
+          if (demand.priority) {
+            counted[demand.priority.importance]
+              ? counted[demand.priority.importance]++
+              : (counted[demand.priority.importance] = 1);
+          }
 
-        return counted;
-      }, {});
+          return counted;
+        },
+        {},
+      );
 
-      return +Object.keys(countedPrios).reduce(
-        (prio1, prio2) => (countedPrios[+prio1] > countedPrios[+prio2] ? prio1 : prio2),
+      const prioWithLargestQuantity = +Object.keys(priosWithQuantities).reduce(
+        (prio1, prio2) => (priosWithQuantities[+prio1] > priosWithQuantities[+prio2] ? prio1 : prio2),
         '0',
       );
+
+      return prioWithLargestQuantity;
     },
 
     set() {
