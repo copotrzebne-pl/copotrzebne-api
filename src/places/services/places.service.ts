@@ -25,7 +25,10 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    const place = await this.placeModel.findByPk(id, { include: [Demand], transaction });
+    const place = await this.placeModel.findByPk(id, {
+      include: [{ model: Demand, include: [Priority] }],
+      transaction,
+    });
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
@@ -56,7 +59,7 @@ export class PlacesService {
       include: [
         {
           model: Demand,
-          include: [Supply],
+          include: [Supply, Priority],
         },
       ],
       where: {
@@ -106,6 +109,7 @@ export class PlacesService {
         },
         {
           model: Demand,
+          include: [Priority],
         },
       ],
       transaction,
