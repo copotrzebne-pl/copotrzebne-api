@@ -20,6 +20,10 @@ export class Priority extends Model {
   @Column({ allowNull: false, type: DataType.STRING })
   nameEn!: string;
 
+  @ApiProperty()
+  @Column({ allowNull: false, type: DataType.INTEGER })
+  importance!: number;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 }

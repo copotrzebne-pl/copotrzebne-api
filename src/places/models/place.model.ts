@@ -4,6 +4,7 @@ import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
+import ForbiddenOperationError from '../../error/forbidden-operation.error';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -68,6 +69,11 @@ export class Place extends Model {
   @HasMany(() => Comment)
   comments!: Comment[];
 
+  @ApiProperty({
+    nullable: true,
+    type: 'string',
+    description: 'virtual field that returns date of last update based on last updated demand for place',
+  })
   @Column({
     type: DataType.VIRTUAL,
     get() {
@@ -83,6 +89,52 @@ export class Place extends Model {
 
       return newestDemand.updatedAt;
     },
+
+    set() {
+      throw new ForbiddenOperationError('Cannot set virtual field lastUpdatedAt');
+    },
   })
   lastUpdatedAt!: Date | null;
+
+  @ApiProperty({
+    nullable: false,
+    type: 'number',
+    description:
+      'virtual field that returns priority of place calculated from demands with priorities we have the most of',
+  })
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      const demands: Demand[] = this.getDataValue('demands');
+
+      if (!demands || !demands.length) {
+        return 0;
+      }
+
+      const priosWithQuantities = demands.reduce(
+        (counted: Record<number, number>, demand: Demand): Record<number, number> => {
+          if (demand.priority) {
+            counted[demand.priority.importance]
+              ? counted[demand.priority.importance]++
+              : (counted[demand.priority.importance] = 1);
+          }
+
+          return counted;
+        },
+        {},
+      );
+
+      const prioWithLargestQuantity = +Object.keys(priosWithQuantities).reduce(
+        (prio1, prio2) => (priosWithQuantities[+prio1] > priosWithQuantities[+prio2] ? prio1 : prio2),
+        '0',
+      );
+
+      return prioWithLargestQuantity;
+    },
+
+    set() {
+      throw new ForbiddenOperationError('Cannot set virtual field priority');
+    },
+  })
+  priority!: number;
 }
