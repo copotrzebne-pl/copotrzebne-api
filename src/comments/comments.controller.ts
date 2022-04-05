@@ -130,7 +130,7 @@ export class CommentsController {
     this.journalsService.logInJournal({
       action: Action.EDIT_COMMENT,
       user: user.login,
-      details: `Comment ${comment.id} for place ${comment.placeId}`,
+      details: `Comment ${comment.id} edited for place ${comment.placeId}`,
     });
 
     return comment;

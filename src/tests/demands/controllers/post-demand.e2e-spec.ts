@@ -11,7 +11,7 @@ import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
 import { Supply } from '../../../supplies/models/supply.model';
 import { Priority } from '../../../priorities/models/priority.model';
 
-describe('PlacesController (e2e)', () => {
+describe('DemandsController (e2e)', () => {
   describe('POST /demands', () => {
     let app: INestApplication;
     let dbHelper: DatabaseHelper;

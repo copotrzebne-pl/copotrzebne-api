@@ -12,7 +12,7 @@ import { Supply } from '../../../supplies/models/supply.model';
 import { Priority } from '../../../priorities/models/priority.model';
 import { Demand } from '../../../demands/models/demand.model';
 
-describe('PlacesController (e2e)', () => {
+describe('DemandsController (e2e)', () => {
   describe('DELETE /demands/:id', () => {
     let app: INestApplication;
     let dbHelper: DatabaseHelper;

@@ -8,12 +8,9 @@ import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { UserRole } from '../../../users/types/user-role.enum';
 import { Place } from '../../../places/models/place.model';
 import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
-import { Supply } from '../../../supplies/models/supply.model';
-import { Priority } from '../../../priorities/models/priority.model';
-import { Demand } from '../../../demands/models/demand.model';
 
-describe('DemandsController (e2e)', () => {
-  describe('PATCH /demands/:id', () => {
+describe('CommentsController (e2e)', () => {
+  describe('POST /comments', () => {
     let app: INestApplication;
     let dbHelper: DatabaseHelper;
 
@@ -22,7 +19,6 @@ describe('DemandsController (e2e)', () => {
     let hashedPassword: string;
 
     let place: Place;
-    let demand: Demand;
 
     beforeAll(async () => {
       const module: TestingModule = await Test.createTestingModule({
@@ -37,27 +33,18 @@ describe('DemandsController (e2e)', () => {
 
       hashedPassword = await hash(password, process.env.API_PASSWORD_SALT || '');
 
-      const supply = (await dbHelper.suppliesRepository.findOne()) as Supply;
-      const priority = (await dbHelper.prioritiesRepository.findOne()) as Priority;
-
       place = await dbHelper.placeRepository.create({
-        name: 'Demand test org',
+        name: 'Post comment test',
         city: 'Gdansk',
         street: 'Pawia',
         buildingNumber: '5a',
-        nameSlug: 'demand-test-org',
-      });
-
-      demand = await dbHelper.demandsRepository.create({
-        placeId: place.id,
-        priorityId: priority.id,
-        supplyId: supply.id,
+        nameSlug: 'my-org',
       });
     });
 
     afterAll(async () => {
-      await app.close();
       await dbHelper.placeRepository.destroy({ where: { id: place.id } });
+      await app.close();
     });
 
     afterEach(async () => {
@@ -66,7 +53,7 @@ describe('DemandsController (e2e)', () => {
 
     it('logs in journal on success', async (done) => {
       // GIVEN
-      const uniqueLogin = 'edit_demand_unique_login';
+      const uniqueLogin = 'post_comment_unique_login';
       const user = await dbHelper.usersRepository.create({
         login: uniqueLogin,
         hashedPassword,
@@ -80,28 +67,35 @@ describe('DemandsController (e2e)', () => {
       } = await request(app.getHttpServer()).post(`/login`).send({ login: uniqueLogin, password });
 
       await request(app.getHttpServer())
-        .patch(`/demands/${demand.id}`)
+        .post(`/comments`)
         .set({ authorization: `Bearer ${jwt}` })
         .send({
-          comment: 'New comment',
+          placeId: place.id,
+          title: 'Test comment',
+          message: 'This is a comment',
+          links: [],
         })
-        .expect(200);
+        .expect(201);
 
       // THEN
       await retryWithSleep(async () => {
-        return (await dbHelper.journalsRepository.count({ where: { user: uniqueLogin, action: 'edit_demand' } })) === 1;
+        return (await dbHelper.journalsRepository.count({ where: { user: uniqueLogin, action: 'add_comment' } })) === 1;
       });
+
+      const [comment] = await dbHelper.commentsRepository.findAll({ where: { placeId: place.id } });
 
       const [journal] = await dbHelper.journalsRepository.findAll({
-        where: { user: uniqueLogin, action: 'edit_demand' },
+        where: { user: uniqueLogin, action: 'add_comment' },
       });
 
+      expect(comment).not.toBe(undefined);
+      expect(comment).not.toBe(null);
       expect(journal.toJSON()).toMatchObject({
         id: expect.any(String),
         createdAt: expect.any(Date),
-        action: 'edit_demand',
+        action: 'add_comment',
         user: uniqueLogin,
-        details: `Demand ${demand.id} edited for place ${place.id}`,
+        details: `New comment ${comment.id} added to place ${place.id}`,
       });
       done();
     });
