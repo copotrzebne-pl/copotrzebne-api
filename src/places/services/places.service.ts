@@ -14,6 +14,7 @@ import { Supply } from '../../supplies/models/supply.model';
 import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
+import { Category } from '../../categories/models/category.model';
 
 @Injectable()
 export class PlacesService {
@@ -33,7 +34,15 @@ export class PlacesService {
       include: [
         {
           model: Demand,
-          include: [Supply, Priority],
+          include: [
+            {
+              model: Supply,
+              include: [Category],
+            },
+            {
+              model: Priority,
+            },
+          ],
         },
       ],
       transaction,
