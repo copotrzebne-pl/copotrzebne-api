@@ -34,6 +34,10 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
     options.username = configService.get<string>('API_DB_USERNAME', '');
     options.password = configService.get<string>('API_DB_PWD', '');
     options.database = configService.get<string>('API_DB_DATABASE', '');
+    options.logging = process.env.NODE_ENV !== 'test';
+
+    // uncomment when needed for local debugging of prod
+    // options.dialectOptions = { ssl: { require: true, rejectUnauthorized: false } };
   }
   return options;
 };

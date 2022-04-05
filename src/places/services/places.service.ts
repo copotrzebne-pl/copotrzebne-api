@@ -13,6 +13,8 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { Supply } from '../../supplies/models/supply.model';
 import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
+import { Priority } from '../../priorities/models/priority.model';
+import { Category } from '../../categories/models/category.model';
 import { OpeningHoursService } from '../../opening-hours/services/opening-hours.service';
 
 @Injectable()
@@ -29,9 +31,26 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
-    const places = await this.placeModel.findAll({ include: [Demand], transaction });
-    return places.map((place) => this.getRawPlaceWithoutAssociations(place)).sort(this.sortPlacesByLastUpdate);
+  public async getDetailedPlaces(transaction: Transaction): Promise<Place[]> {
+    const places = await this.placeModel.findAll({
+      include: [
+        {
+          model: Demand,
+          include: [
+            {
+              model: Supply,
+              include: [Category],
+            },
+            {
+              model: Priority,
+            },
+          ],
+        },
+      ],
+      transaction,
+    });
+
+    return places.sort(this.sortPlacesByLastUpdate);
   }
 
   public async getPlacesWithSupplies(transaction: Transaction, suppliesIds: string[]): Promise<Place[]> {
