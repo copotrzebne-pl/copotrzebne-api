@@ -74,6 +74,7 @@ describe('PlacesController (e2e)', () => {
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
           nameSlug: 'zhp-test',
+          demands: [],
         },
       ]);
 
