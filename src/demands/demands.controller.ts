@@ -114,7 +114,7 @@ export class DemandsController {
     this.journalsService.logInJournal({
       action: Action.EDIT_DEMAND,
       user: user.login,
-      details: `Demand ${demand.id} edited for place ${demandDto.placeId}`,
+      details: `Demand ${demand.id} edited for place ${demand.placeId}`,
     });
 
     return demand;
@@ -144,7 +144,7 @@ export class DemandsController {
     this.journalsService.logInJournal({
       action: Action.DELETE_DEMAND,
       user: user.login,
-      details: `Demand ${id} edited from place ${placeId}`,
+      details: `Demand ${id} deleted from place ${placeId}`,
     });
   }
 }
