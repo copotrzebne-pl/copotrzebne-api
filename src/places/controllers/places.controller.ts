@@ -79,7 +79,7 @@ export class PlacesController {
         return await this.placesService.getPlacesWithSupplies(transaction, supplies);
       }
 
-      return await this.placesService.getAllPlaces(transaction);
+      return await this.placesService.getDetailedPlaces(transaction);
     });
   }
 
