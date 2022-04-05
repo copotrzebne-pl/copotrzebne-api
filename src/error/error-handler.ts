@@ -1,5 +1,13 @@
 import { HttpAdapterHost } from '@nestjs/core';
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  BadRequestException,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 
 import ServerError from './server.error';
 import { isErrorResponse } from './helpers/is-error-response.helper';
