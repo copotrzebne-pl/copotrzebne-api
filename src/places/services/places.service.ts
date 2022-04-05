@@ -13,6 +13,7 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { Supply } from '../../supplies/models/supply.model';
 import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
+import { Priority } from '../../priorities/models/priority.model';
 
 @Injectable()
 export class PlacesService {
@@ -23,12 +24,15 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    const place = await this.placeModel.findByPk(id, { include: [Demand], transaction });
+    const place = await this.placeModel.findByPk(id, {
+      include: [{ model: Demand, include: [Priority] }],
+      transaction,
+    });
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getAllPlaces(transaction: Transaction): Promise<Place[]> {
-    const places = await this.placeModel.findAll({ include: [Demand], transaction });
+    const places = await this.placeModel.findAll({ include: [{ model: Demand, include: [Priority] }], transaction });
     return places.map((place) => this.getRawPlaceWithoutAssociations(place)).sort(this.sortPlacesByLastUpdate);
   }
 
@@ -37,7 +41,7 @@ export class PlacesService {
       include: [
         {
           model: Demand,
-          include: [Supply],
+          include: [Supply, Priority],
         },
       ],
       where: {

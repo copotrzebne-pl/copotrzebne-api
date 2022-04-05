@@ -13,8 +13,13 @@ module.exports = {
         { transaction },
       );
 
-      await queryInterface.bulkUpdate('priorities', {importance: 1}, {name_pl: 'pilnie potrzebne'}, {transaction});
-      await queryInterface.bulkUpdate('priorities', {importance: 2}, {name_pl: 'potrzebne'}, {transaction});
+      await queryInterface.bulkUpdate(
+        'priorities',
+        { importance: 1 },
+        { name_pl: 'pilnie potrzebne' },
+        { transaction },
+      );
+      await queryInterface.bulkUpdate('priorities', { importance: 2 }, { name_pl: 'potrzebne' }, { transaction });
 
       await queryInterface.changeColumn(
         'priorities',
