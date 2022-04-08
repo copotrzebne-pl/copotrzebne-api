@@ -52,9 +52,36 @@ const migrateDatabase = async (sequelize: Sequelize): Promise<void> => {
   }
 };
 
-module.exports = async () => {
-  const sequelize = new Sequelize(databaseConfig);
+const seedSupplies = async (sequelize: Sequelize) => {
+  await sequelize.query(
+    `insert into "categories" ("name_pl","name_ua","name_en") values ('inne', 'another', 'інший');`,
+  );
+  const [result] = await sequelize.query(`SELECT "id" FROM "categories" LIMIT 1`);
+  const idResult = result as { id: string }[];
+  const categoryId = idResult[0].id;
 
-  await createDatabase(sequelize);
-  await migrateDatabase(sequelize);
+  await sequelize.query(
+    `INSERT INTO supplies ("name_pl", "name_ua", "name_en", "category_id")
+           VALUES ('miód', 'мед', 'honey', '${categoryId}'), ('witaminy', 'вітаміни', 'vitamins', '${categoryId}')`,
+  );
+};
+const seedPriorities = async (sequelize: Sequelize) => {
+  await sequelize.query(
+    `INSERT INTO "priorities" ("name_pl", "name_ua", "name_en", "importance")
+           VALUES ('potrzebne', 'необхідний', 'needed', 1)`,
+  );
+};
+
+module.exports = async () => {
+  try {
+    const sequelize = new Sequelize(databaseConfig);
+
+    await createDatabase(sequelize);
+    await migrateDatabase(sequelize);
+    await seedSupplies(sequelize);
+    await seedPriorities(sequelize);
+  } catch (error) {
+    console.error('Failed to migrate DB for tests', error);
+    throw error;
+  }
 };

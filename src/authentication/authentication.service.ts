@@ -14,7 +14,7 @@ export class AuthenticationService {
   public async createSessionOrFail(
     transaction: Transaction,
     loginDetails: { login: string; password: string },
-  ): Promise<string> {
+  ): Promise<{ user: User; jwt: string }> {
     const { login, password } = loginDetails;
 
     const user = await this.usersService.getUserByLogin(transaction, login);
@@ -27,7 +27,10 @@ export class AuthenticationService {
       throw new Error('FAILED_TO_LOGIN');
     }
 
-    return this.generateJWT(user);
+    return {
+      user,
+      jwt: this.generateJWT(user),
+    };
   }
 
   private static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
