@@ -15,7 +15,8 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
-import { PlaceScope } from '../types/place.scope';
+import { PlaceScope } from '../types/placeScope';
+import { PlaceState } from '../types/place.state.enum';
 
 @Injectable()
 export class PlacesService {
@@ -33,7 +34,7 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = ''): Promise<Place[]> {
+  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = PlaceScope.DEFAULT): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -58,7 +59,7 @@ export class PlacesService {
   public async getPlacesWithSupplies(
     transaction: Transaction,
     suppliesIds: string[],
-    scope: PlaceScope = '',
+    scope: PlaceScope = PlaceScope.DEFAULT,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -134,6 +135,14 @@ export class PlacesService {
     }
 
     return true;
+  }
+
+  public mapStateToScope(state: PlaceState | undefined): PlaceScope {
+    if (!state || !Object.values(PlaceState).includes(state)) {
+      return PlaceScope.DEFAULT;
+    }
+
+    return state === PlaceState.ACTIVE ? PlaceScope.ACTIVE : PlaceScope.INACTIVE;
   }
 
   private getRawPlaceWithoutAssociations(place: Place): Place {

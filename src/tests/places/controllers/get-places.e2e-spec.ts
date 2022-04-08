@@ -5,6 +5,7 @@ import request from 'supertest';
 import { AppModule } from '../../../app.module';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { PlaceState } from '../../../places/types/place.state.enum';
+import { PlaceTransitionName } from '../../../places/types/place.transition-name.enum';
 
 describe('PlacesController (e2e)', () => {
   describe('GET /places', () => {
@@ -79,7 +80,9 @@ describe('PlacesController (e2e)', () => {
           demands: [],
           priority: 0,
           state: 1,
-          transitions: [{ startState: PlaceState.ACTIVE, endState: PlaceState.INACTIVE, name: 'DEACTIVATE' }],
+          transitions: [
+            { startState: PlaceState.ACTIVE, endState: PlaceState.INACTIVE, name: PlaceTransitionName.DEACTIVATE },
+          ],
         },
       ]);
 

@@ -15,6 +15,11 @@ import { placeTransitions } from '../services/state-machine/place.transitions';
       state: PlaceState.ACTIVE,
     },
   },
+  inactive: {
+    where: {
+      state: PlaceState.INACTIVE,
+    },
+  },
 }))
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {

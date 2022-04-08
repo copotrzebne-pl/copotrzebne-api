@@ -38,6 +38,8 @@ import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
+import { PlaceState } from '../types/place.state.enum';
+import { PlaceScope } from '../types/placeScope';
 
 @ApiTags('places')
 @Injectable()
@@ -65,13 +67,14 @@ export class PlacesController {
     return await this.sequelize.transaction(async (transaction) => {
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies, 'active');
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction, 'active');
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
     });
   }
 
+  @ApiQuery({ name: 'state', type: Number })
   @ApiResponse({
     isArray: true,
     type: Place,
@@ -81,9 +84,11 @@ export class PlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/all')
-  public async getAllPlaces(): Promise<Place[] | void> {
+  public async getAllPlaces(@Query('state') state?: string): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      return await this.placesService.getDetailedPlaces(transaction);
+      const placeState = state ? +state : undefined;
+      const scope = this.placesService.mapStateToScope(placeState);
+      return await this.placesService.getDetailedPlaces(transaction, scope);
     });
   }
 
