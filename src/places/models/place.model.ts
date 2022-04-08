@@ -5,6 +5,8 @@ import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
+import { Transition } from '../../state-machine/types/transition';
+import { placesStateMachine } from '../services/places.state-machine';
 
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
@@ -60,6 +62,10 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   nameSlug!: string;
 
+  @ApiProperty({ nullable: false, type: 'number' })
+  @Column({ allowNull: false, type: DataType.NUMBER })
+  state!: number;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 
@@ -68,6 +74,18 @@ export class Place extends Model {
 
   @HasMany(() => Comment)
   comments!: Comment[];
+
+  @ApiProperty({
+    nullable: false,
+    description: 'transitions allowed to perform on this entity',
+  })
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      return placesStateMachine.getTransitionsForState(this.getDataValue('state'));
+    },
+  })
+  transitions!: Transition[];
 
   @ApiProperty({
     nullable: true,
