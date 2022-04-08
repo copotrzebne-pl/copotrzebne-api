@@ -83,21 +83,6 @@ export class Place extends Model {
   @Column({
     allowNull: false,
     type: DataType.DATE,
-    get() {
-      const currentValue = this.getDataValue('lastUpdatedAt');
-
-      const demands: Demand[] = this.getDataValue('demands');
-
-      if (!demands || !demands.length) {
-        return currentValue;
-      }
-
-      const [newestDemand] = demands.sort((demand1, demand2) => {
-        return demand2.updatedAt.getTime() - demand1.updatedAt.getTime();
-      });
-
-      return currentValue.getTime() > newestDemand.updatedAt.getTime() ? currentValue : newestDemand.updatedAt;
-    },
   })
   lastUpdatedAt!: Date;
 
