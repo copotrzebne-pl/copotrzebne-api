@@ -54,7 +54,7 @@ describe('PlacesController (e2e)', () => {
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
         nameSlug: 'zhp-test',
-        state: 1,
+        state: PlaceState.ACTIVE,
       });
 
       // WHEN

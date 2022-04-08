@@ -8,6 +8,7 @@ import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { AppModule } from '../../../app.module';
 import { Place } from '../../../places/models/place.model';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 // TODO: add test which checks that demands are removed (seed supplies and priorities before all tests)
 describe('PlacesController (e2e)', () => {
@@ -40,6 +41,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'super-org',
+        state: PlaceState.ACTIVE,
       });
     });
 

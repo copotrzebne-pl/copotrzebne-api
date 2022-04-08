@@ -8,6 +8,7 @@ import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { UserRole } from '../../../users/types/user-role.enum';
 import { Place } from '../../../places/models/place.model';
 import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 describe('PlacesController (e2e)', () => {
   describe('PATCH /places/:id', () => {
@@ -37,6 +38,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'my-org',
+        state: PlaceState.ACTIVE,
       });
     });
 
@@ -134,6 +136,15 @@ describe('PlacesController (e2e)', () => {
         street: 'Long street',
         updatedAt: expect.any(String),
         workingHours: 'From 9 to 10',
+        priority: 0,
+        state: 1,
+        transitions: [
+          {
+            endState: 2,
+            name: 'DEACTIVATE',
+            startState: 1,
+          },
+        ],
       });
 
       done();

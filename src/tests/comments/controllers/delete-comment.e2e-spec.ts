@@ -9,6 +9,7 @@ import { UserRole } from '../../../users/types/user-role.enum';
 import { Place } from '../../../places/models/place.model';
 import { Comment } from '../../../comments/models/comment.model';
 import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 describe('CommentsController (e2e)', () => {
   describe('DELETE /comments/:id', () => {
@@ -41,6 +42,7 @@ describe('CommentsController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'my-org',
+        state: PlaceState.ACTIVE,
       });
     });
 

@@ -10,6 +10,7 @@ import { Place } from '../../../places/models/place.model';
 import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
 import { Supply } from '../../../supplies/models/supply.model';
 import { Priority } from '../../../priorities/models/priority.model';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 describe('DemandsController (e2e)', () => {
   describe('POST /demands', () => {
@@ -43,6 +44,7 @@ describe('DemandsController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'my-org',
+        state: PlaceState.ACTIVE,
       });
 
       supply = (await dbHelper.suppliesRepository.findOne()) as Supply;

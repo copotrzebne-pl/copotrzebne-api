@@ -11,6 +11,7 @@ import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
 import { Supply } from '../../../supplies/models/supply.model';
 import { Priority } from '../../../priorities/models/priority.model';
 import { Demand } from '../../../demands/models/demand.model';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 describe('DemandsController (e2e)', () => {
   describe('PATCH /demands/:id', () => {
@@ -46,6 +47,7 @@ describe('DemandsController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'demand-test-org',
+        state: PlaceState.ACTIVE,
       });
 
       demand = await dbHelper.demandsRepository.create({

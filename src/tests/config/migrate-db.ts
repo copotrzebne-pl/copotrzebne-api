@@ -67,16 +67,20 @@ const seedSupplies = async (sequelize: Sequelize) => {
 };
 const seedPriorities = async (sequelize: Sequelize) => {
   await sequelize.query(
-    `INSERT INTO "priorities" ("name_pl", "name_ua", "name_en")
-           VALUES ('potrzebne', 'необхідний', 'needed')`,
+    `INSERT INTO "priorities" ("name_pl", "name_ua", "name_en", "importance")
+           VALUES ('potrzebne', 'необхідний', 'needed', 1)`,
   );
 };
 
 module.exports = async () => {
-  const sequelize = new Sequelize(databaseConfig);
+  try {
+    const sequelize = new Sequelize(databaseConfig);
 
-  await createDatabase(sequelize);
-  await migrateDatabase(sequelize);
-  await seedSupplies(sequelize);
-  await seedPriorities(sequelize);
+    await createDatabase(sequelize);
+    await migrateDatabase(sequelize);
+    await seedSupplies(sequelize);
+    await seedPriorities(sequelize);
+  } catch (error) {
+    console.log('ERRRR', error);
+  }
 };
