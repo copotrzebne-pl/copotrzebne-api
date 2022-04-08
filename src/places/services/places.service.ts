@@ -31,6 +31,17 @@ export class PlacesService {
       include: [{ model: Demand, include: [Priority] }],
       transaction,
     });
+
+    return place ? this.getRawPlaceWithoutAssociations(place) : null;
+  }
+
+  public async getPlaceByNameSlug(transaction: Transaction, nameSlug: string): Promise<Place | null> {
+    const place = await this.placeModel.findOne({
+      where: { nameSlug },
+      include: [{ model: Demand, include: [Priority] }],
+      transaction,
+    });
+
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
