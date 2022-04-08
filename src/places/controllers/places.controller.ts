@@ -36,6 +36,8 @@ import { Comment } from '../../comments/models/comment.model';
 import { CommentsService } from '../../comments/services/comments.service';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
+import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
+import { PlaceStateMachine } from '../services/state-machine/places.state-machine';
 
 @ApiTags('places')
 @Injectable()
@@ -48,6 +50,7 @@ export class PlacesController {
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
+    private readonly placeStateMachine: PlaceStateMachine,
   ) {}
 
   @ApiQuery({ name: 'supply', type: String })
@@ -74,7 +77,8 @@ export class PlacesController {
     type: Place,
     description: 'returns all places',
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @ApiHeader({ name: 'authorization' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/all')
   public async getAllPlaces(): Promise<Place[] | void> {
@@ -168,6 +172,29 @@ export class PlacesController {
 
       if (!place) {
         throw new CRUDError('CANNOT_UPDATE_PLACE');
+      }
+
+      return place;
+    });
+  }
+
+  @ApiResponse({ type: Place, description: 'performs state transition on place and returns updated entity' })
+  @ApiHeader({ name: 'authorization' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Patch('/:id/transitions/perform')
+  public async performTransition(
+    @Param('id') placeId: string,
+    @Body() performTransitionDto: PerformPlaceTransitionDto,
+  ): Promise<Place | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placeStateMachine.performTransition(
+        placeId,
+        performTransitionDto.transition,
+        transaction,
+      );
+      if (!place) {
+        throw new CRUDError('CANNOT_PERFORM_PLACE_ACTION');
       }
 
       return place;

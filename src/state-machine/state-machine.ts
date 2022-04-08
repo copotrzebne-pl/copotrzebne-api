@@ -47,26 +47,6 @@ export class StateMachine<T extends Model> {
     return updatedEntity;
   }
 
-  public async getTransitions(entityId: string, transaction: Transaction): Promise<Transition[]> {
-    if (!this.model) {
-      throw new TransitionError('Model is empty');
-    }
-
-    const entity = await this.model.findByPk(entityId, {
-      transaction,
-    });
-
-    if (!entity) {
-      throw new TransitionError(`Entity with id ${entityId} not found`);
-    }
-
-    return this.getTransitionsForState(entity.getDataValue(this.stateField));
-  }
-
-  public getTransitionsForState(state: number | string): Transition[] {
-    return this.transitions.filter((t) => state === t.startState);
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   protected beforeTransition(entity: T, transition: Transition, transaction: Transaction): void {}
 
