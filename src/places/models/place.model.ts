@@ -7,7 +7,7 @@ import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
 import { Transition } from '../../state-machine/types/transition';
 import { PlaceState } from '../types/place.state.enum';
-import { placesTransitions } from '../services/state-machine/places.transitions';
+import { placeTransitions } from '../services/state-machine/place.transitions';
 
 @Scopes(() => ({
   active: {
@@ -90,7 +90,7 @@ export class Place extends Model {
   @Column({
     type: DataType.VIRTUAL,
     get() {
-      return placesTransitions.filter((t) => this.getDataValue('state') === t.startState);
+      return placeTransitions.filter((t) => this.getDataValue('state') === t.startState);
     },
   })
   transitions!: Transition[];

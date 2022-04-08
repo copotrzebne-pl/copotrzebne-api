@@ -37,7 +37,7 @@ import { CommentsService } from '../../comments/services/comments.service';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
-import { PlaceStateMachine } from '../services/state-machine/places.state-machine';
+import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
 
 @ApiTags('places')
 @Injectable()
@@ -50,7 +50,7 @@ export class PlacesController {
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
-    private readonly placeStateMachine: PlaceStateMachine,
+    private readonly placeStateMachine: PlacesStateMachine,
   ) {}
 
   @ApiQuery({ name: 'supply', type: String })
