@@ -50,6 +50,20 @@ export class PlacesController {
     private readonly commentsService: CommentsService,
   ) {}
 
+  @ApiResponse({ isArray: true, type: Place, description: 'finds place by slug and returns it' })
+  @Get('/name-slug/:nameSlug')
+  public async getPlaceByNameSlug(@Param('nameSlug') nameSlug: string): Promise<Place | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placesService.getPlaceByNameSlug(transaction, nameSlug);
+
+      if (!place) {
+        throw new NotFoundError('PLACE_NOT_FOUND');
+      }
+
+      return place;
+    });
+  }
+
   @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
   @Get('/:id')
   public async getPlace(@Param('id') id: string): Promise<Place | void> {
