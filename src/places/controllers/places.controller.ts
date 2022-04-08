@@ -36,6 +36,9 @@ import { Comment } from '../../comments/models/comment.model';
 import { CommentsService } from '../../comments/services/comments.service';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
+import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
+import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
+import { PlaceScope } from '../types/placeScope';
 
 @ApiTags('places')
 @Injectable()
@@ -48,27 +51,14 @@ export class PlacesController {
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
+    private readonly placeStateMachine: PlacesStateMachine,
   ) {}
 
-  @ApiResponse({ isArray: true, type: Place, description: 'finds place by slug and returns it' })
+  @ApiResponse({ type: Place, description: 'finds place by slug and returns it' })
   @Get('/name-slug/:nameSlug')
   public async getPlaceByNameSlug(@Param('nameSlug') nameSlug: string): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
       const place = await this.placesService.getPlaceByNameSlug(transaction, nameSlug);
-
-      if (!place) {
-        throw new NotFoundError('PLACE_NOT_FOUND');
-      }
-
-      return place;
-    });
-  }
-
-  @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
-  @Get('/:id')
-  public async getPlace(@Param('id') id: string): Promise<Place | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.getPlaceById(transaction, id);
 
       if (!place) {
         throw new NotFoundError('PLACE_NOT_FOUND');
@@ -83,17 +73,49 @@ export class PlacesController {
     isArray: true,
     type: Place,
     description:
-      'if query param "supplyId" is given - returns all places with demands for specific supply; if not - returns all places',
+      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places',
   })
   @Get('/')
-  public async getPlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
+  public async getActivePlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies);
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction);
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
+    });
+  }
+
+  @ApiQuery({ name: 'state', type: Number })
+  @ApiResponse({
+    isArray: true,
+    type: Place,
+    description: 'returns all places',
+  })
+  @ApiHeader({ name: 'authorization' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Get('/all')
+  public async getAllPlaces(@Query('state') state?: string): Promise<Place[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const placeState = state ? +state : undefined;
+      const scope = this.placesService.mapStateToScope(placeState);
+      return await this.placesService.getDetailedPlaces(transaction, scope);
+    });
+  }
+
+  @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
+  @Get('/:id')
+  public async getPlace(@Param('id') id: string): Promise<Place | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placesService.getPlaceById(transaction, id);
+
+      if (!place) {
+        throw new NotFoundError('PLACE_NOT_FOUND');
+      }
+
+      return place;
     });
   }
 
@@ -168,6 +190,29 @@ export class PlacesController {
 
       if (!place) {
         throw new CRUDError('CANNOT_UPDATE_PLACE');
+      }
+
+      return place;
+    });
+  }
+
+  @ApiResponse({ type: Place, description: 'performs state transition on place and returns updated entity' })
+  @ApiHeader({ name: 'authorization' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @UseGuards(AuthGuard)
+  @Patch('/:id/transitions/perform')
+  public async performTransition(
+    @Param('id') placeId: string,
+    @Body() performTransitionDto: PerformPlaceTransitionDto,
+  ): Promise<Place | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placeStateMachine.performTransition(
+        placeId,
+        performTransitionDto.transition,
+        transaction,
+      );
+      if (!place) {
+        throw new CRUDError('CANNOT_PERFORM_PLACE_ACTION');
       }
 
       return place;

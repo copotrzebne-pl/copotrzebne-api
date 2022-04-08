@@ -1,11 +1,26 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, HasMany, Model, Scopes, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
+import { Transition } from '../../state-machine/types/transition';
+import { PlaceState } from '../types/place.state.enum';
+import { placeTransitions } from '../services/state-machine/place.transitions';
 
+@Scopes(() => ({
+  active: {
+    where: {
+      state: PlaceState.ACTIVE,
+    },
+  },
+  inactive: {
+    where: {
+      state: PlaceState.INACTIVE,
+    },
+  },
+}))
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
   @ApiProperty()
@@ -60,6 +75,10 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   nameSlug!: string;
 
+  @ApiProperty({ nullable: false, type: 'number' })
+  @Column({ allowNull: false, type: DataType.NUMBER })
+  state!: number;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 
@@ -68,6 +87,18 @@ export class Place extends Model {
 
   @HasMany(() => Comment)
   comments!: Comment[];
+
+  @ApiProperty({
+    nullable: false,
+    description: 'transitions allowed to perform on this entity',
+  })
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      return placeTransitions.filter((t) => this.getDataValue('state') === t.startState);
+    },
+  })
+  transitions!: Transition[];
 
   @ApiProperty({
     nullable: true,
