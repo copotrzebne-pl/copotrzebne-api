@@ -81,6 +81,7 @@ module.exports = async () => {
     await seedSupplies(sequelize);
     await seedPriorities(sequelize);
   } catch (error) {
-    console.log('ERRRR', error);
+    console.error('Failed to migrate DB for tests', error);
+    throw error;
   }
 };
