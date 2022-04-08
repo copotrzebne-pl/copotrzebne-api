@@ -30,6 +30,8 @@ import { AuthorizationError } from '../error/authorization.error';
 import { SessionUser } from '../decorators/session-user.decorator';
 import { User } from '../users/models/user.model';
 import { PlacesService } from '../places/services/places.service';
+import { Action } from '../journals/types/action.enum';
+import { JournalsService } from '../journals/services/journals.service';
 
 @ApiTags('demands')
 @Injectable()
@@ -40,6 +42,7 @@ export class DemandsController {
     private readonly sequelize: Sequelize,
     private readonly demandsService: DemandsService,
     private readonly placesService: PlacesService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiResponse({ isArray: true, type: Demand, description: 'returns single demand' })
@@ -73,6 +76,12 @@ export class DemandsController {
       throw new CRUDError('CANNOT_CREATE_DEMAND');
     }
 
+    this.journalsService.logInJournal({
+      action: Action.ADD_DEMAND,
+      user: user.login,
+      details: `Demand ${demand.id} added added to place ${demandDto.placeId}`,
+    });
+
     return demand;
   }
 
@@ -102,6 +111,12 @@ export class DemandsController {
       throw new CRUDError('CANNOT_UPDATE_DEMAND');
     }
 
+    this.journalsService.logInJournal({
+      action: Action.EDIT_DEMAND,
+      user: user.login,
+      details: `Demand ${demand.id} edited for place ${demand.placeId}`,
+    });
+
     return demand;
   }
 
@@ -111,7 +126,7 @@ export class DemandsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   public async deleteDemand(@SessionUser() user: User, @Param('id') id: string): Promise<void> {
-    await this.sequelize.transaction(async (transaction) => {
+    const placeId = await this.sequelize.transaction(async (transaction): Promise<string> => {
       const demand = await this.demandsService.getDemandById(transaction, id);
       if (!demand) {
         throw new NotFoundError('DEMAND_NOT_FOUND');
@@ -122,6 +137,14 @@ export class DemandsController {
       }
 
       await this.demandsService.deleteDemand(transaction, id);
+
+      return demand.placeId;
+    });
+
+    this.journalsService.logInJournal({
+      action: Action.DELETE_DEMAND,
+      user: user.login,
+      details: `Demand ${id} deleted from place ${placeId}`,
     });
   }
 }
