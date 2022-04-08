@@ -22,6 +22,8 @@ describe('PlacesController (e2e)', () => {
 
       await app.init();
       dbHelper = new DatabaseHelper(module);
+
+      dbHelper.placeRepository.destroy({ where: {} });
     });
 
     afterAll(async () => {
