@@ -38,7 +38,6 @@ import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
-import { PlaceState } from '../types/place.state.enum';
 import { PlaceScope } from '../types/placeScope';
 
 @ApiTags('places')
@@ -55,7 +54,7 @@ export class PlacesController {
     private readonly placeStateMachine: PlacesStateMachine,
   ) {}
 
-  @ApiResponse({ isArray: true, type: Place, description: 'finds place by slug and returns it' })
+  @ApiResponse({ type: Place, description: 'finds place by slug and returns it' })
   @Get('/name-slug/:nameSlug')
   public async getPlaceByNameSlug(@Param('nameSlug') nameSlug: string): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
