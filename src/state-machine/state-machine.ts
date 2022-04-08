@@ -2,10 +2,10 @@ import { Transaction } from 'sequelize';
 import { Model } from 'sequelize-typescript';
 import TransitionError from '../error/transition.error';
 import { Transition } from './types/transition';
-import { ModelStatic } from '../types/model-static';
+import { ModelStaticType } from '../types/model-static.type';
 
 export class StateMachine<T extends Model> {
-  protected model: ModelStatic<T> | null = null;
+  protected model: ModelStaticType<T> | null = null;
   protected stateField = 'state';
   protected transitions: Transition[] = [];
 

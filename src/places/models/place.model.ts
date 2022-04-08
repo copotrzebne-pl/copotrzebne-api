@@ -1,4 +1,4 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, HasMany, Model, Scopes, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
@@ -6,8 +6,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
 import { Transition } from '../../state-machine/types/transition';
+import { PlaceState } from '../types/place.state.enum';
 import { placesStateMachine } from '../services/places.state-machine';
 
+@Scopes(() => ({
+  active: {
+    where: {
+      state: PlaceState.ACTIVE,
+    },
+  },
+}))
 @Table({ tableName: 'places', underscored: true })
 export class Place extends Model {
   @ApiProperty()

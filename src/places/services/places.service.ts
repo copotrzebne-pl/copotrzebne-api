@@ -15,6 +15,7 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
+import { PlaceScope } from '../types/place.scope';
 
 @Injectable()
 export class PlacesService {
@@ -32,8 +33,8 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction): Promise<Place[]> {
-    const places = await this.placeModel.findAll({
+  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = ''): Promise<Place[]> {
+    const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
           model: Demand,
@@ -54,8 +55,12 @@ export class PlacesService {
     return places.sort(this.sortPlacesByLastUpdate);
   }
 
-  public async getPlacesWithSupplies(transaction: Transaction, suppliesIds: string[]): Promise<Place[]> {
-    const places = await this.placeModel.findAll({
+  public async getPlacesWithSupplies(
+    transaction: Transaction,
+    suppliesIds: string[],
+    scope: PlaceScope = '',
+  ): Promise<Place[]> {
+    const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
           model: Demand,

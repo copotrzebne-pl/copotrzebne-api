@@ -50,6 +50,39 @@ export class PlacesController {
     private readonly commentsService: CommentsService,
   ) {}
 
+  @ApiQuery({ name: 'supply', type: String })
+  @ApiResponse({
+    isArray: true,
+    type: Place,
+    description:
+      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places',
+  })
+  @Get('/')
+  public async getActivePlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      if (supplyId) {
+        const supplies = supplyId.split(',');
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, 'active');
+      }
+
+      return await this.placesService.getDetailedPlaces(transaction, 'active');
+    });
+  }
+
+  @ApiResponse({
+    isArray: true,
+    type: Place,
+    description: 'returns all places',
+  })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @Get('/all')
+  public async getAllPlaces(): Promise<Place[] | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.placesService.getDetailedPlaces(transaction);
+    });
+  }
+
   @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
   @Get('/:id')
   public async getPlace(@Param('id') id: string): Promise<Place | void> {
@@ -61,25 +94,6 @@ export class PlacesController {
       }
 
       return place;
-    });
-  }
-
-  @ApiQuery({ name: 'supply', type: String })
-  @ApiResponse({
-    isArray: true,
-    type: Place,
-    description:
-      'if query param "supplyId" is given - returns all places with demands for specific supply; if not - returns all places',
-  })
-  @Get('/')
-  public async getPlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      if (supplyId) {
-        const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies);
-      }
-
-      return await this.placesService.getDetailedPlaces(transaction);
     });
   }
 
