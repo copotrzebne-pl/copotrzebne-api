@@ -43,6 +43,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'super-org',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
+        openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
       });
     });
 

@@ -57,7 +57,8 @@ export class UpdatePlaceDto {
   @IsNumber()
   longitude?: number;
 
-  @ApiProperty({ nullable: false })
+  @ApiProperty({ nullable: true })
+  @IsOptional()
   @IsArray()
   openingHours!: CreateOpeningHoursDto[];
 

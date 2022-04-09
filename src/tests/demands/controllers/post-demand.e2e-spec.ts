@@ -46,6 +46,7 @@ describe('DemandsController (e2e)', () => {
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
+        openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
       });
 
       supply = (await dbHelper.suppliesRepository.findOne()) as Supply;

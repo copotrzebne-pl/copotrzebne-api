@@ -49,6 +49,7 @@ describe('DemandsController (e2e)', () => {
         nameSlug: 'demand-test-org',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
+        openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
       });
 
       demand = await dbHelper.demandsRepository.create({

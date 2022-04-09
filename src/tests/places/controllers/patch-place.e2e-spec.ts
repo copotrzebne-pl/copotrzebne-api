@@ -40,6 +40,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
+        openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
       });
     });
 
@@ -87,7 +88,7 @@ describe('PlacesController (e2e)', () => {
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),
-        workingHours: null,
+        openingHours: [],
       });
 
       done();
@@ -115,8 +116,8 @@ describe('PlacesController (e2e)', () => {
           latitude: 11,
           longitude: 12,
           phone: '123',
-          workingHours: 'From 9 to 10',
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
+          openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
         })
         .expect(200);
 
@@ -137,7 +138,6 @@ describe('PlacesController (e2e)', () => {
         phone: '123',
         street: 'Long street',
         updatedAt: expect.any(String),
-        workingHours: 'From 9 to 10',
         priority: 0,
         state: 1,
         transitions: [
@@ -146,6 +146,9 @@ describe('PlacesController (e2e)', () => {
             name: 'DEACTIVATE',
             startState: 1,
           },
+        ],
+        openingHours: [
+          { day: 1, openTime: '08:00', closeTime: '16:00', id: expect.any(String), placeId: expect.any(String) },
         ],
       });
 

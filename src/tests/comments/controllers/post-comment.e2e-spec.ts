@@ -42,6 +42,7 @@ describe('CommentsController (e2e)', () => {
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
+        openingHours: [{ day: 1, openTime: '08:00', closeTime: '16:00' }],
       });
     });
 
