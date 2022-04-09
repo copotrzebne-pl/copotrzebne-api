@@ -89,10 +89,14 @@ export class PlacesService {
     return places.sort(this.sortPlacesByLastUpdate);
   }
 
-  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place | null> {
+  public async createPlace(
+    transaction: Transaction,
+    placeDto: CreatePlaceDto,
+    state: PlaceState,
+  ): Promise<Place | null> {
     const nameSlug = slugify(placeDto.name);
 
-    const place = await this.placeModel.create({ nameSlug, ...placeDto }, { transaction });
+    const place = await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
 
     await this.openingHoursService.createOpeningHoursForPlace(transaction, place.id, placeDto.openingHours);
 

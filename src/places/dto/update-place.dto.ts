@@ -60,4 +60,9 @@ export class UpdatePlaceDto {
   @ApiProperty({ nullable: false })
   @IsArray()
   openingHours!: CreateOpeningHoursDto[];
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  lastUpdatedAt?: Date;
 }

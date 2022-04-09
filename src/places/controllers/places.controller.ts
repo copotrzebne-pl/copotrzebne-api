@@ -41,6 +41,7 @@ import { PlacesStateMachine } from '../services/state-machine/places.state-machi
 import { PlaceScope } from '../types/placeScope';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
+import { PlaceState } from '../types/place.state.enum';
 
 @ApiTags('places')
 @Injectable()
@@ -168,7 +169,24 @@ export class PlacesController {
   @Post('/')
   public async createPlace(@SessionUser() user: User, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.createPlace(transaction, placeDto);
+      const place = await this.placesService.createPlace(transaction, placeDto, PlaceState.ACTIVE);
+
+      if (!place) {
+        throw new NotFoundError();
+      }
+
+      return place;
+    });
+  }
+
+  @ApiResponse({
+    type: Place,
+    description: 'creates draft for place to be accepted by admin later and returns created entity',
+  })
+  @Post('/draft')
+  public async createDraftPlace(@Body() placeDto: CreatePlaceDto): Promise<Place | void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      const place = await this.placesService.createPlace(transaction, placeDto, PlaceState.INACTIVE);
 
       if (!place) {
         throw new NotFoundError();

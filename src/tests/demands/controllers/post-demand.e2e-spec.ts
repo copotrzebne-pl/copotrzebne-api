@@ -45,6 +45,7 @@ describe('DemandsController (e2e)', () => {
         buildingNumber: '5a',
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: new Date(),
       });
 
       supply = (await dbHelper.suppliesRepository.findOne()) as Supply;

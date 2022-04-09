@@ -39,6 +39,7 @@ describe('PlacesController (e2e)', () => {
         buildingNumber: '5a',
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: '2022-04-09T00:00:00.000Z',
       });
     });
 
@@ -78,7 +79,7 @@ describe('PlacesController (e2e)', () => {
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
-        lastUpdatedAt: null,
+        lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         latitude: null,
         longitude: null,
         name: 'New Name',
@@ -115,6 +116,7 @@ describe('PlacesController (e2e)', () => {
           longitude: 12,
           phone: '123',
           workingHours: 'From 9 to 10',
+          lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         })
         .expect(200);
 
@@ -127,7 +129,7 @@ describe('PlacesController (e2e)', () => {
         createdAt: expect.any(String),
         email: 'email',
         id: expect.any(String),
-        lastUpdatedAt: null,
+        lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         latitude: '11',
         longitude: '12',
         name: 'New Name 2',

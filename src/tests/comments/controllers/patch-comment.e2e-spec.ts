@@ -43,6 +43,7 @@ describe('CommentsController (e2e)', () => {
         buildingNumber: '5a',
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: new Date(),
       });
 
       comment = await dbHelper.commentsRepository.create({
