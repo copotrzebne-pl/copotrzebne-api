@@ -87,9 +87,9 @@ export class PlacesService {
     return places.sort(this.sortPlacesByLastUpdate);
   }
 
-  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto): Promise<Place> {
+  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto, state: PlaceState): Promise<Place> {
     const nameSlug = slugify(placeDto.name);
-    return await this.placeModel.create({ nameSlug, ...placeDto }, { transaction });
+    return await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
