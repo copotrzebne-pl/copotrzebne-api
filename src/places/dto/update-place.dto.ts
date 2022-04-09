@@ -60,7 +60,7 @@ export class UpdatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsArray()
-  openingHours!: CreateOpeningHoursDto[];
+  openingHours?: CreateOpeningHoursDto[];
 
   @ApiProperty({ nullable: true })
   @IsOptional()
