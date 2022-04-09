@@ -9,12 +9,14 @@ import { UpdateDemandDto } from '../dto/update-demand.dto';
 import { Category } from '../../categories/models/category.model';
 import { Language } from '../../types/language.type.enum';
 import IncorrectValueError from '../../error/incorrect-value.error';
+import { PlacesService } from '../../places/services/places.service';
 
 @Injectable()
 export class DemandsService {
   constructor(
     @InjectModel(Demand)
     private readonly demandModel: typeof Demand,
+    private readonly placesService: PlacesService,
   ) {}
 
   public async getDemandById(transaction: Transaction, id: string): Promise<Demand | null> {
@@ -62,12 +64,32 @@ export class DemandsService {
 
   public async createDemand(transaction: Transaction, demandDto: CreateDemandDto): Promise<Demand | null> {
     const demand = await this.demandModel.create({ ...demandDto }, { transaction });
-    return await this.getDetailedDemand(transaction, demand.id);
+    const detailedDemand = await this.getDetailedDemand(transaction, demand.id);
+
+    if (!detailedDemand) {
+      return null;
+    }
+
+    await this.placesService.updatePlace(transaction, detailedDemand?.placeId, {
+      lastUpdatedAt: detailedDemand.updatedAt,
+    });
+
+    return detailedDemand;
   }
 
   public async updateDemand(transaction: Transaction, id: string, demandDto: UpdateDemandDto): Promise<Demand | null> {
     await this.demandModel.update({ ...demandDto }, { where: { id }, transaction });
-    return await this.getDetailedDemand(transaction, id);
+    const detailedDemand = await this.getDetailedDemand(transaction, id);
+
+    if (!detailedDemand) {
+      return null;
+    }
+
+    await this.placesService.updatePlace(transaction, detailedDemand?.placeId, {
+      lastUpdatedAt: detailedDemand.updatedAt,
+    });
+
+    return detailedDemand;
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {

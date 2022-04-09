@@ -79,6 +79,13 @@ export class Place extends Model {
   @Column({ allowNull: false, type: DataType.NUMBER })
   state!: number;
 
+  @ApiProperty({ nullable: false, type: 'string' })
+  @Column({
+    allowNull: false,
+    type: DataType.DATE,
+  })
+  lastUpdatedAt!: Date;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 
@@ -99,33 +106,6 @@ export class Place extends Model {
     },
   })
   transitions!: Transition[];
-
-  @ApiProperty({
-    nullable: true,
-    type: 'string',
-    description: 'virtual field that returns date of last update based on last updated demand for place',
-  })
-  @Column({
-    type: DataType.VIRTUAL,
-    get() {
-      const demands: Demand[] = this.getDataValue('demands');
-
-      if (!demands || !demands.length) {
-        return null;
-      }
-
-      const [newestDemand] = demands.sort((demand1, demand2) => {
-        return demand2.updatedAt.getTime() - demand1.updatedAt.getTime();
-      });
-
-      return newestDemand.updatedAt;
-    },
-
-    set() {
-      throw new ForbiddenOperationError('Cannot set virtual field lastUpdatedAt');
-    },
-  })
-  lastUpdatedAt!: Date | null;
 
   @ApiProperty({
     nullable: false,

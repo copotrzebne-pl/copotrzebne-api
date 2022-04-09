@@ -48,6 +48,7 @@ describe('DemandsController (e2e)', () => {
         buildingNumber: '5a',
         nameSlug: 'demand-test-org',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: new Date(),
       });
 
       demand = await dbHelper.demandsRepository.create({

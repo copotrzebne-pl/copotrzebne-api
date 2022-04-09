@@ -57,6 +57,7 @@ describe('PlacesController (e2e)', () => {
         workingHours: 'Codziennie 6:30-23:30',
         nameSlug: 'zhp-test',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: '2022-04-08T21:44:00.940Z',
       });
 
       // WHEN
@@ -72,7 +73,7 @@ describe('PlacesController (e2e)', () => {
           createdAt: body[0].createdAt,
           email: 'test-email@email.com',
           id: body[0].id,
-          lastUpdatedAt: null,
+          lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           latitude: '56',
           longitude: '58',
           name: 'ZHP Test',
