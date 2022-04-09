@@ -60,4 +60,9 @@ export class UpdatePlaceDto {
   @IsOptional()
   @IsString()
   workingHours?: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  lastUpdatedAt?: Date;
 }

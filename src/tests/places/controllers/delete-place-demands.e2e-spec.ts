@@ -42,6 +42,7 @@ describe('PlacesController (e2e)', () => {
         buildingNumber: '5a',
         nameSlug: 'super-org',
         state: PlaceState.ACTIVE,
+        lastUpdatedAt: new Date(),
       });
     });
 
