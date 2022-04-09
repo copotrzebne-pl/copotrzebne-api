@@ -29,6 +29,8 @@ import { PlacesService } from '../places/services/places.service';
 import { AuthorizationError } from '../error/authorization.error';
 import { SessionUser } from '../decorators/session-user.decorator';
 import { User } from '../users/models/user.model';
+import { Action } from '../journals/types/action.enum';
+import { JournalsService } from '../journals/services/journals.service';
 
 @ApiTags('comments')
 @Injectable()
@@ -39,6 +41,7 @@ export class CommentsController {
     private readonly sequelize: Sequelize,
     private readonly commentsService: CommentsService,
     private readonly placesService: PlacesService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiResponse({ isArray: true, type: Comment, description: 'returns single comment' })
@@ -60,7 +63,7 @@ export class CommentsController {
   @UseGuards(AuthGuard)
   @Post('/')
   public async createComment(@SessionUser() user: User, @Body() commentDto: CreateCommentDto): Promise<Comment | void> {
-    return await this.sequelize.transaction(async (transaction) => {
+    const comment = await this.sequelize.transaction(async (transaction): Promise<Comment> => {
       const isPlaceManageableByUser = await this.placesService.isPlaceManageableByUser(
         transaction,
         user,
@@ -79,6 +82,14 @@ export class CommentsController {
 
       return comment;
     });
+
+    this.journalsService.logInJournal({
+      action: Action.ADD_COMMENT,
+      user: user.login,
+      details: `New comment ${comment.id} added to place ${commentDto.placeId}`,
+    });
+
+    return comment;
   }
 
   @ApiResponse({ type: Comment, description: 'updates comment and returns updated entity' })
@@ -90,7 +101,7 @@ export class CommentsController {
     @Param('id') id: string,
     @Body() commentDto: UpdateCommentDto,
   ): Promise<Comment | void> {
-    return await this.sequelize.transaction(async (transaction) => {
+    const comment = await this.sequelize.transaction(async (transaction): Promise<Comment> => {
       const comment = await this.commentsService.getCommentById(transaction, id);
 
       if (!comment) {
@@ -115,6 +126,14 @@ export class CommentsController {
 
       return updatedComment;
     });
+
+    this.journalsService.logInJournal({
+      action: Action.EDIT_COMMENT,
+      user: user.login,
+      details: `Comment ${comment.id} edited for place ${comment.placeId}`,
+    });
+
+    return comment;
   }
 
   @ApiResponse({ status: 204, description: 'deletes comment and returns empty response' })
@@ -123,7 +142,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   public async deleteComment(@SessionUser() user: User, @Param('id') id: string): Promise<void> {
-    await this.sequelize.transaction(async (transaction) => {
+    const placeId = await this.sequelize.transaction(async (transaction): Promise<string> => {
       const comment = await this.commentsService.getCommentById(transaction, id);
 
       if (!comment) {
@@ -141,6 +160,14 @@ export class CommentsController {
       }
 
       await this.commentsService.deleteComment(transaction, id);
+
+      return comment.placeId;
+    });
+
+    this.journalsService.logInJournal({
+      action: Action.DELETE_COMMENT,
+      user: user.login,
+      details: `Comment ${id} removed from place ${placeId}`,
     });
   }
 }

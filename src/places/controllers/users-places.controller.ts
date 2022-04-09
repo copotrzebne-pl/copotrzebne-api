@@ -23,6 +23,8 @@ import { UserRole } from '../../users/types/user-role.enum';
 import { AuthGuard } from '../../guards/authentication.guard';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
+import { Action } from '../../journals/types/action.enum';
+import { JournalsService } from '../../journals/services/journals.service';
 
 @ApiTags('users-places')
 @Injectable()
@@ -34,6 +36,7 @@ export class UsersPlacesController {
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
+    private readonly journalsService: JournalsService,
   ) {}
 
   @ApiHeader({ name: 'authorization' })
@@ -42,13 +45,23 @@ export class UsersPlacesController {
   @UseGuards(AuthGuard)
   @Get('/owned')
   public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
+    const userPlaces = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
       if (user.role === UserRole.ADMIN) {
         return await this.placesService.getDetailedPlaces(transaction);
       }
 
       return await this.placesService.getUserPlaces(transaction, user.id);
     });
+
+    if (user.role === UserRole.PLACE_MANAGER) {
+      this.journalsService.logInJournal({
+        action: Action.GET_OWNED_PLACES,
+        user: user.login,
+        details: `Place manager fetched owned places`,
+      });
+    }
+
+    return userPlaces;
   }
 
   @ApiResponse({ status: 204, description: 'Assign place to user. Only admin can assign places.' })

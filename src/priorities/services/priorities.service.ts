@@ -11,6 +11,6 @@ export class PrioritiesService {
   ) {}
 
   public async getAllPriorities(transaction: Transaction): Promise<Priority[]> {
-    return await this.priorityModel.findAll({ transaction });
+    return await this.priorityModel.findAll({ order: [['importance', 'ASC']], transaction });
   }
 }

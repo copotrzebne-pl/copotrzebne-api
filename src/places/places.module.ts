@@ -11,11 +11,12 @@ import { CommentsService } from '../comments/services/comments.service';
 import { Comment } from '../comments/models/comment.model';
 import { OpeningHoursService } from '../opening-hours/services/opening-hours.service';
 import { OpeningHours } from '../opening-hours/models/opening-hours.model';
+import { PlacesStateMachine } from './services/state-machine/places.state-machine';
 
 @Global()
 @Module({
   imports: [SequelizeModule.forFeature([Place, Demand, Comment, OpeningHours])],
-  providers: [PlacesService, DemandsService, CommentsService, OpeningHoursService],
+  providers: [PlacesService, DemandsService, CommentsService, PlacesStateMachine, OpeningHoursService],
   controllers: [PlacesController, UsersPlacesController],
   exports: [PlacesService],
 })

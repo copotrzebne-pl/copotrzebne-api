@@ -16,6 +16,8 @@ import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
 import { OpeningHoursService } from '../../opening-hours/services/opening-hours.service';
+import { PlaceScope } from '../types/placeScope';
+import { PlaceState } from '../types/place.state.enum';
 
 @Injectable()
 export class PlacesService {
@@ -27,12 +29,26 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    const place = await this.placeModel.findByPk(id, { include: [Demand], transaction });
+    const place = await this.placeModel.findByPk(id, {
+      include: [{ model: Demand, include: [Priority] }],
+      transaction,
+    });
+
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction): Promise<Place[]> {
-    const places = await this.placeModel.findAll({
+  public async getPlaceByNameSlug(transaction: Transaction, nameSlug: string): Promise<Place | null> {
+    const place = await this.placeModel.findOne({
+      where: { nameSlug },
+      include: [{ model: Demand, include: [Priority] }],
+      transaction,
+    });
+
+    return place ? this.getRawPlaceWithoutAssociations(place) : null;
+  }
+
+  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = PlaceScope.DEFAULT): Promise<Place[]> {
+    const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
           model: Demand,
@@ -53,12 +69,16 @@ export class PlacesService {
     return places.sort(this.sortPlacesByLastUpdate);
   }
 
-  public async getPlacesWithSupplies(transaction: Transaction, suppliesIds: string[]): Promise<Place[]> {
-    const places = await this.placeModel.findAll({
+  public async getPlacesWithSupplies(
+    transaction: Transaction,
+    suppliesIds: string[],
+    scope: PlaceScope = PlaceScope.DEFAULT,
+  ): Promise<Place[]> {
+    const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
           model: Demand,
-          include: [Supply],
+          include: [Supply, Priority],
         },
       ],
       where: {
@@ -115,6 +135,7 @@ export class PlacesService {
         },
         {
           model: Demand,
+          include: [Priority],
         },
       ],
       transaction,
@@ -134,6 +155,14 @@ export class PlacesService {
     }
 
     return true;
+  }
+
+  public mapStateToScope(state: PlaceState | undefined): PlaceScope {
+    if (!state || !Object.values(PlaceState).includes(state)) {
+      return PlaceScope.DEFAULT;
+    }
+
+    return state === PlaceState.ACTIVE ? PlaceScope.ACTIVE : PlaceScope.INACTIVE;
   }
 
   private getRawPlaceWithoutAssociations(place: Place): Place {

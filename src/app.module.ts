@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { PlacesModule } from './places/places.module';
 import { getDatabaseConfig } from './config/database/database.config';
@@ -14,6 +15,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
 import { CommentsModule } from './comments/comments.module';
 import { OpeningHoursModule } from './opening-hours/opening-hours.module';
+import { JournalsModule } from './journals/journals.module';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { OpeningHoursModule } from './opening-hours/opening-hours.module';
       useFactory: async (configService: ConfigService) => getDatabaseConfig(configService),
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot(),
     UsersModule,
     AuthenticationModule,
     PlacesModule,
@@ -32,6 +35,7 @@ import { OpeningHoursModule } from './opening-hours/opening-hours.module';
     CommentsModule,
     OpeningHoursModule,
     JwtModule,
+    JournalsModule,
   ],
 })
 export class AppModule implements NestModule {

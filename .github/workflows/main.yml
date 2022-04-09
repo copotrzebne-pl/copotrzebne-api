@@ -12,4 +12,6 @@ jobs:
         node-version: 16
     - run: yarn install
     - run: yarn build
+    - run: yarn start:docker:test-db
     - run: yarn test
+    - run: yarn test:e2e

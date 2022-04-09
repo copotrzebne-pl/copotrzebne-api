@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppModule } from '../../../app.module';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
+import { PlaceState } from '../../../places/types/place.state.enum';
+import { PlaceTransitionName } from '../../../places/types/place.transition-name.enum';
 
 describe('PlacesController (e2e)', () => {
   describe('GET /places', () => {
@@ -16,8 +18,12 @@ describe('PlacesController (e2e)', () => {
       }).compile();
 
       app = module.createNestApplication();
+      app.useGlobalPipes(new ValidationPipe());
+
       await app.init();
       dbHelper = new DatabaseHelper(module);
+
+      dbHelper.placeRepository.destroy({ where: {} });
     });
 
     afterAll(async () => {
@@ -33,9 +39,9 @@ describe('PlacesController (e2e)', () => {
       done();
     });
 
-    it('returns all places', async (done) => {
+    it('returns all active places', async (done) => {
       // GIVEN
-      await dbHelper.placeRepository.create({
+      const place = await dbHelper.placeRepository.create({
         name: 'ZHP Test',
         city: 'Krakow',
         street: 'Pawia',
@@ -50,6 +56,7 @@ describe('PlacesController (e2e)', () => {
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
         nameSlug: 'zhp-test',
+        state: PlaceState.ACTIVE,
       });
 
       // WHEN
@@ -74,6 +81,12 @@ describe('PlacesController (e2e)', () => {
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
           nameSlug: 'zhp-test',
+          demands: [],
+          priority: 0,
+          state: 1,
+          transitions: [
+            { startState: PlaceState.ACTIVE, endState: PlaceState.INACTIVE, name: PlaceTransitionName.DEACTIVATE },
+          ],
         },
       ]);
 
@@ -81,6 +94,7 @@ describe('PlacesController (e2e)', () => {
       expect(typeof body[0].updatedAt).toBe('string');
       expect(typeof body[0].id).toBe('string');
 
+      await dbHelper.placeRepository.destroy({ where: { id: place.id } });
       done();
     });
   });
