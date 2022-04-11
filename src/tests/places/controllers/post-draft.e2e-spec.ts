@@ -4,6 +4,7 @@ import request from 'supertest';
 
 import { AppModule } from '../../../app.module';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
+import { PlaceState } from '../../../places/types/place.state.enum';
 
 describe('PlacesController (e2e)', () => {
   describe('POST /places/draft', () => {
@@ -62,6 +63,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         updatedAt: expect.any(String),
         workingHours: null,
+        state: PlaceState.INACTIVE,
       });
 
       expect(newPlacesCount).toEqual(placesCount + 1);
