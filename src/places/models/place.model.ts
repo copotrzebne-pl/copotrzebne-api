@@ -83,6 +83,7 @@ export class Place extends Model {
   @Column({
     allowNull: false,
     type: DataType.DATE,
+    defaultValue: Sequelize.fn('now'),
   })
   lastUpdatedAt!: Date;
 
