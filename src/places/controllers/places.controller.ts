@@ -42,6 +42,8 @@ import { PlaceScope } from '../types/placeScope';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
+import { UsersDraftsService } from '../../users-drafts/services/users-drafts.service';
+import { CreateDraftPlaceDto } from '../dto/create-draft-place.dto';
 
 @ApiTags('places')
 @Injectable()
@@ -56,6 +58,7 @@ export class PlacesController {
     private readonly commentsService: CommentsService,
     private readonly placeStateMachine: PlacesStateMachine,
     private readonly journalsService: JournalsService,
+    private readonly usersDraftsService: UsersDraftsService,
   ) {}
 
   @ApiResponse({ type: Place, description: 'finds place by slug and returns it' })
@@ -184,9 +187,11 @@ export class PlacesController {
     description: 'creates draft for place to be accepted by admin later and returns created entity',
   })
   @Post('/draft')
-  public async createDraftPlace(@Body() placeDto: CreatePlaceDto): Promise<Place | void> {
+  public async createDraftPlace(@Body() placeDto: CreateDraftPlaceDto): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
       const place = await this.placesService.createPlace(transaction, placeDto, PlaceState.INACTIVE);
+
+      await this.usersDraftsService.createUserDraft(transaction, { email: placeDto.userEmail, placeId: place.id });
 
       if (!place) {
         throw new NotFoundError();

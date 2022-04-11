@@ -9,6 +9,7 @@ import { Demand } from '../../demands/models/demand.model';
 import { Supply } from '../../supplies/models/supply.model';
 import { Priority } from '../../priorities/models/priority.model';
 import { Comment } from '../../comments/models/comment.model';
+import { UserDraft } from '../../users-drafts/models/user-draft.model';
 
 export class DatabaseHelper {
   constructor(private readonly testingModule: TestingModule) {}
@@ -21,4 +22,5 @@ export class DatabaseHelper {
   public readonly suppliesRepository = this.testingModule.get<typeof Supply>(getModelToken(Supply));
   public readonly prioritiesRepository = this.testingModule.get<typeof Priority>(getModelToken(Priority));
   public readonly commentsRepository = this.testingModule.get<typeof Comment>(getModelToken(Comment));
+  public readonly usersDraftsRepository = this.testingModule.get<typeof UserDraft>(getModelToken(UserDraft));
 }
