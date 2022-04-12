@@ -11,10 +11,11 @@ import { CommentsService } from '../comments/services/comments.service';
 import { Comment } from '../comments/models/comment.model';
 import { PlacesStateMachine } from './services/state-machine/places.state-machine';
 import { UsersDraftsModule } from '../users-drafts/users-drafts.module';
+import { Link } from '../links/models/link.model';
 
 @Global()
 @Module({
-  imports: [SequelizeModule.forFeature([Place, Demand, Comment]), UsersDraftsModule],
+  imports: [SequelizeModule.forFeature([Place, Demand, Comment, Link]), UsersDraftsModule],
   providers: [PlacesService, DemandsService, CommentsService, PlacesStateMachine],
   controllers: [PlacesController, UsersPlacesController],
   exports: [PlacesService],

@@ -76,7 +76,11 @@ describe('CommentsController (e2e)', () => {
           placeId: place.id,
           title: 'Test comment',
           message: 'This is a comment',
-          links: [],
+          link: {
+            homepage: 'http://somefakeaddress.com',
+            facebook: 'http://facebook.com',
+            signup: 'http://somefakeaddress.com/signup',
+          },
         })
         .expect(201);
 
