@@ -39,7 +39,7 @@ export class CommentsService {
       await this.createLinkForComment(transaction, comment.id, commentDto.link);
     }
 
-    return this.getCommentById(transaction, comment.id);
+    return await this.getCommentById(transaction, comment.id);
   }
 
   public async updateComment(

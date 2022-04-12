@@ -2,7 +2,7 @@ import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '../../comments/models/comment.model';
 
-@Table({ tableName: 'links', underscored: true })
+@Table({ tableName: 'links', underscored: true, timestamps: false })
 export class Link extends Model {
   @ApiProperty()
   @Column({ primaryKey: true, defaultValue: Sequelize.fn('uuid_generate_v4') })
