@@ -61,11 +61,10 @@ export class PlacesService {
           ],
         },
       ],
-      order: [['lastUpdatedAt', 'DESC']],
       transaction,
     });
 
-    return places.sort(this.sortPlacesByPriority);
+    return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
   public async getPlacesWithSupplies(
@@ -83,10 +82,9 @@ export class PlacesService {
       where: {
         '$demands->supply.id$': suppliesIds,
       },
-      order: [['lastUpdatedAt', 'DESC']],
     });
 
-    return places.sort(this.sortPlacesByPriority);
+    return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
   public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto, state: PlaceState): Promise<Place> {
@@ -164,7 +162,18 @@ export class PlacesService {
     return rawPlace as Place;
   }
 
+  private sortPlacesByLastUpdateAndPriority(places: Place[]): Place[] {
+    return places.sort(this.sortPlacesByPriority).sort(this.sortPlacesByLastUpdate);
+  }
+
   private sortPlacesByPriority(place1: Place, place2: Place): number {
     return place2.priority - place1.priority;
+  }
+
+  private sortPlacesByLastUpdate(place1: Place, place2: Place): number {
+    const place1LastUpdatedAt = place1.lastUpdatedAt ? place1.lastUpdatedAt.getTime() : 0;
+    const place2LastUpdatedAt = place2.lastUpdatedAt ? place2.lastUpdatedAt.getTime() : 0;
+
+    return place2LastUpdatedAt - place1LastUpdatedAt;
   }
 }
