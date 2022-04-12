@@ -50,7 +50,6 @@ describe('CommentsController (e2e)', () => {
         placeId: place.id,
         title: 'Comment',
         message: 'New Comment',
-        links: [],
       });
     });
 
