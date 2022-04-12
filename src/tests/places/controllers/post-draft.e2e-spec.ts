@@ -36,6 +36,7 @@ describe('PlacesController (e2e)', () => {
         city: 'Krakow',
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         userEmail: 'adrian@schibsted.com',
+        openingHours: [],
       };
       const placesCount = await dbHelper.placeRepository.count();
 
@@ -62,7 +63,7 @@ describe('PlacesController (e2e)', () => {
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),
-        workingHours: null,
+        openingHours: [],
         state: PlaceState.INACTIVE,
       });
 
@@ -92,6 +93,7 @@ describe('PlacesController (e2e)', () => {
           'street must be a string',
           'buildingNumber should not be empty',
           'buildingNumber must be a string',
+          'openingHours must be an array',
         ],
       });
 
