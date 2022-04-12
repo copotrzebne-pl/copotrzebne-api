@@ -12,12 +12,13 @@ import { Category } from '../../categories/models/category.model';
 import { Comment } from '../../comments/models/comment.model';
 import { Journal } from '../../journals/models/journal.model';
 import { UserDraft } from '../../users-drafts/models/user-draft.model';
+import { Link } from '../../links/models/link.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
     dialect: 'postgres',
     synchronize: false,
-    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category, Comment, Journal, UserDraft],
+    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category, Comment, Link, Journal, UserDraft],
   };
   // Heroku
   const databaseUrl = configService.get<string>('DATABASE_URL', '');
