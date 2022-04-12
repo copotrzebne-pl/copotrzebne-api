@@ -191,11 +191,11 @@ export class PlacesController {
     return await this.sequelize.transaction(async (transaction) => {
       const place = await this.placesService.createPlace(transaction, placeDto, PlaceState.INACTIVE);
 
-      await this.usersDraftsService.createUserDraft(transaction, { email: placeDto.userEmail, placeId: place.id });
-
       if (!place) {
         throw new NotFoundError();
       }
+
+      await this.usersDraftsService.createUserDraft(transaction, { email: placeDto.userEmail, placeId: place.id });
 
       return place;
     });
