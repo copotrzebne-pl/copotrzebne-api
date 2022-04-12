@@ -12,10 +12,12 @@ import { Comment } from '../comments/models/comment.model';
 import { OpeningHoursService } from '../opening-hours/services/opening-hours.service';
 import { OpeningHours } from '../opening-hours/models/opening-hours.model';
 import { PlacesStateMachine } from './services/state-machine/places.state-machine';
+import { UsersDraftsModule } from '../users-drafts/users-drafts.module';
+import { Link } from '../links/models/link.model';
 
 @Global()
 @Module({
-  imports: [SequelizeModule.forFeature([Place, Demand, Comment, OpeningHours])],
+  imports: [SequelizeModule.forFeature([Place, Demand, Comment, Link, OpeningHours]), UsersDraftsModule],
   providers: [PlacesService, DemandsService, CommentsService, PlacesStateMachine, OpeningHoursService],
   controllers: [PlacesController, UsersPlacesController],
   exports: [PlacesService],

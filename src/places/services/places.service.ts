@@ -66,7 +66,7 @@ export class PlacesService {
       transaction,
     });
 
-    return places.sort(this.sortPlacesByLastUpdate);
+    return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
   public async getPlacesWithSupplies(
@@ -86,7 +86,7 @@ export class PlacesService {
       },
     });
 
-    return places.sort(this.sortPlacesByLastUpdate);
+    return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
   public async createPlace(
@@ -175,6 +175,14 @@ export class PlacesService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { demands = [], users = [], ...rawPlace } = place.get();
     return rawPlace as Place;
+  }
+
+  private sortPlacesByLastUpdateAndPriority(places: Place[]): Place[] {
+    return places.sort(this.sortPlacesByPriority).sort(this.sortPlacesByLastUpdate);
+  }
+
+  private sortPlacesByPriority(place1: Place, place2: Place): number {
+    return place2.priority - place1.priority;
   }
 
   private sortPlacesByLastUpdate(place1: Place, place2: Place): number {

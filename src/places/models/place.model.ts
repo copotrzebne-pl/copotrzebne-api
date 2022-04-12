@@ -87,9 +87,9 @@ export class Place extends Model {
   @Column({ allowNull: false, type: DataType.NUMBER })
   state!: number;
 
-  @ApiProperty({ nullable: false, type: 'string' })
+  @ApiProperty({ nullable: true, type: 'string' })
   @Column({
-    allowNull: false,
+    allowNull: true,
     type: DataType.DATE,
   })
   lastUpdatedAt!: Date;

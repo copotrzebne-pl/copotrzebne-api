@@ -1,5 +1,6 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { LinkDto } from '../../links/dto/link.dto';
 
 export class CreateCommentDto {
   @ApiProperty()
@@ -13,12 +14,11 @@ export class CreateCommentDto {
   message!: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsArray()
-  links!: string[];
-
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   placeId!: string;
+
+  @ApiProperty()
+  @IsOptional()
+  link?: LinkDto;
 }

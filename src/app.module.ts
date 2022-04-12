@@ -16,6 +16,7 @@ import { AddUserToContextMiddleware } from './middleware/add-user-to-context.mid
 import { CommentsModule } from './comments/comments.module';
 import { OpeningHoursModule } from './opening-hours/opening-hours.module';
 import { JournalsModule } from './journals/journals.module';
+import { LinksModule } from './links/links.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JournalsModule } from './journals/journals.module';
     DemandsModule,
     CategoriesModule,
     CommentsModule,
+    LinksModule,
     OpeningHoursModule,
     JwtModule,
     JournalsModule,
