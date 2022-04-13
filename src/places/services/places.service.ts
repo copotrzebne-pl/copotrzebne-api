@@ -93,15 +93,16 @@ export class PlacesService {
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
-    const place = await this.getPlaceById(transaction, id);
+    const place = await this.placeModel.findByPk(id, { include: [Demand], transaction });
 
     if (!place) {
       throw new NotFoundError();
     }
 
     const nameSlug = placeDto.name ? slugify(placeDto.name) : slugify(place.name);
+    const lastUpdatedAt = place.demands.length ? placeDto.lastUpdatedAt : null;
 
-    await this.placeModel.update({ nameSlug, ...placeDto }, { where: { id }, transaction });
+    await this.placeModel.update({ ...placeDto, nameSlug, lastUpdatedAt }, { where: { id }, transaction });
 
     return await this.getPlaceById(transaction, id);
   }
