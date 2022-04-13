@@ -63,6 +63,5 @@ export class UpdatePlaceDto {
 
   @ApiProperty({ nullable: true })
   @IsOptional()
-  @IsString()
-  lastUpdatedAt?: Date;
+  lastUpdatedAt?: Date | null;
 }

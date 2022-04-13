@@ -10,6 +10,7 @@ import { Category } from '../../categories/models/category.model';
 import { Language } from '../../types/language.type.enum';
 import IncorrectValueError from '../../error/incorrect-value.error';
 import { PlacesService } from '../../places/services/places.service';
+import NotFoundError from '../../error/not-found.error';
 
 @Injectable()
 export class DemandsService {
@@ -93,7 +94,23 @@ export class DemandsService {
   }
 
   public async deleteDemand(transaction: Transaction, id: string): Promise<void> {
-    await this.demandModel.destroy({ where: { id }, transaction });
+    const demand = await this.getDemandById(transaction, id);
+
+    if (!demand) {
+      throw new NotFoundError('DEMAND_NOT_FOUND');
+    }
+
+    const placeId = demand.placeId;
+
+    await demand.destroy({ transaction });
+
+    const demandsForPlace = await this.getDemandsForPlace(transaction, placeId);
+
+    if (!demandsForPlace || !demandsForPlace.length) {
+      await this.placesService.updatePlace(transaction, placeId, {
+        lastUpdatedAt: null,
+      });
+    }
   }
 
   public async deleteAllDemandsForPlace(transaction: Transaction, placeId: string): Promise<void> {
@@ -106,5 +123,9 @@ export class DemandsService {
     const demandsIds = demands.map((demand) => demand.id);
 
     await this.demandModel.destroy({ where: { id: demandsIds }, transaction });
+
+    await this.placesService.updatePlace(transaction, placeId, {
+      lastUpdatedAt: null,
+    });
   }
 }
