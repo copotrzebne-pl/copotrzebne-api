@@ -12,7 +12,8 @@ export class AddCacheHeaderToResponseInterceptor implements NestInterceptor {
 
     const hasAuthHeader = getAuthHeaderFromContextRequest(request) !== null;
 
-    response.setHeader('Cache-Control', hasAuthHeader ? 'no-cache' : 'max-age=60');
+    response.setHeader('Vary', 'Origin, Authorization');
+    response.setHeader('Cache-Control', hasAuthHeader ? 'no-store' : 'max-age=60');
     return next.handle();
   }
 }
