@@ -113,7 +113,7 @@ describe('PlacesController (e2e)', () => {
         latitude: null,
         longitude: null,
         phone: '888-221-222',
-        workingHours: 'Codziennie 6:30-11:11',
+        workingHours: 'Codziennie 6:00-11:11',
         nameSlug: 'other-place',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
