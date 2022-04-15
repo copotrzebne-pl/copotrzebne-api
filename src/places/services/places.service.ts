@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction } from 'sequelize';
+import { Transaction, Op } from 'sequelize';
 
 import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
@@ -17,6 +17,7 @@ import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
 import { PlaceScope } from '../types/placeScope';
 import { PlaceState } from '../types/place.state.enum';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class PlacesService {
@@ -24,6 +25,7 @@ export class PlacesService {
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
     private readonly usersService: UsersService,
+    private readonly sequelize: Sequelize,
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
@@ -35,9 +37,16 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getPlaceByNameSlug(transaction: Transaction, nameSlug: string): Promise<Place | null> {
+  public async getPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
     const place = await this.placeModel.findOne({
-      where: { nameSlug },
+      where: {
+        [Op.or]: [
+          this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
+          {
+            nameSlug: idOrSlug,
+          },
+        ],
+      },
       include: [{ model: Demand, include: [Priority] }],
       transaction,
     });
