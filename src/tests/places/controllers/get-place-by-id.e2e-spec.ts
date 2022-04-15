@@ -5,7 +5,6 @@ import request from 'supertest';
 import { AppModule } from '../../../app.module';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { PlaceState } from '../../../places/types/place.state.enum';
-import { PlaceTransitionName } from '../../../places/types/place.transition-name.enum';
 import { Place } from '../../../places/models/place.model';
 
 describe('PlacesController (e2e)', () => {
