@@ -61,20 +61,6 @@ export class PlacesController {
     private readonly usersDraftsService: UsersDraftsService,
   ) {}
 
-  @ApiResponse({ type: Place, description: 'finds place by slug and returns it' })
-  @Get('/name-slug/:nameSlug')
-  public async getPlaceByNameSlug(@Param('nameSlug') nameSlug: string): Promise<Place | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.getPlaceByNameSlug(transaction, nameSlug);
-
-      if (!place) {
-        throw new NotFoundError('PLACE_NOT_FOUND');
-      }
-
-      return place;
-    });
-  }
-
   @ApiQuery({ name: 'supply', type: String })
   @ApiResponse({
     isArray: true,
@@ -112,11 +98,11 @@ export class PlacesController {
     });
   }
 
-  @ApiResponse({ isArray: true, type: Place, description: 'returns single place' })
-  @Get('/:id')
-  public async getPlace(@Param('id') id: string): Promise<Place | void> {
+  @ApiResponse({ isArray: true, type: Place, description: 'returns single place by id or slug' })
+  @Get('/:idOrSlug')
+  public async getPlace(@Param('idOrSlug') idOrSlug: string): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.getPlaceById(transaction, id);
+      const place = await this.placesService.getPlaceByIdOrSlug(transaction, idOrSlug);
 
       if (!place) {
         throw new NotFoundError('PLACE_NOT_FOUND');
