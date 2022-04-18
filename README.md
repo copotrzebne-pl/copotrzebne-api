@@ -1,18 +1,12 @@
-# copotrzebne-api
+# CoPotrzebne API
 
 This is the API for copotrzebne.pl
 
-# important TODOS:
-- 
-- [x] Prepare Docker for hosting on heroku 
-- [x] Configure Sequelize, so it can generate migration files based on models (currently must be done by hand)
-- [x] Host the app
-
-# Start the project
+## Start the project
 
 1. Copy `.env.dist` to `.env` and fill in env variables
 
-    ```ini
+    ```conf
     NODE_ENV=development
     PORT=3000
     API_DB_HOST=localhost
@@ -30,7 +24,7 @@ This is the API for copotrzebne.pl
 
 3. Run the app
 
-# Running the app
+## Running the app
 
 ```bash
 # watch mode with dockerized or local database
@@ -38,23 +32,25 @@ $ yarn start:docker:db
 $ yarn start:dev
 ```
 
-# Sequelize
+## Sequelize
 
-## About Sequelize with Nest.js
+### About Sequelize with Nest.js
 
 https://docs.nestjs.com/techniques/database#sequelize-integration
 
-## Creating database
+### Creating database
+
 ```bash
 yarn db:create
 ```
 
-## Dropping database
+### Dropping database
+
 ```bash
 yarn db:drop
 ```
 
-## Generating database migrations
+### Generating database migrations
 
 In order to generate migration for Sequelize ORM sequelize-cli is required.
 The cli is included in dev modules.
@@ -64,13 +60,13 @@ After creating a new entity run command to generate a new db migration.
 npx sequelize-cli migration:generate --name <migration-name>
 ```
 
-## Running migrations
+### Running migrations
 
 ```bash
 $ yarn db:migrate
 ```
 
-## Example of migration
+### Example of migration
 
 how to add column to existing table
 ```javascript
@@ -80,7 +76,17 @@ how to add column to existing table
     });
 ```
 
-# Dockerized DB and Adminer
+## Health checks
+
+Health check implemented using [Terminus](https://github.com/nestjs/terminus)
+is available on path `/health`.
+
+Read more:
+
+* [Healthcheck (Terminus)](https://docs.nestjs.com/recipes/terminus)
+* [NestJS Health Check with Terminus – HTTP, DB, Redis & Custom Checks](https://progressivecoder.com/nestjs-health-check-terminus/)
+
+## Dockerized DB and Adminer
 
 To login into the adminer use credentials from `.env`
 Host is the name of the db service from docker-compose - postgres.
@@ -89,25 +95,30 @@ Adminer is hosted on http://localhost:8080
 
 ![Adminer login](readme/adminer-login.png)
 
-# Infrastructure and deployment
+## Infrastructure and deployment
 
 GitHub Actions are used for CI/CD.
 
-Heroku is used for hosting - ~two apps per pipeline: beta and production.~
+Convox is used to host applications.
 
-## Continous Integration
+### Continuous Integration
 
 `main.yml` workflow run test on each branch.
 
-## Release to beta
+### Release
 
-`relsease.yml` workflow push app to Heroku using GIT if test sucessed on branch `master`.
+`release.yml` and `release-staging.yml` workflows push app to Convox 
+if test succeed on branch `master` or `staging`.
 
-## Promotion to production
+### Secrets
 
-~App need to be promoted manually on Heroku, pipeline: `api.copotrzebne.pl`~
+Secrets and configuration could be set using Convox Console or CLI command:
 
-## DB
+```bash
+convox env edit -a api-copotrzebne-pl -r copotrzebne/dev
+```
+
+### DB
 
 PostgreSQL from Heroku is used.
 
@@ -116,7 +127,8 @@ PostgreSQL from Heroku is used.
 The value of `DATABASE_URL` config var can change at any time.
 Do not rely on this value either inside or outside your Heroku app.
 
-## Transactions
+### Transactions
+
 We are using [Sequelize managed transactions](https://sequelize.org/master/manual/transactions.html)
 and the standard flow looks like this:
 - we inject global sequelize instance into controller 
@@ -132,9 +144,9 @@ await this.sequelize.transaction(async (transaction) => {
 - every service method that is operating on database should accept transaction as first parameter
 - we can now use as many services as we want inside the controller and in case of any error, the whole transaction will roll back automatically
 
-# Testing
+## Testing
 
-## E2E tests
+### E2E tests
 
 To run e2e tests first you need to run test db container:
 
@@ -147,15 +159,17 @@ Before tests migrations are runned.
 After tests db migrations are reverted to clean the db.
 
 Run tests with the command:
+
 ```shell
 $ yarn test:e2e
 ```
 
 Add E2E tests files into src/tests/<module>/
 
-## Unit testing
+### Unit testing
 
 To run unit tests:
+
 ```shell
 $ yarn test
 ```
@@ -163,22 +177,21 @@ $ yarn test
 To write unit test, name the file as <something-tested>.spec.ts.
 Add unit tests files into src/<module>/<functionality>/
 
+## User Roles
 
-# User Roles
-
-## Admin
+### Admin
 
 Should have access to everything
 
-## Service
+### Service
 
 Have access to fetch data only - for generating static frontend
 
-## Place Manager
+### Place Manager
 
 Can access only his own places
 
-# Authorization
+## Authorization
 
 To authorize user, use AuthGuard and define allowed roles using SetMetaData.
 AuthGuard verifies the session and roles.

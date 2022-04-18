@@ -16,6 +16,7 @@ import { AddUserToContextMiddleware } from './middleware/add-user-to-context.mid
 import { CommentsModule } from './comments/comments.module';
 import { JournalsModule } from './journals/journals.module';
 import { LinksModule } from './links/links.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { LinksModule } from './links/links.module';
     LinksModule,
     JwtModule,
     JournalsModule,
+    HealthModule,
   ],
 })
 export class AppModule implements NestModule {

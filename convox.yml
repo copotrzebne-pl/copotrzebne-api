@@ -1,0 +1,16 @@
+#resources:
+#  database:
+#    type: postgres
+#    options:
+#      storage: 10
+#      version: 14.2
+#      durable: ${DB_MULTI_AZ}
+services:
+  web:
+    build: .
+    domain: api.dev.beta.copotrzebne.pl
+    health: /api/health
+    port: 3000
+    environment:
+      - PORT=3000
+      - "*"
