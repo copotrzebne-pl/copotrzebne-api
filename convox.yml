@@ -15,6 +15,10 @@ services:
     port: 3000
     resources:
       - database
+    scale:
+      count: 1
+      cpu: 64
+      memory: 128
     environment:
       - PORT=3000
       - "*"
