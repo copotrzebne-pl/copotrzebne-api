@@ -76,16 +76,6 @@ how to add column to existing table
     });
 ```
 
-## Health checks
-
-Health check implemented using [Terminus](https://github.com/nestjs/terminus)
-is available on path `/health`.
-
-Read more:
-
-* [Healthcheck (Terminus)](https://docs.nestjs.com/recipes/terminus)
-* [NestJS Health Check with Terminus – HTTP, DB, Redis & Custom Checks](https://progressivecoder.com/nestjs-health-check-terminus/)
-
 ## Dockerized DB and Adminer
 
 To login into the adminer use credentials from `.env`
@@ -95,30 +85,105 @@ Adminer is hosted on http://localhost:8080
 
 ![Adminer login](readme/adminer-login.png)
 
+### How to connect to DB on AWS
+
+To connect DB on AWS you need to create a Proxy using Convox CLI.
+
+Example:
+
+```bash
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 65432
+```
+
+Read more: [Accessing Resources](https://docsv2.convox.com/management/resources)
+
+### How to copy DB from Pro to Dev
+
+Run in Terminal#1 tunnel to database (is not exposed to the Internet).
+
+```bash
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/pro --port 65432
+```
+
+Using Terminal#2 dump database to a file:
+
+```bash
+pg_dump -U app -W -F t  app -p 65432 -h localhost > file_name
+```
+
+Return to Terminal#1, stop tunnel using Ctrl+C and run a new one:
+
+```bash
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 75432
+```
+
+Using Terminal #2 import data to DB on DEV:
+
+```bash
+pg_restore -d app file_name -c -U app -p 75432 -h localhost --no-owner  --no-privileges
+```
+
+## Health checks
+
+Health check are implemented using [Terminus](https://github.com/nestjs/terminus)
+is available on path `/health`.
+
+Read more:
+
+* [Healthcheck (Terminus)](https://docs.nestjs.com/recipes/terminus)
+* [NestJS Health Check with Terminus – HTTP, DB, Redis & Custom Checks](https://progressivecoder.com/nestjs-health-check-terminus/)
+
 ## Infrastructure and deployment
 
 GitHub Actions are used for CI/CD.
 
 Convox is used to host applications.
 
+Database is created by Convox using [Resources](https://docsv2.convox.com/application/resources) - is defined
+in [`convox.yml`](./convox.yml) file
+
+Configuration per environment is kept as [Environment variables](https://docsv2.convox.com/application/environment) -
+you can edit them using command `convox env edit`:
+
+- `DB_INSTANCE_TYPE`
+- `DB_STORAGE`
+- `DB_ENCRYPTED` - disabled for all envs to minimize costs
+- `DB_MULTI_AZ` - enabled only for production to minimize costs
+
 ### Continuous Integration
 
 `main.yml` workflow run test on each branch.
 
-### Release
+### Deployment to Convox
 
-`release.yml` and `release-staging.yml` workflows push app to Convox 
-if test succeed on branch `master` or `staging`.
+Workflows:
 
-### Secrets
+* `deploy-dev.yml` is responsible for deployment to Dev Convox Rack.
+* `deploy-pro.yml` is responsible for deployment to Pro Convox Rack.
 
-Secrets and configuration could be set using Convox Console or CLI command:
+Docker image is build by Convox on AWS.
+
+During deployment, when docker image was build, DB migration is run by Convox as one time task.
+To achieve that a few additional files are added to Dockerimage (more details in `Dockerfile`).
+
+#### Secrets and Configuration
+
+Secrets and configuration are manage by [Convox](https://docsv2.convox.com/application/environment).
+
+To edit secrets you can use Convox CLI:
 
 ```bash
 convox env edit -a api-copotrzebne-pl -r copotrzebne/dev
 ```
 
-### DB
+### Deployment to Heroku
+
+_This section will be removed after migration to new AWS accounts._
+
+`release.yml` and `release-staging.yml` workflows push app to Convox 
+if test succeed on branch `master` or `staging`.
+
+#### DB
 
 PostgreSQL from Heroku is used.
 

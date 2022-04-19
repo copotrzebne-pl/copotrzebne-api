@@ -1,17 +1,15 @@
-name: Release Staging
+name: Deploy to Dev
 
 on:
   workflow_run:
     workflows: [ "Run Tests" ]
     branches:
-      - 'staging'
+      - 'develop'
     types:
       - completed
-  push:
-    branches:
-      - 'chore/convox'
 
 env:
+  # Required by Convox actions
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:

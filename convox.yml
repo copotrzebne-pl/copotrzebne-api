@@ -10,7 +10,7 @@ resources:
 services:
   web:
     build: .
-    domain: api.dev.beta.copotrzebne.pl
+    domain: ${DOMAIN}
     health: /api/health
     port: 3000
     resources:
