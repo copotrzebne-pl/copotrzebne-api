@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TranslatedField } from '../../types/translated.field.type';
 
 export class CreatePlaceDto {
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  name!: string;
+  name!: TranslatedField;
 
   @ApiProperty()
   @IsString()

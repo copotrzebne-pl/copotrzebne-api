@@ -18,6 +18,7 @@ import { Category } from '../../categories/models/category.model';
 import { PlaceScope } from '../types/placeScope';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
+import { TranslatedField } from '../../types/translated.field.type';
 
 @Injectable()
 export class PlacesService {
@@ -43,7 +44,9 @@ export class PlacesService {
         [Op.or]: [
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
           {
-            nameSlug: idOrSlug,
+            nameSlug: {
+              pl: idOrSlug,
+            },
           },
         ],
       },
@@ -97,7 +100,11 @@ export class PlacesService {
   }
 
   public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto, state: PlaceState): Promise<Place> {
-    const nameSlug = slugify(placeDto.name);
+    const nameSlug: TranslatedField = {
+      pl: slugify(placeDto.name.pl),
+      en: slugify(placeDto.name.en),
+      ua: slugify(placeDto.name.ua),
+    };
     return await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
   }
 
@@ -108,7 +115,18 @@ export class PlacesService {
       throw new NotFoundError();
     }
 
-    const nameSlug = placeDto.name ? slugify(placeDto.name) : slugify(place.name);
+    const nameSlug: TranslatedField = placeDto.name
+      ? {
+          pl: slugify(placeDto.name.pl),
+          en: slugify(placeDto.name.en),
+          ua: slugify(placeDto.name.ua),
+        }
+      : {
+          pl: slugify(place.name.pl),
+          en: slugify(place.name.en),
+          ua: slugify(place.name.ua),
+        };
+
     const lastUpdatedAt = place.demands.length ? placeDto.lastUpdatedAt : null;
 
     await this.placeModel.update({ ...placeDto, nameSlug, lastUpdatedAt }, { where: { id }, transaction });
