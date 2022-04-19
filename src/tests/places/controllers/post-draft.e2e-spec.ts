@@ -30,7 +30,7 @@ describe('PlacesController (e2e)', () => {
     it('creates place and user drafts for anonymous user', async (done) => {
       // GIVEN
       const payload = {
-        name: 'Draft org',
+        name: { pl: 'Draft org PL', en: 'Draft org EN', ua: 'Draft org UA' },
         street: 'Pawia',
         buildingNumber: '22',
         city: 'Krakow',
@@ -57,8 +57,8 @@ describe('PlacesController (e2e)', () => {
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         latitude: null,
         longitude: null,
-        name: 'Draft org',
-        nameSlug: 'draft-org',
+        name: { pl: 'Draft org PL', en: 'Draft org EN', ua: 'Draft org UA' },
+        nameSlug: { pl: 'draft-org-pl', en: 'draft-org-en', ua: 'draft-org-ua' },
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),

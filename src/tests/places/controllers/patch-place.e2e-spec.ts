@@ -33,7 +33,7 @@ describe('PlacesController (e2e)', () => {
       hashedPassword = await hash(password, process.env.API_PASSWORD_SALT || '');
 
       place = await dbHelper.placeRepository.create({
-        name: 'Patched org',
+        name: { pl: 'Patched org PL', en: 'Patched org EN', ua: 'Patched org UA' },
         city: 'Gdansk',
         street: 'Pawia',
         buildingNumber: '5a',
@@ -66,7 +66,7 @@ describe('PlacesController (e2e)', () => {
         .patch(`/places/${place.id}`)
         .set({ authorization: `Bearer ${jwt}` })
         .send({
-          name: 'New Name',
+          name: { pl: 'New Name PL', en: '', ua: '' },
         })
         .expect(200);
 
@@ -82,8 +82,8 @@ describe('PlacesController (e2e)', () => {
         lastUpdatedAt: null,
         latitude: null,
         longitude: null,
-        name: 'New Name',
-        nameSlug: 'new-name',
+        name: { pl: 'New Name PL', en: '', ua: '' },
+        nameSlug: { pl: 'new-name-pl', en: '', ua: '' },
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),
@@ -106,7 +106,7 @@ describe('PlacesController (e2e)', () => {
         .patch(`/places/${place.id}`)
         .set({ authorization: `Bearer ${jwt}` })
         .send({
-          name: 'New Name 2',
+          name: { pl: 'New Name PL', en: 'New Name EN', ua: 'New Name UA' },
           apartment: '2',
           street: 'Long street',
           comment: 'foo',
@@ -132,8 +132,8 @@ describe('PlacesController (e2e)', () => {
         lastUpdatedAt: null,
         latitude: '11',
         longitude: '12',
-        name: 'New Name 2',
-        nameSlug: 'new-name-2',
+        name: { pl: 'New Name PL', en: 'New Name EN', ua: 'New Name UA' },
+        nameSlug: { pl: 'new-name-pl', en: 'new-name-en', ua: 'new-name-ua' },
         phone: '123',
         street: 'Long street',
         updatedAt: expect.any(String),

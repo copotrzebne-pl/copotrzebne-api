@@ -39,11 +39,11 @@ describe('DemandsController (e2e)', () => {
       hashedPassword = await hash(password, process.env.API_PASSWORD_SALT || '');
 
       place = await dbHelper.placeRepository.create({
-        name: 'My org',
+        name: { pl: 'My org PL', en: 'My org EN', ua: 'My org UA' },
         city: 'Gdansk',
         street: 'Pawia',
         buildingNumber: '5a',
-        nameSlug: 'my-org',
+        nameSlug: { pl: 'my-org-pl', en: 'my-org-en', ua: 'my-org-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
       });

@@ -42,7 +42,7 @@ describe('PlacesController (e2e)', () => {
     it('returns all active places', async (done) => {
       // GIVEN
       const place = await dbHelper.placeRepository.create({
-        name: 'ZHP Test',
+        name: { pl: 'ZHP Test PL', en: 'ZHP Test EN', ua: 'ZHP Test UA' },
         city: 'Krakow',
         street: 'Pawia',
         buildingNumber: '5a',
@@ -55,7 +55,7 @@ describe('PlacesController (e2e)', () => {
         longitude: 58,
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
-        nameSlug: 'zhp-test',
+        nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
       });
@@ -76,12 +76,12 @@ describe('PlacesController (e2e)', () => {
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           latitude: '56',
           longitude: '58',
-          name: 'ZHP Test',
+          name: { pl: 'ZHP Test PL', en: 'ZHP Test EN', ua: 'ZHP Test UA' },
           phone: '888-111-222',
           street: 'Pawia',
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
-          nameSlug: 'zhp-test',
+          nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
           demands: [],
           priority: 0,
           state: 1,
