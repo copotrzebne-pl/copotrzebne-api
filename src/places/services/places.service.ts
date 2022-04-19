@@ -45,7 +45,7 @@ export class PlacesService {
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
           {
             nameSlug: {
-              pl: idOrSlug,
+              [Op.or]: [{ pl: idOrSlug }, { en: idOrSlug }, { ua: idOrSlug }],
             },
           },
         ],
