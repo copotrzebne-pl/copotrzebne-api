@@ -41,6 +41,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'zhp-test',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
+        bankAccount: '78 1370 1011 7522 3905 2498 0200',
       });
 
       await dbHelper.placeRepository.create({
@@ -90,6 +91,7 @@ describe('PlacesController (e2e)', () => {
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
+        bankAccount: '78 1370 1011 7522 3905 2498 0200',
       });
       done();
     });
@@ -119,6 +121,7 @@ describe('PlacesController (e2e)', () => {
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
+        bankAccount: null,
       });
       done();
     });

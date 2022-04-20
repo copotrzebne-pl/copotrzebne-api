@@ -64,4 +64,9 @@ export class UpdatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   lastUpdatedAt?: Date | null;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bankAccount?: string;
 }
