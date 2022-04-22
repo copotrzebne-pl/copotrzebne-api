@@ -1,6 +1,7 @@
 import { Column, DataType, HasMany, Model, Sequelize, Table } from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demand.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { TranslatedField } from '../../types/translated-field.type';
 
 @Table({ tableName: 'priorities', underscored: true, timestamps: false })
 export class Priority extends Model {
@@ -9,16 +10,8 @@ export class Priority extends Model {
   id!: string;
 
   @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  namePl!: string;
-
-  @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  nameUa!: string;
-
-  @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  nameEn!: string;
+  @Column({ allowNull: false, type: DataType.JSONB })
+  name!: TranslatedField;
 
   @ApiProperty()
   @Column({ allowNull: false, type: DataType.INTEGER })
