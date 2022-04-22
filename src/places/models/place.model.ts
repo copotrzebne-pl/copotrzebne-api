@@ -87,6 +87,10 @@ export class Place extends Model {
   })
   lastUpdatedAt!: Date;
 
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  bankAccount!: string | null;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 

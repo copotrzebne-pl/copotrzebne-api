@@ -58,6 +58,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
+        bankAccount: '78 1370 1011 7522 3905 2498 0200',
       });
 
       // WHEN
@@ -82,6 +83,7 @@ describe('PlacesController (e2e)', () => {
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
           nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
+          bankAccount: '78 1370 1011 7522 3905 2498 0200',
           demands: [],
           priority: 0,
           state: 1,

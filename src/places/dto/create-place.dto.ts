@@ -56,4 +56,9 @@ export class CreatePlaceDto {
   @IsOptional()
   @IsString()
   workingHours?: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bankAccount?: string;
 }
