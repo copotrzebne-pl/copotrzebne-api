@@ -67,8 +67,8 @@ const seedSupplies = async (sequelize: Sequelize) => {
 };
 const seedPriorities = async (sequelize: Sequelize) => {
   await sequelize.query(
-    `INSERT INTO "priorities" ("name_pl", "name_ua", "name_en", "importance")
-           VALUES ('potrzebne', 'необхідний', 'needed', 1)`,
+    `INSERT INTO "priorities" ("name", "importance")
+           VALUES ('{"pl": "potrzebne", "en": "needed", "ua": "необхідний"}', 1)`,
   );
 };
 
