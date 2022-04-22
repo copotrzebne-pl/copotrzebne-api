@@ -1,5 +1,3 @@
-export type TranslatedField = {
-  pl: string;
-  en: string;
-  ua: string;
-};
+import { Language } from './language.type.enum';
+
+export type TranslatedField = Record<Language, string>;
