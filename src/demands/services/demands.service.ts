@@ -42,7 +42,7 @@ export class DemandsService {
       where: { placeId },
       order: [
         [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
-        [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
+        [{ model: Supply, as: 'supply' }, `name.${sort}`, 'ASC'],
       ],
       transaction,
     });

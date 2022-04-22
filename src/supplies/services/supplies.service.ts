@@ -29,7 +29,7 @@ export class SuppliesService {
       include: [{ model: Category }],
       order: [
         [{ model: Category, as: 'category' }, `priority`, 'ASC'],
-        [`name_${sort}`, 'ASC'],
+        [`name.${sort}`, 'ASC'],
       ],
       transaction,
     });
