@@ -42,6 +42,7 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        fundraisingLink: 'https://funds1.com',
       });
 
       await dbHelper.placeRepository.create({
@@ -59,6 +60,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'other-place',
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
+        fundraisingLink: 'https://funds2.com',
       });
     });
 
@@ -92,6 +94,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        fundraisingLink: 'https://funds1.com',
       });
       done();
     });
@@ -122,6 +125,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: null,
+        fundraisingLink: 'https://funds2.com',
       });
       done();
     });

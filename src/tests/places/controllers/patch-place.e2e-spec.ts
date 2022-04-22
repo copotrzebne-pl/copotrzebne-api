@@ -41,6 +41,7 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
+        fundraisingLink: 'https://money.com',
       });
     });
 
@@ -90,6 +91,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        fundraisingLink: 'https://money.com',
       });
 
       done();
@@ -120,6 +122,7 @@ describe('PlacesController (e2e)', () => {
           workingHours: 'From 9 to 10',
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
+          fundraisingLink: 'https://funds.com',
         })
         .expect(200);
 
@@ -142,6 +145,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: 'From 9 to 10',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        fundraisingLink: 'https://funds.com',
         priority: 0,
         state: 1,
         transitions: [

@@ -64,6 +64,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         state: PlaceState.INACTIVE,
+        fundraisingLink: null,
       });
 
       expect(newPlacesCount).toEqual(placesCount + 1);

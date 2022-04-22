@@ -90,6 +90,10 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   bankAccount!: string | null;
 
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  fundraisingLink!: string | null;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 

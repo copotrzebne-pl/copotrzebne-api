@@ -59,6 +59,7 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        fundraisingLink: 'https://test.com',
       });
 
       // WHEN
@@ -83,6 +84,7 @@ describe('PlacesController (e2e)', () => {
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
+          fundraisingLink: 'https://test.com',
           nameSlug: 'zhp-test',
           demands: [],
           priority: 0,
