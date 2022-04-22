@@ -53,9 +53,7 @@ const migrateDatabase = async (sequelize: Sequelize): Promise<void> => {
 };
 
 const seedSupplies = async (sequelize: Sequelize) => {
-  await sequelize.query(
-    `insert into "categories" ("name_pl","name_ua","name_en") values ('inne', 'another', 'інший');`,
-  );
+  await sequelize.query(`insert into "categories" ("name") values ('{"pl": "inne", "en": "another", "ua": "інший"}');`);
   const [result] = await sequelize.query(`SELECT "id" FROM "categories" LIMIT 1`);
   const idResult = result as { id: string }[];
   const categoryId = idResult[0].id;
