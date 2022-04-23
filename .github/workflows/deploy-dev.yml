@@ -12,6 +12,8 @@ env:
   # Required by Convox actions
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
+concurrency: deploy-dev
+
 jobs:
   build:
     runs-on: ubuntu-latest
