@@ -173,8 +173,30 @@ Secrets and configuration are manage by [Convox](https://docsv2.convox.com/appli
 To edit secrets you can use Convox CLI:
 
 ```bash
-convox env edit -a api-copotrzebne-pl -r copotrzebne/dev
+convox env edit -a api-copotrzebne-pl -r copotrzebne-pl/dev
+convox env edit -a api-copotrzebne-pl -r copotrzebne-pl/pro
 ```
+
+#### AWS Permissions
+
+Permission to AWS resources are set by IAM Policy document created by infrastructure.
+
+Convox is responsible for instance configuration - app does not have to get any dedicated permissions
+(key, secret, ...), allowed by policy AWS resources could just be accessed.
+
+Policy documents:
+
+* DEV: `arn:aws:iam::933930654998:policy/terraform-20220423052627908900000001`
+* PRO: `arn:aws:iam::432456784825:policy/terraform-20220423053450753600000001`
+
+To set `IamPolicy` run command: 
+
+```bash
+convox apps params set IamPolicy=${IamPolicy} -a api-copotrzebne-pl -r copotrzebne-pl/dev
+convox apps params set IamPolicy=${IamPolicy} -a api-copotrzebne-pl -r copotrzebne-pl/pro
+```
+
+Read more: [Convox \ App Parameters](https://docsv2.convox.com/reference/app-parameters#iampolicy)
 
 ### Deployment to Heroku
 
