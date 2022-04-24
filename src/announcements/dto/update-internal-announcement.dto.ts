@@ -1,21 +1,17 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
+import { UpdatePublicAnnouncementDto } from './update-public-announcement.dto';
 
-export class UpdateCommentDto {
+export class UpdateInternalAnnouncementDto extends UpdatePublicAnnouncementDto {
   @ApiProperty()
-  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  title?: string;
+  @IsOptional()
+  startDate?: Date;
 
   @ApiProperty()
-  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  message?: string;
-
-  @ApiProperty()
   @IsOptional()
-  link?: PlaceLinkDto;
+  endDate?: Date;
 }

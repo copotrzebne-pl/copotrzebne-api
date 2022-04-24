@@ -32,8 +32,8 @@ import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
 import { Language } from '../../types/language.type.enum';
-import { Comment } from '../../comments/models/comment.model';
-import { CommentsService } from '../../comments/services/comments.service';
+import { AnnouncementComment } from '../../announcement-comments/models/announcement-comment.model';
+import { AnnouncementCommentsService } from '../../announcement-comments/services/announcement-comments.service';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
@@ -55,7 +55,6 @@ export class PlacesController {
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
-    private readonly commentsService: CommentsService,
     private readonly placeStateMachine: PlacesStateMachine,
     private readonly journalsService: JournalsService,
     private readonly usersDraftsService: UsersDraftsService,
@@ -118,14 +117,6 @@ export class PlacesController {
   public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Language): Promise<Demand[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       return await this.demandsService.getDetailedDemandsForPlace(transaction, id, sort);
-    });
-  }
-
-  @ApiResponse({ isArray: true, type: Comment, description: 'returns all comments for place' })
-  @Get(':id/comments')
-  public async getCommentsForPlace(@Param('id') id: string): Promise<Comment[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      return await this.commentsService.getCommentsForPlace(transaction, id);
     });
   }
 

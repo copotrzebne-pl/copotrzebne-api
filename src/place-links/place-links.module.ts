@@ -7,4 +7,4 @@ import { PlaceLink } from './models/place-link.model';
   providers: [],
   controllers: [],
 })
-export class LinksModule {}
+export class PlaceLinksModule {}

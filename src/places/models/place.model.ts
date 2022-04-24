@@ -19,6 +19,8 @@ import { Transition } from '../../state-machine/types/transition';
 import { PlaceState } from '../types/place.state.enum';
 import { placeTransitions } from '../services/state-machine/place.transitions';
 import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
+import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
 
 @DefaultScope(() => ({
   include: [PlaceLink],
@@ -112,6 +114,12 @@ export class Place extends Model {
 
   @HasOne(() => PlaceLink)
   placeLink!: PlaceLink;
+
+  @HasMany(() => PublicAnnouncement)
+  publicAnnouncements!: PublicAnnouncement[];
+
+  @HasMany(() => InternalAnnouncement)
+  internalAnnouncements!: InternalAnnouncement[];
 
   @ApiProperty({
     nullable: false,

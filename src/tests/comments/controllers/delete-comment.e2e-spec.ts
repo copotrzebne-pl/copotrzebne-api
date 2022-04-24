@@ -7,7 +7,7 @@ import { AppModule } from '../../../app.module';
 import { DatabaseHelper } from '../../test-helpers/database-helper';
 import { UserRole } from '../../../users/types/user-role.enum';
 import { Place } from '../../../places/models/place.model';
-import { Comment } from '../../../comments/models/comment.model';
+import { AnnouncementComment } from '../../../announcement-comments/models/announcement-comment.model';
 import { retryWithSleep } from '../../test-helpers/retry-with-sleep';
 import { PlaceState } from '../../../places/types/place.state.enum';
 
@@ -21,7 +21,7 @@ describe('CommentsController (e2e)', () => {
     let hashedPassword: string;
 
     let place: Place;
-    let comment: Comment;
+    let comment: AnnouncementComment;
 
     beforeAll(async () => {
       const module: TestingModule = await Test.createTestingModule({

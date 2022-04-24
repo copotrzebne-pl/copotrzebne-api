@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PlaceLinkDto {
@@ -19,6 +19,6 @@ export class PlaceLinkDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsArray()
-  additional?: string[];
+  @IsString()
+  fundraising?: string;
 }

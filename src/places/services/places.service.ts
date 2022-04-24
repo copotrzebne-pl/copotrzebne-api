@@ -26,6 +26,7 @@ export class PlacesService {
   constructor(
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
+    @InjectModel(PlaceLink)
     private readonly placeLinkModel: typeof PlaceLink,
     private readonly usersService: UsersService,
     private readonly sequelize: Sequelize,
@@ -182,7 +183,7 @@ export class PlacesService {
   }
 
   public async getLinkForPlace(transaction: Transaction, placeId: string): Promise<PlaceLink | null> {
-    return await this.placeLinkModel.findOne({ where: { commentId: placeId }, transaction });
+    return await this.placeLinkModel.findOne({ where: { placeId }, transaction });
   }
 
   public async createLinkForPlace(

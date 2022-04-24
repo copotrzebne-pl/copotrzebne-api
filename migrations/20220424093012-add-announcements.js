@@ -72,11 +72,11 @@ module.exports = {
           },
           title: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
           message: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
           contact_info: {
             type: Sequelize.STRING,
@@ -121,11 +121,11 @@ module.exports = {
           },
           title: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
           message: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
           contact_info: {
             type: Sequelize.STRING,
@@ -156,7 +156,7 @@ module.exports = {
       );
 
       await queryInterface.createTable(
-        'internal_announcement_comments',
+        'announcement_comments',
         {
           id: {
             type: Sequelize.UUID,
@@ -178,7 +178,7 @@ module.exports = {
           },
           message: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
           created_at: {
             type: Sequelize.DATE,
@@ -201,7 +201,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.dropTable('place_links', { transaction });
-      await queryInterface.dropTable('internal_announcement_comments', { transaction });
+      await queryInterface.dropTable('announcement_comments', { transaction });
       await queryInterface.dropTable('public_announcements', { transaction });
       await queryInterface.dropTable('internal_announcements', { transaction });
 
