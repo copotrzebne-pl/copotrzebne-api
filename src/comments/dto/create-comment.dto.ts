@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { LinkDto } from '../../links/dto/link.dto';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 export class CreateCommentDto {
   @ApiProperty()
@@ -20,5 +20,5 @@ export class CreateCommentDto {
 
   @ApiProperty()
   @IsOptional()
-  link?: LinkDto;
+  link?: PlaceLinkDto;
 }

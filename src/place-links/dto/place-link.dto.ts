@@ -1,7 +1,7 @@
 import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LinkDto {
+export class PlaceLinkDto {
   @ApiProperty()
   @IsOptional()
   @IsString()

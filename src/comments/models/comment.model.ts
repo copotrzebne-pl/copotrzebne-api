@@ -11,9 +11,9 @@ import {
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Place } from '../../places/models/place.model';
-import { Link } from '../../links/models/link.model';
+import { PlaceLink } from '../../place-links/models/place-link.model';
 
-@DefaultScope(() => ({ include: Link }))
+@DefaultScope(() => ({ include: PlaceLink }))
 @Table({ tableName: 'comments', underscored: true })
 export class Comment extends Model {
   @ApiProperty()
@@ -36,6 +36,6 @@ export class Comment extends Model {
   @BelongsTo(() => Place)
   place!: Place;
 
-  @HasOne(() => Link)
-  link!: Link;
+  @HasOne(() => PlaceLink)
+  link!: PlaceLink;
 }

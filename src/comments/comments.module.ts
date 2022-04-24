@@ -6,10 +6,10 @@ import { CommentsController } from './comments.controller';
 import { PlacesService } from '../places/services/places.service';
 import { Place } from '../places/models/place.model';
 import { PlacesStateMachine } from '../places/services/state-machine/places.state-machine';
-import { Link } from '../links/models/link.model';
+import { PlaceLink } from '../place-links/models/place-link.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Comment, Link, Place])],
+  imports: [SequelizeModule.forFeature([Comment, PlaceLink, Place])],
   providers: [CommentsService, PlacesService, PlacesStateMachine],
   controllers: [CommentsController],
 })

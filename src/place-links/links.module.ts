@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Link } from './models/link.model';
+import { PlaceLink } from './models/place-link.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Link])],
+  imports: [SequelizeModule.forFeature([PlaceLink])],
   providers: [],
   controllers: [],
 })

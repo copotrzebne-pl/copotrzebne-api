@@ -15,7 +15,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
 import { CommentsModule } from './comments/comments.module';
 import { JournalsModule } from './journals/journals.module';
-import { LinksModule } from './links/links.module';
+import { LinksModule } from './place-links/links.module';
 import { HealthModule } from './health/health.module';
 
 @Module({

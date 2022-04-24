@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from '../models/comment.model';
-import { Link } from '../../links/models/link.model';
+import { PlaceLink } from '../../place-links/models/place-link.model';
 import { Transaction } from 'sequelize';
 import { PlacesService } from '../../places/services/places.service';
 import NotFoundError from '../../error/not-found.error';
 import { UpdateCommentDto } from '../dto/update-comment.dto';
 import { CreateCommentDto } from '../dto/create-comment.dto';
-import { LinkDto } from '../../links/dto/link.dto';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectModel(Comment)
     private readonly commentModel: typeof Comment,
-    @InjectModel(Link)
-    private readonly linkModel: typeof Link,
+    @InjectModel(PlaceLink)
+    private readonly linkModel: typeof PlaceLink,
     private readonly placesService: PlacesService,
   ) {}
 
@@ -72,20 +72,24 @@ export class CommentsService {
     await comment.destroy({ transaction });
   }
 
-  private async createLinkForComment(transaction: Transaction, commentId: string, linkDto: LinkDto): Promise<Link> {
+  private async createLinkForComment(
+    transaction: Transaction,
+    commentId: string,
+    linkDto: PlaceLinkDto,
+  ): Promise<PlaceLink> {
     return await this.linkModel.create({ ...linkDto, commentId }, { transaction });
   }
 
   private async updateLinkForComment(
     transaction: Transaction,
     commentId: string,
-    linkDto: LinkDto,
-  ): Promise<Link | null> {
+    linkDto: PlaceLinkDto,
+  ): Promise<PlaceLink | null> {
     await this.linkModel.update({ ...linkDto }, { where: { commentId }, transaction });
     return await this.getLinkForComment(transaction, commentId);
   }
 
-  private async getLinkForComment(transaction: Transaction, commentId: string): Promise<Link | null> {
+  private async getLinkForComment(transaction: Transaction, commentId: string): Promise<PlaceLink | null> {
     return await this.linkModel.findOne({ where: { commentId }, transaction });
   }
 }
