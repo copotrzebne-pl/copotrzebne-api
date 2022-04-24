@@ -90,6 +90,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        placeLink: null,
       });
 
       done();
@@ -144,6 +145,7 @@ describe('PlacesController (e2e)', () => {
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
         priority: 0,
         state: 1,
+        placeLink: null,
         transitions: [
           {
             endState: 2,
