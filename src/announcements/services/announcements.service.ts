@@ -8,6 +8,7 @@ import { CreateInternalAnnouncementDto } from '../dto/create-internal-announceme
 import { UpdatePublicAnnouncementDto } from '../dto/update-public-announcement.dto';
 import { UpdateInternalAnnouncementDto } from '../dto/update-internal-announcement.dto';
 import NotFoundError from '../../error/not-found.error';
+import { date } from '../../helpers/date-utils';
 
 @Injectable()
 export class AnnouncementsService {
@@ -32,6 +33,32 @@ export class AnnouncementsService {
 
   public async getInternalAnnouncements(transaction: Transaction): Promise<InternalAnnouncement[]> {
     return await this.internalAnnouncementModel.findAll({ transaction });
+  }
+
+  public async getActiveInternalAnnouncements(transaction: Transaction): Promise<InternalAnnouncement[]> {
+    const announcements = await this.internalAnnouncementModel.findAll({ transaction });
+    const now = new Date();
+    return announcements.filter((announcement) => {
+      const { startDate, endDate } = announcement;
+
+      if (!startDate && !endDate) {
+        return true;
+      }
+
+      if (!startDate && endDate) {
+        return date(now).earlierThan(endDate);
+      }
+
+      if (!endDate && startDate) {
+        return date(now).laterThanOrEquals(startDate);
+      }
+
+      if (startDate && endDate) {
+        return date(now).laterThanOrEquals(startDate) && date(now).earlierThan(endDate);
+      }
+
+      return false;
+    });
   }
 
   public async createPublicAnnouncement(

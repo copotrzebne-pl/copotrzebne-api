@@ -62,6 +62,20 @@ export class AnnouncementsController {
     });
   }
 
+  @ApiResponse({
+    isArray: true,
+    type: InternalAnnouncement,
+    description: 'returns only active internal announcements (by start and end date)',
+  })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @UseGuards(AuthGuard)
+  @Get('/internal/active')
+  public async getActiveInternalAnnouncements(): Promise<InternalAnnouncement[]> {
+    return await this.sequelize.transaction(async (transaction) => {
+      return await this.announcementsService.getActiveInternalAnnouncements(transaction);
+    });
+  }
+
   @ApiResponse({ type: PublicAnnouncement, description: 'returns single public announcement found by id' })
   @Get('/public/:id')
   public async getPublicAnnouncement(@Param('id') id: string): Promise<PublicAnnouncement | null> {
