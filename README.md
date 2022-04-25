@@ -120,13 +120,13 @@ pg_dump -U app -W -F t  app -p 65432 -h localhost > file_name
 Return to Terminal#1, stop tunnel using Ctrl+C and run a new one:
 
 ```bash
-convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 75432
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 55432
 ```
 
 Using Terminal #2 import data to DB on DEV:
 
 ```bash
-pg_restore -d app file_name -c -U app -p 75432 -h localhost --no-owner  --no-privileges
+pg_restore -d app file_name -c -U app -p 55432 -h localhost --no-owner  --no-privileges
 ```
 
 ## Health checks
@@ -203,22 +203,6 @@ convox apps params set IamPolicy=${IamPolicy} -a api-copotrzebne-pl -r copotrzeb
 ```
 
 Read more: [Convox \ App Parameters](https://docsv2.convox.com/reference/app-parameters#iampolicy)
-
-### Deployment to Heroku
-
-_This section will be removed after migration to new AWS accounts._
-
-`release.yml` and `release-staging.yml` workflows push app to Convox 
-if test succeed on branch `master` or `staging`.
-
-#### DB
-
-PostgreSQL from Heroku is used.
-
-`DATABASE_URL` contains connection string.
-
-The value of `DATABASE_URL` config var can change at any time.
-Do not rely on this value either inside or outside your Heroku app.
 
 ### Transactions
 

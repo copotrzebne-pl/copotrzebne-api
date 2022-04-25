@@ -36,7 +36,7 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
       AnnouncementComment,
     ],
   };
-  // Heroku
+
   const databaseUrl = configService.get<string>('DATABASE_URL', '');
   if (databaseUrl) {
     const dbUrl = new URL(databaseUrl);
@@ -53,9 +53,6 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
     options.password = configService.get<string>('API_DB_PWD', '');
     options.database = configService.get<string>('API_DB_DATABASE', '');
     options.logging = process.env.NODE_ENV !== 'test';
-
-    // uncomment when needed for local debugging of prod
-    // options.dialectOptions = { ssl: { require: true, rejectUnauthorized: false } };
   }
   return options;
 };
