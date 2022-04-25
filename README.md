@@ -172,6 +172,38 @@ Docker image is build by Convox on AWS.
 During deployment, when docker image was build, DB migration is run by Convox as one time task.
 To achieve that a few additional files are added to Dockerimage (more details in `Dockerfile`).
 
+### Logs
+
+To display logs use one of command in CLI:
+
+```bash
+convox logs -a api-copotrzebne-pl -r copotrzebne-pl/dev
+convox logs -a api-copotrzebne-pl -r copotrzebne-pl/pro
+```
+
+### Scaling
+
+App could be scaled manually using Convox CLI: `convox scale`.
+
+Example:
+
+```bash
+# To change number of instances
+convox scale web --count <count>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
+
+# To change CPU
+convox scale web --cpu <cpu>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
+
+# To change memory
+convox scale web  --memory <memory>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
+
+# To change all values at once
+convox scale web --count <count>  --cpu <cpu> --memory <memory>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
+```
+
+`Scale` section from `convox.yml` is responsible only for initial scaling during app creation.
+To scale app please use CLI described above.
+
 #### Secrets and Configuration
 
 Secrets and configuration are manage by [Convox](https://docsv2.convox.com/application/environment).
