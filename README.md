@@ -87,7 +87,7 @@ Adminer is hosted on http://localhost:8080
 
 ### How to connect to DB on AWS
 
-To connect DB on AWS you need to create a Proxy using Convox CLI.
+To connect DB on AWS you need to create a Proxy using Convox CLI ([how to install and configure Convox CLI](https://github.com/copotrzebne-pl/infrastructure/wiki/Convox#convox-cli)).
 
 Example:
 
