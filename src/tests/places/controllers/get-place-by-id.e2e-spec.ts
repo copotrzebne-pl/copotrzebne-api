@@ -92,6 +92,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        placeLink: null,
       });
       done();
     });
@@ -122,6 +123,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: null,
+        placeLink: null,
       });
       done();
     });

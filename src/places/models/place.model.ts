@@ -1,14 +1,30 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Scopes, Sequelize, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  DefaultScope,
+  HasMany,
+  HasOne,
+  Model,
+  Scopes,
+  Sequelize,
+  Table,
+} from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
-import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
 import { Transition } from '../../state-machine/types/transition';
 import { PlaceState } from '../types/place.state.enum';
 import { placeTransitions } from '../services/state-machine/place.transitions';
+import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
+import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
 
+@DefaultScope(() => ({
+  include: [PlaceLink],
+}))
 @Scopes(() => ({
   active: {
     where: {
@@ -96,8 +112,14 @@ export class Place extends Model {
   @BelongsToMany(() => User, { through: () => UsersPlaces })
   users?: User[];
 
-  @HasMany(() => Comment)
-  comments!: Comment[];
+  @HasOne(() => PlaceLink)
+  placeLink!: PlaceLink;
+
+  @HasMany(() => PublicAnnouncement)
+  publicAnnouncements!: PublicAnnouncement[];
+
+  @HasMany(() => InternalAnnouncement)
+  internalAnnouncements!: InternalAnnouncement[];
 
   @ApiProperty({
     nullable: false,

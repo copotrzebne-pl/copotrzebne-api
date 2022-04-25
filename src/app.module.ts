@@ -13,10 +13,11 @@ import { DemandsModule } from './demands/demands.module';
 import { JwtModule } from './jwt/jwt.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AddUserToContextMiddleware } from './middleware/add-user-to-context.middleware';
-import { CommentsModule } from './comments/comments.module';
+import { AnnouncementCommentsModule } from './announcement-comments/announcement-comments.module';
 import { JournalsModule } from './journals/journals.module';
-import { LinksModule } from './links/links.module';
+import { PlaceLinksModule } from './place-links/place-links.module';
 import { HealthModule } from './health/health.module';
+import { AnnouncementsModule } from './announcements/announcements.module';
 
 @Module({
   imports: [
@@ -33,11 +34,12 @@ import { HealthModule } from './health/health.module';
     PrioritiesModule,
     DemandsModule,
     CategoriesModule,
-    CommentsModule,
-    LinksModule,
+    PlaceLinksModule,
     JwtModule,
     JournalsModule,
     HealthModule,
+    AnnouncementsModule,
+    AnnouncementCommentsModule,
   ],
 })
 export class AppModule implements NestModule {

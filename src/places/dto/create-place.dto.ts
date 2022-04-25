@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 export class CreatePlaceDto {
   @ApiProperty()
@@ -61,4 +62,8 @@ export class CreatePlaceDto {
   @IsOptional()
   @IsString()
   bankAccount?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  placeLink?: PlaceLinkDto;
 }

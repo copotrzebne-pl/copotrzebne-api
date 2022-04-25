@@ -1,9 +1,9 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Comment } from '../../comments/models/comment.model';
+import { Place } from '../../places/models/place.model';
 
-@Table({ tableName: 'links', underscored: true, timestamps: false })
-export class Link extends Model {
+@Table({ tableName: 'place_links', underscored: true, timestamps: false })
+export class PlaceLink extends Model {
   @ApiProperty()
   @Column({ primaryKey: true, defaultValue: Sequelize.fn('uuid_generate_v4') })
   id!: string;
@@ -18,17 +18,17 @@ export class Link extends Model {
 
   @ApiProperty()
   @Column({ allowNull: true, type: DataType.STRING })
-  signup!: string[];
+  signup!: string;
 
   @ApiProperty()
-  @Column({ allowNull: true, type: DataType.ARRAY(DataType.STRING), defaultValue: [] })
-  additional!: string[];
+  @Column({ allowNull: true, type: DataType.STRING })
+  fundraising!: string;
 
   @ApiProperty({ type: 'string', nullable: false })
   @Column({ allowNull: false, type: DataType.UUID })
-  @ForeignKey(() => Comment)
-  commentId!: string;
+  @ForeignKey(() => Place)
+  placeId!: string;
 
-  @BelongsTo(() => Comment)
-  comment!: Comment;
+  @BelongsTo(() => Place)
+  place!: Place;
 }
