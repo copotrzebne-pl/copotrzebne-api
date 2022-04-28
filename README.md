@@ -95,6 +95,12 @@ Example:
 convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 65432
 ```
 
+You can find user name and password by running command:
+
+```bash
+convox resources  -a api-copotrzebne-pl -r copotrzebne-pl/dev
+```
+
 Read more: [Accessing Resources](https://docsv2.convox.com/management/resources)
 
 ### How to copy DB from Pro to Dev
