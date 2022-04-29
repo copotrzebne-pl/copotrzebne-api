@@ -56,7 +56,7 @@ describe('PlacesController (e2e)', () => {
         apartment: null,
         buildingNumber: '22',
         city: 'Krakow',
-        comment: null,
+        additionalDescription: null,
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
