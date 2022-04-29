@@ -92,22 +92,20 @@ To connect DB on AWS you need to create a Proxy using Convox CLI ([how to instal
 Example:
 
 ```bash
-convox resources proxy database -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro --port 65432
-convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/pro --port 65432
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 65432
 ```
 
-To get username and password run command:
+You can find user name and password by running command:
 
 ```bash
-convox resources  -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
-convox resources  -a api-copotrzebne-pl -r copotrzebne-pl/pro
+convox resources  -a api-copotrzebne-pl -r copotrzebne-pl/dev
 ```
 
 Read more: [Accessing Resources](https://docsv2.convox.com/management/resources)
 
 ### How to copy DB from Pro to Dev
 
-Create in Terminal#1 tunnel to database (is not exposed to the Internet).
+Run in Terminal#1 tunnel to database (is not exposed to the Internet).
 
 ```bash
 convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/pro --port 65432
@@ -119,10 +117,10 @@ Using Terminal#2 dump database to a file:
 pg_dump -U app -W -F t  app -p 65432 -h localhost > file_name
 ```
 
-Return to Terminal#1, terminate tunnel using Ctrl+C and create a new one:
+Return to Terminal#1, stop tunnel using Ctrl+C and run a new one:
 
 ```bash
-convox resources proxy database -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro --port 55432
+convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/dev --port 55432
 ```
 
 Using Terminal #2 import data to DB on DEV:
@@ -145,10 +143,7 @@ Read more:
 
 GitHub Actions are used for CI/CD.
 
-Convox is used to host applications - one rack created on AWS pro to minimise costs (apps for pro and dev are run on
-rack `copotrzebne-pl/pro`).
-
-API is covered by Cloud Front responsible for caching.
+Convox is used to host applications.
 
 Database is created by Convox using [Resources](https://docsv2.convox.com/application/resources) - is defined
 in [`convox.yml`](./convox.yml) file
@@ -182,7 +177,7 @@ To achieve that a few additional files are added to Dockerimage (more details in
 To display logs use one of command in CLI:
 
 ```bash
-convox logs -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox logs -a api-copotrzebne-pl -r copotrzebne-pl/dev
 convox logs -a api-copotrzebne-pl -r copotrzebne-pl/pro
 ```
 
@@ -194,16 +189,16 @@ Example:
 
 ```bash
 # To change number of instances
-convox scale web --count <count>  -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox scale web --count <count>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
 
 # To change CPU
-convox scale web --cpu <cpu>  -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox scale web --cpu <cpu>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
 
 # To change memory
-convox scale web  --memory <memory>  -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox scale web  --memory <memory>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
 
 # To change all values at once
-convox scale web --count <count>  --cpu <cpu> --memory <memory>  -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox scale web --count <count>  --cpu <cpu> --memory <memory>  -a api-copotrzebne-pl -r copotrzebne-pl/dev
 ```
 
 `Scale` section from `convox.yml` is responsible only for initial scaling during app creation.
@@ -216,7 +211,7 @@ Secrets and configuration are manage by [Convox](https://docsv2.convox.com/appli
 To edit secrets you can use Convox CLI:
 
 ```bash
-convox env edit -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox env edit -a api-copotrzebne-pl -r copotrzebne-pl/dev
 convox env edit -a api-copotrzebne-pl -r copotrzebne-pl/pro
 ```
 
@@ -227,15 +222,15 @@ Permission to AWS resources are set by IAM Policy document created by infrastruc
 Convox is responsible for instance configuration - app does not have to get any dedicated permissions
 (key, secret, ...), allowed by policy AWS resources could just be accessed.
 
-Because apps are hosted on the same AWS account (the same Convox rack) for both environemts (dev and pro)
-the same policy document is used:
+Policy documents:
 
-* `arn:aws:iam::432456784825:policy/terraform-20220423053450753600000001`
+* DEV: `arn:aws:iam::933930654998:policy/terraform-20220423052627908900000001`
+* PRO: `arn:aws:iam::432456784825:policy/terraform-20220423053450753600000001`
 
 To set `IamPolicy` run command: 
 
 ```bash
-convox apps params set IamPolicy=${IamPolicy} -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro
+convox apps params set IamPolicy=${IamPolicy} -a api-copotrzebne-pl -r copotrzebne-pl/dev
 convox apps params set IamPolicy=${IamPolicy} -a api-copotrzebne-pl -r copotrzebne-pl/pro
 ```
 
