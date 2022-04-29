@@ -31,7 +31,7 @@ export class CreatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  comment?: string;
+  additionalDescription?: string;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
