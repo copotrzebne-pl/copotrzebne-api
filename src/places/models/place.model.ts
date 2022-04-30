@@ -65,7 +65,7 @@ export class Place extends Model {
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
-  comment!: string | null;
+  additionalDescription!: string | null;
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })

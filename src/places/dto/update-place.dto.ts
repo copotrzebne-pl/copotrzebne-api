@@ -35,7 +35,7 @@ export class UpdatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  comment?: string;
+  additionalDescription?: string;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
