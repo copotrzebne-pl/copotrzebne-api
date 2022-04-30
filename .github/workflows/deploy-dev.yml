@@ -31,14 +31,14 @@ jobs:
         id: build
         uses: convox/action-build@v1
         with:
-          rack: dev
-          app: api-copotrzebne-pl
+          rack: pro
+          app: dev-api-copotrzebne-pl
       - name: migrate
         id: migrate
         uses: convox/action-run@v1
         with:
-          rack: dev
-          app: api-copotrzebne-pl
+          rack: pro
+          app: dev-api-copotrzebne-pl
           service: web
           command: yarn db:migrate
           release: ${{ steps.build.outputs.release }}
@@ -46,6 +46,6 @@ jobs:
         id: promote
         uses: convox/action-promote@v1
         with:
-          rack: dev
-          app: api-copotrzebne-pl
+          rack: pro
+          app: dev-api-copotrzebne-pl
           release: ${{ steps.build.outputs.release }}
