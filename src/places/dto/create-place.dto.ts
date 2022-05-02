@@ -63,6 +63,16 @@ export class CreatePlaceDto {
   @IsString()
   bankAccount?: string;
 
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bankAccountInfo?: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  resources?: string;
+
   @ApiProperty()
   @IsOptional()
   placeLink?: PlaceLinkDto;
