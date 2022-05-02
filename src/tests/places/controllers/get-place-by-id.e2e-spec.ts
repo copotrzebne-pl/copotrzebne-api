@@ -42,7 +42,7 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Title',
+        bankAccountDescription: 'Payment title: Title',
         resources: 'Resources',
       });
 
@@ -94,7 +94,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Title',
+        bankAccountDescription: 'Payment title: Title',
         resources: 'Resources',
         placeLink: null,
       });
@@ -127,7 +127,7 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: null,
-        bankAccountInfo: null,
+        bankAccountDescription: null,
         resources: null,
         placeLink: null,
       });

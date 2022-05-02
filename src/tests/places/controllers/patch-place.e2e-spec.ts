@@ -40,7 +40,7 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Some title',
+        bankAccountDescription: 'Payment title: Some title',
         resources: null,
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
       });
@@ -92,7 +92,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Some title',
+        bankAccountDescription: 'Payment title: Some title',
         resources: null,
         placeLink: null,
       });
@@ -125,7 +125,7 @@ describe('PlacesController (e2e)', () => {
           workingHours: 'From 9 to 10',
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
-          bankAccountInfo: 'Payment title: Title',
+          bankAccountDescription: 'Payment title: Title',
           resources: 'Some resources',
         })
         .expect(200);
@@ -149,7 +149,7 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: 'From 9 to 10',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Title',
+        bankAccountDescription: 'Payment title: Title',
         resources: 'Some resources',
         priority: 0,
         state: 1,

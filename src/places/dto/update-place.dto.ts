@@ -74,7 +74,7 @@ export class UpdatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  bankAccountInfo?: string;
+  bankAccountDescription?: string;
 
   @ApiProperty({ nullable: true })
   @IsOptional()

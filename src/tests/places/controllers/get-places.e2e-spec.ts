@@ -59,7 +59,7 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
-        bankAccountInfo: 'Payment title: Title',
+        bankAccountDescription: 'Payment title: Title',
         resources: 'Resources',
       });
 
@@ -85,7 +85,7 @@ describe('PlacesController (e2e)', () => {
           updatedAt: body[0].updatedAt,
           workingHours: 'Codziennie 6:30-23:30',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
-          bankAccountInfo: 'Payment title: Title',
+          bankAccountDescription: 'Payment title: Title',
           resources: 'Resources',
           nameSlug: 'zhp-test',
           demands: [],

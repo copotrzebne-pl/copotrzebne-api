@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.addColumn(
         'places',
-        'bank_account_info',
+        'bank_account_description',
         {
           type: Sequelize.STRING,
           allowNull: true,
@@ -27,7 +27,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.removeColumn('places', 'bank_account_info', {
+      await queryInterface.removeColumn('places', 'bank_account_description', {
         transaction,
       });
 

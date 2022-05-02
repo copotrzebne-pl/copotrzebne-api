@@ -108,7 +108,7 @@ export class Place extends Model {
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
-  bankAccountInfo!: string | null;
+  bankAccountDescription!: string | null;
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
