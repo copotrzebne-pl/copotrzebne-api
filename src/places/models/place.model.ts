@@ -106,6 +106,14 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   bankAccount!: string | null;
 
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  bankAccountDescription!: string | null;
+
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  resources!: string | null;
+
   @HasMany(() => Demand)
   demands!: Demand[];
 
