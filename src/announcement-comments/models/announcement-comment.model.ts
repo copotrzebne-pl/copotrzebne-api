@@ -13,6 +13,14 @@ export class AnnouncementComment extends Model {
   @Column({ allowNull: false, type: DataType.STRING })
   message!: string;
 
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  createdAt!: Date;
+
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  updatedAt!: Date;
+
   @ApiProperty({ type: 'string', nullable: false })
   @Column({ allowNull: false, type: DataType.UUID })
   @ForeignKey(() => InternalAnnouncement)
@@ -27,7 +35,7 @@ export class AnnouncementComment extends Model {
   @BelongsTo(() => InternalAnnouncement)
   internalAnnouncement!: InternalAnnouncement;
 
-  @ApiProperty({ type: () => Place, nullable: true })
+  @ApiProperty({ type: () => Place, nullable: false })
   @BelongsTo(() => Place)
-  place!: Place | null;
+  place!: Place;
 }
