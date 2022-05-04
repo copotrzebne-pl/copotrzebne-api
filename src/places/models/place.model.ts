@@ -1,15 +1,32 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Scopes, Sequelize, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  DefaultScope,
+  HasMany,
+  HasOne,
+  Model,
+  Scopes,
+  Sequelize,
+  Table,
+} from 'sequelize-typescript';
 import { Demand } from '../../demands/models/demand.model';
 import { User } from '../../users/models/user.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { ApiProperty } from '@nestjs/swagger';
-import { Comment } from '../../comments/models/comment.model';
 import ForbiddenOperationError from '../../error/forbidden-operation.error';
 import { Transition } from '../../state-machine/types/transition';
 import { PlaceState } from '../types/place.state.enum';
 import { placeTransitions } from '../services/state-machine/place.transitions';
 import { TranslatedField } from '../../types/translated.field.type';
+import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
+import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
+import { AnnouncementComment } from '../../announcement-comments/models/announcement-comment.model';
 
+@DefaultScope(() => ({
+  include: [PlaceLink],
+}))
 @Scopes(() => ({
   active: {
     where: {
@@ -50,7 +67,7 @@ export class Place extends Model {
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
-  comment!: string | null;
+  additionalDescription!: string | null;
 
   @ApiProperty({ nullable: true, type: 'string' })
   @Column({ allowNull: true, type: DataType.STRING })
@@ -91,14 +108,37 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   bankAccount!: string | null;
 
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  bankAccountDescription!: string | null;
+
+  @ApiProperty({ nullable: true, type: 'string' })
+  @Column({ allowNull: true, type: DataType.STRING })
+  resources!: string | null;
+
+  @ApiProperty({ isArray: true, type: () => Demand, nullable: false })
   @HasMany(() => Demand)
   demands!: Demand[];
 
+  @ApiProperty({ isArray: true, type: () => AnnouncementComment, nullable: false })
+  @HasMany(() => AnnouncementComment)
+  announcementComments!: AnnouncementComment[];
+
+  @ApiProperty({ isArray: true, type: () => User, nullable: true })
   @BelongsToMany(() => User, { through: () => UsersPlaces })
   users?: User[];
 
-  @HasMany(() => Comment)
-  comments!: Comment[];
+  @ApiProperty({ type: () => PlaceLink, nullable: false })
+  @HasOne(() => PlaceLink)
+  placeLink!: PlaceLink;
+
+  @ApiProperty({ isArray: true, type: () => PublicAnnouncement, nullable: false })
+  @HasMany(() => PublicAnnouncement)
+  publicAnnouncements!: PublicAnnouncement[];
+
+  @ApiProperty({ isArray: true, type: () => InternalAnnouncement, nullable: false })
+  @HasMany(() => InternalAnnouncement)
+  internalAnnouncements!: InternalAnnouncement[];
 
   @ApiProperty({
     nullable: false,

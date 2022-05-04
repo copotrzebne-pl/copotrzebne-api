@@ -7,16 +7,14 @@ import { DemandsService } from '../demands/services/demands.service';
 import { Demand } from '../demands/models/demand.model';
 import { PlacesController } from './controllers/places.controller';
 import { UsersPlacesController } from './controllers/users-places.controller';
-import { CommentsService } from '../comments/services/comments.service';
-import { Comment } from '../comments/models/comment.model';
 import { PlacesStateMachine } from './services/state-machine/places.state-machine';
 import { UsersDraftsModule } from '../users-drafts/users-drafts.module';
-import { Link } from '../links/models/link.model';
+import { PlaceLink } from '../place-links/models/place-link.model';
 
 @Global()
 @Module({
-  imports: [SequelizeModule.forFeature([Place, Demand, Comment, Link]), UsersDraftsModule],
-  providers: [PlacesService, DemandsService, CommentsService, PlacesStateMachine],
+  imports: [SequelizeModule.forFeature([Place, Demand, PlaceLink]), UsersDraftsModule],
+  providers: [PlacesService, DemandsService, PlacesStateMachine],
   controllers: [PlacesController, UsersPlacesController],
   exports: [PlacesService],
 })

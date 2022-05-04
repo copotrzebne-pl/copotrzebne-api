@@ -36,6 +36,12 @@ describe('PlacesController (e2e)', () => {
         city: 'Krakow',
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         userEmail: 'adrian@schibsted.com',
+        placeLink: {
+          homepage: 'homepage',
+          facebook: 'facebook',
+          signup: 'signup',
+          fundraising: 'fundraising',
+        },
       };
       const placesCount = await dbHelper.placeRepository.count();
 
@@ -50,7 +56,7 @@ describe('PlacesController (e2e)', () => {
         apartment: null,
         buildingNumber: '22',
         city: 'Krakow',
-        comment: null,
+        additionalDescription: null,
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
@@ -64,6 +70,12 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         state: PlaceState.INACTIVE,
+        placeLink: {
+          homepage: 'homepage',
+          facebook: 'facebook',
+          signup: 'signup',
+          fundraising: 'fundraising',
+        },
       });
 
       expect(newPlacesCount).toEqual(placesCount + 1);

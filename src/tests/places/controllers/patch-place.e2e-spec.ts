@@ -40,6 +40,8 @@ describe('PlacesController (e2e)', () => {
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Some title',
+        resources: null,
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
       });
     });
@@ -76,7 +78,7 @@ describe('PlacesController (e2e)', () => {
         apartment: null,
         buildingNumber: '5a',
         city: 'Gdansk',
-        comment: null,
+        additionalDescription: null,
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
@@ -90,6 +92,9 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: null,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Some title',
+        resources: null,
+        placeLink: null,
       });
 
       done();
@@ -111,7 +116,7 @@ describe('PlacesController (e2e)', () => {
           name: { pl: 'New Name PL', en: 'New Name EN', ua: 'New Name UA' },
           apartment: '2',
           street: 'Long street',
-          comment: 'foo',
+          additionalDescription: 'Test description',
           city: 'Krakow',
           email: 'email',
           latitude: 11,
@@ -120,6 +125,8 @@ describe('PlacesController (e2e)', () => {
           workingHours: 'From 9 to 10',
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
+          bankAccountDescription: 'Payment title: Title',
+          resources: 'Some resources',
         })
         .expect(200);
 
@@ -128,7 +135,7 @@ describe('PlacesController (e2e)', () => {
         apartment: '2',
         buildingNumber: '5a',
         city: 'Krakow',
-        comment: 'foo',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         email: 'email',
         id: expect.any(String),
@@ -142,8 +149,11 @@ describe('PlacesController (e2e)', () => {
         updatedAt: expect.any(String),
         workingHours: 'From 9 to 10',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Some resources',
         priority: 0,
         state: 1,
+        placeLink: null,
         transitions: [
           {
             endState: 2,

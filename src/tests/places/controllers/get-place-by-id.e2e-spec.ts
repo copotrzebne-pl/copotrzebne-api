@@ -32,7 +32,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         apartment: '1',
-        comment: 'Test comment',
+        additionalDescription: 'Test description',
         email: 'test-email@email.com',
         latitude: 56,
         longitude: 58,
@@ -42,6 +42,8 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
       });
 
       await dbHelper.placeRepository.create({
@@ -50,7 +52,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Dluga',
         buildingNumber: '1',
         apartment: null,
-        comment: 'Comment',
+        additionalDescription: 'Test description',
         email: 'test-22@email.com',
         latitude: null,
         longitude: null,
@@ -78,7 +80,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         apartment: '1',
-        comment: 'Test comment',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         email: 'test-email@email.com',
@@ -92,6 +94,9 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
+        placeLink: null,
       });
       done();
     });
@@ -108,7 +113,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Dluga',
         buildingNumber: '1',
         apartment: null,
-        comment: 'Comment',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         email: 'test-22@email.com',
@@ -122,6 +127,9 @@ describe('PlacesController (e2e)', () => {
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: null,
+        bankAccountDescription: null,
+        resources: null,
+        placeLink: null,
       });
       done();
     });

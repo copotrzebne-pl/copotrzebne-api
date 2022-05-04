@@ -47,7 +47,7 @@ describe('PlacesController (e2e)', () => {
         street: 'Pawia',
         buildingNumber: '5a',
         apartment: '1',
-        comment: 'Test comment',
+        additionalDescription: 'Test description',
         createdAt: '2022-03-26T15:36:50.650Z',
         updatedAt: '2022-04-03T08:06:21.097Z',
         email: 'test-email@email.com',
@@ -59,6 +59,8 @@ describe('PlacesController (e2e)', () => {
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
       });
 
       // WHEN
@@ -70,7 +72,7 @@ describe('PlacesController (e2e)', () => {
           apartment: '1',
           buildingNumber: '5a',
           city: 'Krakow',
-          comment: 'Test comment',
+          additionalDescription: 'Test description',
           createdAt: body[0].createdAt,
           email: 'test-email@email.com',
           id: body[0].id,
@@ -84,6 +86,8 @@ describe('PlacesController (e2e)', () => {
           workingHours: 'Codziennie 6:30-23:30',
           nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
+          bankAccountDescription: 'Payment title: Title',
+          resources: 'Resources',
           demands: [],
           priority: 0,
           state: 1,

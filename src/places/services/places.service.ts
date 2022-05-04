@@ -19,12 +19,16 @@ import { PlaceScope } from '../types/placeScope';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { TranslatedField } from '../../types/translated.field.type';
+import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 @Injectable()
 export class PlacesService {
   constructor(
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
+    @InjectModel(PlaceLink)
+    private readonly placeLinkModel: typeof PlaceLink,
     private readonly usersService: UsersService,
     private readonly sequelize: Sequelize,
   ) {}
@@ -99,13 +103,24 @@ export class PlacesService {
     return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
-  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto, state: PlaceState): Promise<Place> {
+  public async createPlace(
+    transaction: Transaction,
+    placeDto: CreatePlaceDto,
+    state: PlaceState,
+  ): Promise<Place | null> {
     const nameSlug: TranslatedField = {
       pl: slugify(placeDto.name.pl),
       en: slugify(placeDto.name.en),
       ua: slugify(placeDto.name.ua),
     };
-    return await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
+
+    const place = await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
+
+    if (placeDto.placeLink) {
+      await this.createLinkForPlace(transaction, place.id, placeDto.placeLink);
+    }
+
+    return this.getPlaceById(transaction, place.id);
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
@@ -130,6 +145,16 @@ export class PlacesService {
     const lastUpdatedAt = place.demands.length ? placeDto.lastUpdatedAt : null;
 
     await this.placeModel.update({ ...placeDto, nameSlug, lastUpdatedAt }, { where: { id }, transaction });
+
+    if (placeDto.placeLink) {
+      const linkForPlace = await this.getLinkForPlace(transaction, id);
+
+      if (linkForPlace) {
+        await this.updateLinkForPlace(transaction, id, placeDto.placeLink);
+      } else {
+        await this.createLinkForPlace(transaction, id, placeDto.placeLink);
+      }
+    }
 
     return await this.getPlaceById(transaction, id);
   }
@@ -174,6 +199,27 @@ export class PlacesService {
     }
 
     return true;
+  }
+
+  public async getLinkForPlace(transaction: Transaction, placeId: string): Promise<PlaceLink | null> {
+    return await this.placeLinkModel.findOne({ where: { placeId }, transaction });
+  }
+
+  public async createLinkForPlace(
+    transaction: Transaction,
+    placeId: string,
+    placeLinkDto: PlaceLinkDto,
+  ): Promise<PlaceLink> {
+    return await this.placeLinkModel.create({ ...placeLinkDto, placeId }, { transaction });
+  }
+
+  public async updateLinkForPlace(
+    transaction: Transaction,
+    placeId: string,
+    placeLinkDto: PlaceLinkDto,
+  ): Promise<PlaceLink | null> {
+    await this.placeLinkModel.update({ ...placeLinkDto }, { where: { placeId }, transaction });
+    return await this.getLinkForPlace(transaction, placeId);
   }
 
   public mapStateToScope(state: PlaceState | undefined): PlaceScope {
