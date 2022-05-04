@@ -10,5 +10,10 @@ export class CreateAnnouncementCommentDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  placeId!: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   message!: string;
 }
