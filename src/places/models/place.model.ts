@@ -21,6 +21,7 @@ import { placeTransitions } from '../services/state-machine/place.transitions';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
 import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
+import { AnnouncementComment } from '../../announcement-comments/models/announcement-comment.model';
 
 @DefaultScope(() => ({
   include: [PlaceLink],
@@ -114,18 +115,27 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   resources!: string | null;
 
+  @ApiProperty({ isArray: true, type: () => Demand, nullable: false })
   @HasMany(() => Demand)
   demands!: Demand[];
 
+  @ApiProperty({ isArray: true, type: () => AnnouncementComment, nullable: false })
+  @HasMany(() => AnnouncementComment)
+  announcementComments!: AnnouncementComment[];
+
+  @ApiProperty({ isArray: true, type: () => User, nullable: true })
   @BelongsToMany(() => User, { through: () => UsersPlaces })
   users?: User[];
 
+  @ApiProperty({ type: () => PlaceLink, nullable: false })
   @HasOne(() => PlaceLink)
   placeLink!: PlaceLink;
 
+  @ApiProperty({ isArray: true, type: () => PublicAnnouncement, nullable: false })
   @HasMany(() => PublicAnnouncement)
   publicAnnouncements!: PublicAnnouncement[];
 
+  @ApiProperty({ isArray: true, type: () => InternalAnnouncement, nullable: false })
   @HasMany(() => InternalAnnouncement)
   internalAnnouncements!: InternalAnnouncement[];
 
