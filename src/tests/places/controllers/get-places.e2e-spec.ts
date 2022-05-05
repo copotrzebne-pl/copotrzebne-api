@@ -104,5 +104,53 @@ describe('PlacesController (e2e)', () => {
       await dbHelper.placeRepository.destroy({ where: { id: place.id } });
       done();
     });
+
+    it('returns only places within boundaries', async (done) => {
+      // GIVEN
+      const base = {
+        name: 'ZHP Test',
+        city: 'Krakow',
+        street: 'Pawia',
+        buildingNumber: '5a',
+        apartment: '1',
+        additionalDescription: 'Test description',
+        createdAt: '2022-03-26T15:36:50.650Z',
+        updatedAt: '2022-04-03T08:06:21.097Z',
+        email: 'test-email@email.com',
+        latitude: 50,
+        longitude: 20,
+        phone: '888-111-222',
+        workingHours: 'Codziennie 6:30-23:30',
+        nameSlug: 'zhp-test',
+        state: PlaceState.ACTIVE,
+        lastUpdatedAt: '2022-04-08T21:44:00.940Z',
+        bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
+      };
+      const place = await dbHelper.placeRepository.create(base);
+      const placeABitNorth = await dbHelper.placeRepository.create({ ...base, latitude: base.latitude + 2 });
+      const placeTooFarNorth = await dbHelper.placeRepository.create({ ...base, latitude: base.latitude + 4 });
+
+      // WHEN
+      const { body } = await request(app.getHttpServer()).get('/places?boundaries=53,19,49,21').expect(200);
+
+      // THEN
+      expect(body.size).toEqual(2);
+      expect(body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: place.id,
+          }),
+          expect.objectContaining({
+            id: placeABitNorth.id,
+          }),
+        ]),
+      );
+      await dbHelper.placeRepository.destroy({ where: { id: place.id } });
+      await dbHelper.placeRepository.destroy({ where: { id: placeABitNorth.id } });
+      await dbHelper.placeRepository.destroy({ where: { id: placeTooFarNorth.id } });
+      done();
+    });
   });
 });

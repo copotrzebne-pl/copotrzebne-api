@@ -37,6 +37,7 @@ import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
 import { PlaceScope } from '../types/placeScope';
+import { PlaceRange } from '../types/placeRange';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
@@ -65,7 +66,7 @@ export class PlacesController {
     type: Place,
     description:
       'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
-      'if boundaries are given, then they are expected to be in format "50.076,19.927,50.051,19.994"',
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959"',
   })
   @Get('/')
   public async getActivePlaces(
@@ -73,7 +74,7 @@ export class PlacesController {
     @Query('boundaries') boundaries?: string,
   ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      let range: placeRange = null;
+      let range: PlaceRange = null;
       if (boundaries) {
         const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
         range = {
@@ -96,7 +97,9 @@ export class PlacesController {
   @ApiResponse({
     isArray: true,
     type: Place,
-    description: 'returns all places',
+    description:
+      'returns all places\n' +
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959"',
   })
   @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
@@ -107,7 +110,7 @@ export class PlacesController {
     @Query('boundaries') boundaries?: string,
   ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      let range: placeRange = null;
+      let range: PlaceRange = null;
       if (boundaries) {
         const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
         range = {
