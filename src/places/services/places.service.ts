@@ -20,6 +20,7 @@ import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
+import { PlaceRange } from '../types/placeRange';
 
 @Injectable()
 export class PlacesService {
@@ -61,7 +62,7 @@ export class PlacesService {
   public async getDetailedPlaces(
     transaction: Transaction,
     scope: PlaceScope = PlaceScope.DEFAULT,
-    range: placeRange,
+    range: PlaceRange = null,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -92,7 +93,7 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
-    range: placeRange,
+    range: PlaceRange = null,
   ): Promise<Place[]> {
     const where = {
       '$demands->supply.id$': suppliesIds,
