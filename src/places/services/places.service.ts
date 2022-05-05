@@ -84,7 +84,16 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
+    range: null | { from: { lat: number; long: number }; to: { lat: number; long: number } },
   ): Promise<Place[]> {
+    const where = {
+      '$demands->supply.id$': suppliesIds,
+      ...(range && {
+        latitude: { [Op.gte]: range.from.lat, [Op.lte]: range.to.lat },
+        longitude: { [Op.gte]: range.from.long, [Op.lte]: range.to.long },
+      }),
+    };
+    console.log(where);
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -92,9 +101,7 @@ export class PlacesService {
           include: [Supply, Priority],
         },
       ],
-      where: {
-        '$demands->supply.id$': suppliesIds,
-      },
+      where: where,
     });
 
     return this.sortPlacesByLastUpdateAndPriority(places);

@@ -59,18 +59,32 @@ export class PlacesController {
   ) {}
 
   @ApiQuery({ name: 'supply', type: String })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
     description:
-      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places',
+      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
+      'if boundaries are given, then they are expected to be in format "50.076,19.927,50.051,19.994"',
   })
   @Get('/')
-  public async getActivePlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
+  public async getActivePlaces(
+    @Query('supplyId') supplyId?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
+      let range: { from: { lat: number; long: number }; to: { lat: number; long: number } } | null = null;
+      if (boundaries) {
+        const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
+        range = {
+          from: { lat: +tl_lat, long: +tl_long },
+          to: { lat: +br_lat, long: +br_long },
+        };
+      }
+
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE);
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, range);
       }
 
       return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
