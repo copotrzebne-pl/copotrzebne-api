@@ -73,12 +73,12 @@ export class PlacesController {
     @Query('boundaries') boundaries?: string,
   ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      let range: { from: { lat: number; long: number }; to: { lat: number; long: number } } | null = null;
+      let range: placeRange = null;
       if (boundaries) {
         const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
         range = {
-          from: { lat: +tl_lat, long: +tl_long },
-          to: { lat: +br_lat, long: +br_long },
+          topLeft: { lat: +tl_lat, long: +tl_long },
+          bottomRight: { lat: +br_lat, long: +br_long },
         };
       }
 
@@ -87,11 +87,12 @@ export class PlacesController {
         return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, range);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE, range);
     });
   }
 
   @ApiQuery({ name: 'state', type: Number })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
@@ -101,11 +102,22 @@ export class PlacesController {
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/all')
-  public async getAllPlaces(@Query('state') state?: string): Promise<Place[] | void> {
+  public async getAllPlaces(
+    @Query('state') state?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
+      let range: placeRange = null;
+      if (boundaries) {
+        const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
+        range = {
+          topLeft: { lat: +tl_lat, long: +tl_long },
+          bottomRight: { lat: +br_lat, long: +br_long },
+        };
+      }
       const placeState = state ? +state : undefined;
       const scope = this.placesService.mapStateToScope(placeState);
-      return await this.placesService.getDetailedPlaces(transaction, scope);
+      return await this.placesService.getDetailedPlaces(transaction, scope, range);
     });
   }
 

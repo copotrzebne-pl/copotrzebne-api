@@ -58,7 +58,11 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = PlaceScope.DEFAULT): Promise<Place[]> {
+  public async getDetailedPlaces(
+    transaction: Transaction,
+    scope: PlaceScope = PlaceScope.DEFAULT,
+    range: placeRange,
+  ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -74,6 +78,10 @@ export class PlacesService {
           ],
         },
       ],
+      where: {
+        latitude: { [Op.lte]: range?.topLeft.lat, [Op.gte]: range?.bottomRight.lat },
+        longitude: { [Op.gte]: range?.topLeft.long, [Op.lte]: range?.bottomRight.long },
+      },
       transaction,
     });
 
@@ -84,16 +92,15 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
-    range: null | { from: { lat: number; long: number }; to: { lat: number; long: number } },
+    range: placeRange,
   ): Promise<Place[]> {
     const where = {
       '$demands->supply.id$': suppliesIds,
       ...(range && {
-        latitude: { [Op.gte]: range.from.lat, [Op.lte]: range.to.lat },
-        longitude: { [Op.gte]: range.from.long, [Op.lte]: range.to.long },
+        latitude: { [Op.lte]: range.topLeft.lat, [Op.gte]: range.bottomRight.lat },
+        longitude: { [Op.gte]: range.topLeft.long, [Op.lte]: range.bottomRight.long },
       }),
     };
-    console.log(where);
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
