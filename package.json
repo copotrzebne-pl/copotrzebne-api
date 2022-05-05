@@ -27,6 +27,7 @@
     "db:drop": "npx sequelize-cli db:drop",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "db:import": "PGPASSWORD=\"$(cat .env| grep API_DB_PWD | cut -d'=' -f 2)\" pg_restore -c -U $(cat .env| grep API_DB_USERNAME | cut -d'=' -f 2) -p $(cat .env| grep API_DB_PORT | cut -d'=' -f 2) -h localhost --no-owner --no-privileges -d $(cat .env| grep API_DB_DATABASE | cut -d'=' -f 2) ",
     "prepare": "husky install"
   },
   "dependencies": {
