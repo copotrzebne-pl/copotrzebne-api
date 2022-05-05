@@ -136,7 +136,7 @@ describe('PlacesController (e2e)', () => {
       const { body } = await request(app.getHttpServer()).get('/places?boundaries=53,19,49,21').expect(200);
 
       // THEN
-      expect(body.size).toEqual(2);
+      expect(body.length).toEqual(2);
       expect(body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({

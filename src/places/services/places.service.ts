@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction, Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 
 import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
@@ -80,8 +80,10 @@ export class PlacesService {
         },
       ],
       where: {
-        latitude: { [Op.lte]: range?.topLeft.lat, [Op.gte]: range?.bottomRight.lat },
-        longitude: { [Op.gte]: range?.topLeft.long, [Op.lte]: range?.bottomRight.long },
+        ...(range && {
+          latitude: { [Op.lte]: range?.topLeft.lat, [Op.gte]: range?.bottomRight.lat },
+          longitude: { [Op.gte]: range?.topLeft.long, [Op.lte]: range?.bottomRight.long },
+        }),
       },
       transaction,
     });
@@ -95,13 +97,6 @@ export class PlacesService {
     scope: PlaceScope = PlaceScope.DEFAULT,
     range: PlaceRange = null,
   ): Promise<Place[]> {
-    const where = {
-      '$demands->supply.id$': suppliesIds,
-      ...(range && {
-        latitude: { [Op.lte]: range.topLeft.lat, [Op.gte]: range.bottomRight.lat },
-        longitude: { [Op.gte]: range.topLeft.long, [Op.lte]: range.bottomRight.long },
-      }),
-    };
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -109,7 +104,13 @@ export class PlacesService {
           include: [Supply, Priority],
         },
       ],
-      where: where,
+      where: {
+        '$demands->supply.id$': suppliesIds,
+        ...(range && {
+          latitude: { [Op.lte]: range.topLeft.lat, [Op.gte]: range.bottomRight.lat },
+          longitude: { [Op.gte]: range.topLeft.long, [Op.lte]: range.bottomRight.long },
+        }),
+      },
     });
 
     return this.sortPlacesByLastUpdateAndPriority(places);

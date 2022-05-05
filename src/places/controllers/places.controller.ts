@@ -66,7 +66,7 @@ export class PlacesController {
     type: Place,
     description:
       'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
-      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959"',
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East',
   })
   @Get('/')
   public async getActivePlaces(
@@ -76,10 +76,10 @@ export class PlacesController {
     return await this.sequelize.transaction(async (transaction) => {
       let range: PlaceRange = null;
       if (boundaries) {
-        const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
+        const [north, west, south, east] = boundaries.split(',');
         range = {
-          topLeft: { lat: +tl_lat, long: +tl_long },
-          bottomRight: { lat: +br_lat, long: +br_long },
+          topLeft: { lat: +north, long: +west },
+          bottomRight: { lat: +south, long: +east },
         };
       }
 
@@ -99,7 +99,7 @@ export class PlacesController {
     type: Place,
     description:
       'returns all places\n' +
-      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959"',
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East',
   })
   @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
@@ -112,10 +112,10 @@ export class PlacesController {
     return await this.sequelize.transaction(async (transaction) => {
       let range: PlaceRange = null;
       if (boundaries) {
-        const [tl_lat, tl_long, br_lat, br_long] = boundaries.split(',');
+        const [north, west, south, east] = boundaries.split(',');
         range = {
-          topLeft: { lat: +tl_lat, long: +tl_long },
-          bottomRight: { lat: +br_lat, long: +br_long },
+          topLeft: { lat: +north, long: +west },
+          bottomRight: { lat: +south, long: +east },
         };
       }
       const placeState = state ? +state : undefined;
