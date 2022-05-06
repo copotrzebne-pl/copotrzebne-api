@@ -36,7 +36,7 @@ import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope-enum';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';

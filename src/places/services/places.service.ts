@@ -15,12 +15,12 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope-enum';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
-import { PlaceBoundaries } from '../types/placeBoundaries';
+import { PlaceBoundaries } from '../types/place-boundaries.type';
 import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
@@ -245,8 +245,12 @@ export class PlacesService {
   }
 
   createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
-    if (!boundariesStr) return {};
+    if (!boundariesStr) {
+      return {};
+    }
+
     const boundaries = this.createPlaceBoundariesFromString(boundariesStr);
+
     return {
       latitude: { [Op.lte]: boundaries.topLeft.lat, [Op.gte]: boundaries.bottomRight.lat },
       longitude: { [Op.lte]: boundaries.bottomRight.long, [Op.gte]: boundaries.topLeft.long },
