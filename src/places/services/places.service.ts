@@ -257,11 +257,14 @@ export class PlacesService {
     };
   }
 
-  private createPlaceBoundariesFromString(boundariesStr: string): PlaceBoundaries {
-    const numbers = boundariesStr.split(',').map((v) => parseFloat(v));
-    if (numbers.find((v) => isNaN(v))) throw new IncorrectValueError();
+  private createPlaceBoundariesFromString(boundaries: string): PlaceBoundaries {
+    const coordinates = boundaries.split(',').map((boundary) => parseFloat(boundary));
 
-    const [north, west, south, east] = numbers;
+    if (coordinates.some((coordinate) => isNaN(coordinate))) {
+      throw new IncorrectValueError();
+    }
+
+    const [north, west, south, east] = coordinates;
 
     return {
       topLeft: { lat: north, long: west },
