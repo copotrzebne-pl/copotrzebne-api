@@ -106,6 +106,7 @@ export class PlacesService {
         '$demands->supply.id$': suppliesIds,
         ...this.createWhereClauseForBoundaries(boundaries),
       },
+      transaction,
     });
 
     return this.sortPlacesByLastUpdateAndPriority(places);
