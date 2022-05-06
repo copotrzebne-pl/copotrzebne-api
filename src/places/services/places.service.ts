@@ -15,7 +15,7 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
-import { PlaceScope } from '../types/place-scope-enum';
+import { PlaceScope } from '../types/place-scope.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { PlaceLink } from '../../place-links/models/place-link.model';
