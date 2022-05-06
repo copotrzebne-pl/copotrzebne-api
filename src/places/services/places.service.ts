@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction, Op } from 'sequelize';
+import { Op, Transaction, WhereOptions } from 'sequelize';
 
 import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
@@ -15,11 +15,13 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
+import { PlaceBoundaries } from '../types/place-boundaries.type';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class PlacesService {
@@ -58,7 +60,11 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = PlaceScope.DEFAULT): Promise<Place[]> {
+  public async getDetailedPlaces(
+    transaction: Transaction,
+    scope: PlaceScope = PlaceScope.DEFAULT,
+    boundaries?: string,
+  ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -74,6 +80,9 @@ export class PlacesService {
           ],
         },
       ],
+      where: {
+        ...this.createWhereClauseForBoundaries(boundaries),
+      },
       transaction,
     });
 
@@ -84,6 +93,7 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
+    boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -94,7 +104,9 @@ export class PlacesService {
       ],
       where: {
         '$demands->supply.id$': suppliesIds,
+        ...this.createWhereClauseForBoundaries(boundaries),
       },
+      transaction,
     });
 
     return this.sortPlacesByLastUpdateAndPriority(places);
@@ -229,5 +241,33 @@ export class PlacesService {
     const place2LastUpdatedAt = place2.lastUpdatedAt ? place2.lastUpdatedAt.getTime() : 0;
 
     return place2LastUpdatedAt - place1LastUpdatedAt;
+  }
+
+  createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+    if (!boundariesStr) {
+      return {};
+    }
+
+    const boundaries = this.createPlaceBoundariesFromString(boundariesStr);
+
+    return {
+      latitude: { [Op.lte]: boundaries.topLeft.lat, [Op.gte]: boundaries.bottomRight.lat },
+      longitude: { [Op.lte]: boundaries.bottomRight.long, [Op.gte]: boundaries.topLeft.long },
+    };
+  }
+
+  private createPlaceBoundariesFromString(boundaries: string): PlaceBoundaries {
+    const coordinates = boundaries.split(',').map((boundary) => parseFloat(boundary));
+
+    if (coordinates.some((coordinate) => isNaN(coordinate))) {
+      throw new IncorrectValueError();
+    }
+
+    const [north, west, south, east] = coordinates;
+
+    return {
+      topLeft: { lat: north, long: west },
+      bottomRight: { lat: south, long: east },
+    };
   }
 }

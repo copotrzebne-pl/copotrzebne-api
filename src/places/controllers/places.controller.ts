@@ -36,7 +36,7 @@ import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope.enum';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
@@ -59,39 +59,50 @@ export class PlacesController {
   ) {}
 
   @ApiQuery({ name: 'supply', type: String })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
     description:
-      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places',
+      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @Get('/')
-  public async getActivePlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
+  public async getActivePlaces(
+    @Query('supplyId') supplyId?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE);
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, boundaries);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE, boundaries);
     });
   }
 
   @ApiQuery({ name: 'state', type: Number })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
-    description: 'returns all places',
+    description:
+      'returns all places\n' +
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/all')
-  public async getAllPlaces(@Query('state') state?: string): Promise<Place[] | void> {
+  public async getAllPlaces(
+    @Query('state') state?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       const placeState = state ? +state : undefined;
       const scope = this.placesService.mapStateToScope(placeState);
-      return await this.placesService.getDetailedPlaces(transaction, scope);
+      return await this.placesService.getDetailedPlaces(transaction, scope, boundaries);
     });
   }
 
