@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op, Transaction } from 'sequelize';
+import { Op, Transaction, WhereOptions } from 'sequelize';
 
 import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
@@ -20,7 +20,8 @@ import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
-import { PlaceRange } from '../types/placeRange';
+import { PlaceBoundaries } from '../types/placeBoundaries';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class PlacesService {
@@ -62,7 +63,7 @@ export class PlacesService {
   public async getDetailedPlaces(
     transaction: Transaction,
     scope: PlaceScope = PlaceScope.DEFAULT,
-    range: PlaceRange = null,
+    boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -80,10 +81,7 @@ export class PlacesService {
         },
       ],
       where: {
-        ...(range && {
-          latitude: { [Op.lte]: range?.topLeft.lat, [Op.gte]: range?.bottomRight.lat },
-          longitude: { [Op.gte]: range?.topLeft.long, [Op.lte]: range?.bottomRight.long },
-        }),
+        ...this.createWhereClauseForBoundaries(boundaries),
       },
       transaction,
     });
@@ -95,7 +93,7 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
-    range: PlaceRange = null,
+    boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -106,10 +104,7 @@ export class PlacesService {
       ],
       where: {
         '$demands->supply.id$': suppliesIds,
-        ...(range && {
-          latitude: { [Op.lte]: range.topLeft.lat, [Op.gte]: range.bottomRight.lat },
-          longitude: { [Op.gte]: range.topLeft.long, [Op.lte]: range.bottomRight.long },
-        }),
+        ...this.createWhereClauseForBoundaries(boundaries),
       },
     });
 
@@ -246,5 +241,31 @@ export class PlacesService {
     const place2LastUpdatedAt = place2.lastUpdatedAt ? place2.lastUpdatedAt.getTime() : 0;
 
     return place2LastUpdatedAt - place1LastUpdatedAt;
+  }
+
+  private createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+    if (!boundariesStr) return {};
+    const boundaries = this.createPlaceBoundariesFromString(boundariesStr);
+    return {
+      latitude: { [Op.lte]: boundaries.topLeft.lat, [Op.gte]: boundaries.bottomRight.lat },
+      longitude: { [Op.lte]: boundaries.bottomRight.long, [Op.gte]: boundaries.topLeft.long },
+    };
+  }
+
+  private createPlaceBoundariesFromString(boundariesStr: string): PlaceBoundaries {
+    const [northStr, westStr, southStr, eastStr] = boundariesStr.split(',');
+    const north = parseFloat(northStr);
+    const west = parseFloat(westStr);
+    const south = parseFloat(southStr);
+    const east = parseFloat(eastStr);
+
+    if (isNaN(north) || isNaN(west) || isNaN(south) || isNaN(east)) {
+      throw new IncorrectValueError();
+    }
+
+    return {
+      topLeft: { lat: north, long: west },
+      bottomRight: { lat: south, long: east },
+    };
   }
 }

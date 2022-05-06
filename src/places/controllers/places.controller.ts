@@ -37,7 +37,6 @@ import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
 import { PlaceScope } from '../types/placeScope';
-import { PlaceRange } from '../types/placeRange';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
@@ -66,7 +65,7 @@ export class PlacesController {
     type: Place,
     description:
       'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
-      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East',
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @Get('/')
   public async getActivePlaces(
@@ -74,21 +73,12 @@ export class PlacesController {
     @Query('boundaries') boundaries?: string,
   ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      let range: PlaceRange = null;
-      if (boundaries) {
-        const [north, west, south, east] = boundaries.split(',');
-        range = {
-          topLeft: { lat: +north, long: +west },
-          bottomRight: { lat: +south, long: +east },
-        };
-      }
-
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, range);
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, boundaries);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE, range);
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE, boundaries);
     });
   }
 
@@ -99,7 +89,7 @@ export class PlacesController {
     type: Place,
     description:
       'returns all places\n' +
-      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East',
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
@@ -110,17 +100,9 @@ export class PlacesController {
     @Query('boundaries') boundaries?: string,
   ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      let range: PlaceRange = null;
-      if (boundaries) {
-        const [north, west, south, east] = boundaries.split(',');
-        range = {
-          topLeft: { lat: +north, long: +west },
-          bottomRight: { lat: +south, long: +east },
-        };
-      }
       const placeState = state ? +state : undefined;
       const scope = this.placesService.mapStateToScope(placeState);
-      return await this.placesService.getDetailedPlaces(transaction, scope, range);
+      return await this.placesService.getDetailedPlaces(transaction, scope, boundaries);
     });
   }
 
