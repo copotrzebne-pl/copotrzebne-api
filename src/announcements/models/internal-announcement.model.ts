@@ -42,6 +42,14 @@ export class InternalAnnouncement extends Model {
   @Column({ allowNull: true, type: DataType.DATE })
   endDate!: Date | null;
 
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  createdAt!: Date;
+
+  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  updatedAt!: Date;
+
   @ApiProperty({ type: 'string', nullable: false })
   @Column({ allowNull: false, type: DataType.UUID })
   @ForeignKey(() => Place)

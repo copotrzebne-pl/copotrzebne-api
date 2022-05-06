@@ -105,9 +105,24 @@ convox resources  -a api-copotrzebne-pl -r copotrzebne-pl/pro
 
 Read more: [Accessing Resources](https://docsv2.convox.com/management/resources)
 
-### How to copy DB from Pro to Dev
+### How to import or export data from DB
 
-Create in Terminal#1 tunnel to database (is not exposed to the Internet).
+#### Pre requirements:
+
+You need to have access to commands:
+
+* `pg_dump` - to dump data
+* `pg_restore` - to import data
+
+On MAC you can install both commands using brew:
+
+```bash
+brew install libpq
+```
+
+#### How to dump DB from PRO
+
+Create tunnel to database in Terminal#1.
 
 ```bash
 convox resources proxy database -a api-copotrzebne-pl -r copotrzebne-pl/pro --port 65432
@@ -119,7 +134,17 @@ Using Terminal#2 dump database to a file:
 pg_dump -U app -W -F t  app -p 65432 -h localhost > file_name
 ```
 
-Return to Terminal#1, terminate tunnel using Ctrl+C and create a new one:
+#### How to import data to local DB
+
+Run command:
+
+```bash
+yarn db:import file_name
+```
+
+#### How to import data to Dev DB
+
+Create tunnel to database in Terminal#1.
 
 ```bash
 convox resources proxy database -a dev-api-copotrzebne-pl -r copotrzebne-pl/pro --port 55432
