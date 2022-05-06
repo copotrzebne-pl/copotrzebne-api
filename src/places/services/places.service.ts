@@ -212,7 +212,6 @@ export class PlacesService {
   }
 
   private getRawPlaceWithoutAssociations(place: Place): Place {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { demands = [], users = [], ...rawPlace } = place.get();
     return rawPlace as Place;
   }
