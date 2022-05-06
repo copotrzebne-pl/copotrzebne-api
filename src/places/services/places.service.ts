@@ -18,6 +18,7 @@ import { Category } from '../../categories/models/category.model';
 import { PlaceScope } from '../types/place-scope.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
+import { TranslatedField } from '../../types/translated.field.type';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 import { PlaceBoundaries } from '../types/place-boundaries.type';
@@ -49,7 +50,9 @@ export class PlacesService {
         [Op.or]: [
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
           {
-            nameSlug: idOrSlug,
+            nameSlug: {
+              [Op.or]: [{ pl: idOrSlug }, { en: idOrSlug }, { ua: idOrSlug }],
+            },
           },
         ],
       },
@@ -117,7 +120,12 @@ export class PlacesService {
     placeDto: CreatePlaceDto,
     state: PlaceState,
   ): Promise<Place | null> {
-    const nameSlug = slugify(placeDto.name);
+    const nameSlug: TranslatedField = {
+      pl: slugify(placeDto.name.pl),
+      en: slugify(placeDto.name.en),
+      ua: slugify(placeDto.name.ua),
+    };
+
     const place = await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
 
     if (placeDto.placeLink) {
@@ -134,7 +142,18 @@ export class PlacesService {
       throw new NotFoundError();
     }
 
-    const nameSlug = placeDto.name ? slugify(placeDto.name) : slugify(place.name);
+    const nameSlug: TranslatedField = placeDto.name
+      ? {
+          pl: slugify(placeDto.name.pl),
+          en: slugify(placeDto.name.en),
+          ua: slugify(placeDto.name.ua),
+        }
+      : {
+          pl: slugify(place.name.pl),
+          en: slugify(place.name.en),
+          ua: slugify(place.name.ua),
+        };
+
     const lastUpdatedAt = place.demands.length ? placeDto.lastUpdatedAt : null;
 
     await this.placeModel.update({ ...placeDto, nameSlug, lastUpdatedAt }, { where: { id }, transaction });

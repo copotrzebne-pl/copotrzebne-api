@@ -1,13 +1,13 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TranslatedField } from '../../types/translated.field.type';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 export class UpdatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
-  @IsString()
   @IsNotEmpty()
-  name?: string;
+  name?: TranslatedField;
 
   @ApiProperty({ nullable: true })
   @IsOptional()

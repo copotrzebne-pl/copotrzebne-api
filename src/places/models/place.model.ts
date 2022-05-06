@@ -18,6 +18,7 @@ import ForbiddenOperationError from '../../error/forbidden-operation.error';
 import { Transition } from '../../state-machine/types/transition';
 import { PlaceState } from '../types/place.state.enum';
 import { placeTransitions } from '../services/state-machine/place.transitions';
+import { TranslatedField } from '../../types/translated.field.type';
 import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
 import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
@@ -45,8 +46,8 @@ export class Place extends Model {
   id!: string;
 
   @ApiProperty()
-  @Column({ allowNull: false })
-  name!: string;
+  @Column({ allowNull: false, type: DataType.JSONB })
+  name!: TranslatedField;
 
   @ApiProperty()
   @Column({ allowNull: false })
@@ -88,9 +89,9 @@ export class Place extends Model {
   @Column({ allowNull: true, type: DataType.STRING })
   workingHours!: string | null;
 
-  @ApiProperty({ nullable: false, type: 'string', description: 'automatically slugified from name' })
-  @Column({ allowNull: true, type: DataType.STRING })
-  nameSlug!: string;
+  @ApiProperty({ nullable: false, description: 'automatically slugified from name' })
+  @Column({ allowNull: true, type: DataType.JSONB })
+  nameSlug!: TranslatedField;
 
   @ApiProperty({ nullable: false, type: 'number' })
   @Column({ allowNull: false, type: DataType.NUMBER })
