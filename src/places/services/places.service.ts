@@ -243,7 +243,7 @@ export class PlacesService {
     return place2LastUpdatedAt - place1LastUpdatedAt;
   }
 
-  private createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+  createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
     if (!boundariesStr) return {};
     const boundaries = this.createPlaceBoundariesFromString(boundariesStr);
     return {
@@ -253,15 +253,10 @@ export class PlacesService {
   }
 
   private createPlaceBoundariesFromString(boundariesStr: string): PlaceBoundaries {
-    const [northStr, westStr, southStr, eastStr] = boundariesStr.split(',');
-    const north = parseFloat(northStr);
-    const west = parseFloat(westStr);
-    const south = parseFloat(southStr);
-    const east = parseFloat(eastStr);
+    const numbers = boundariesStr.split(',').map((v) => parseFloat(v));
+    if (numbers.find((v) => isNaN(v))) throw new IncorrectValueError();
 
-    if (isNaN(north) || isNaN(west) || isNaN(south) || isNaN(east)) {
-      throw new IncorrectValueError();
-    }
+    const [north, west, south, east] = numbers;
 
     return {
       topLeft: { lat: north, long: west },
