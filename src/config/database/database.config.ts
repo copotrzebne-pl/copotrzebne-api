@@ -54,5 +54,6 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
     options.database = configService.get<string>('API_DB_DATABASE', '');
     options.logging = process.env.NODE_ENV !== 'test';
   }
+
   return options;
 };
