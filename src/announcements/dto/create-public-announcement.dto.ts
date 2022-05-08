@@ -10,7 +10,8 @@ export class CreatePublicAnnouncementDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  title!: string;
+  @IsOptional()
+  title?: string;
 
   @ApiProperty()
   @IsString()
