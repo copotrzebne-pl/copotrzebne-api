@@ -8,9 +8,9 @@ export class PublicAnnouncement extends Model {
   @Column({ primaryKey: true, defaultValue: Sequelize.fn('uuid_generate_v4') })
   id!: string;
 
-  @ApiProperty({ type: 'string', nullable: false })
-  @Column({ allowNull: false, type: DataType.STRING })
-  title!: string;
+  @ApiProperty({ type: 'string', nullable: true })
+  @Column({ allowNull: true, type: DataType.STRING })
+  title!: string | null;
 
   @ApiProperty({ type: 'string', nullable: false })
   @Column({ allowNull: false, type: DataType.STRING })
