@@ -1,8 +1,11 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, DefaultScope, ForeignKey, Model, Sequelize, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
 import { Place } from '../../places/models/place.model';
 
+@DefaultScope(() => ({
+  include: [Place],
+}))
 @Table({ tableName: 'announcement_comments', underscored: true })
 export class AnnouncementComment extends Model {
   @ApiProperty()
