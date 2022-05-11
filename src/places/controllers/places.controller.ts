@@ -42,6 +42,7 @@ import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { UsersDraftsService } from '../../users-drafts/services/users-drafts.service';
 import { CreateDraftPlaceDto } from '../dto/create-draft-place.dto';
+import { Sort } from '../../demands/types/sort.type.enum';
 
 @ApiTags('places')
 @Injectable()
@@ -123,7 +124,7 @@ export class PlacesController {
   @ApiQuery({ name: 'sort', enum: Language })
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
-  public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Language): Promise<Demand[] | void> {
+  public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Sort): Promise<Demand[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       return await this.demandsService.getDetailedDemandsForPlace(transaction, id, sort);
     });

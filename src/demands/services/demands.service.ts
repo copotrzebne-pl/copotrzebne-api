@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction } from 'sequelize';
+import { Order, Transaction } from 'sequelize';
 import { Demand } from '../models/demand.model';
 import { Supply } from '../../supplies/models/supply.model';
 import { Priority } from '../../priorities/models/priority.model';
 import { CreateDemandDto } from '../dto/create-demand.dto';
 import { UpdateDemandDto } from '../dto/update-demand.dto';
 import { Category } from '../../categories/models/category.model';
-import { Language } from '../../types/language.type.enum';
+import { Sort } from '../types/sort.type.enum';
 import IncorrectValueError from '../../error/incorrect-value.error';
 import { PlacesService } from '../../places/services/places.service';
 import NotFoundError from '../../error/not-found.error';
@@ -31,19 +31,23 @@ export class DemandsService {
   public async getDetailedDemandsForPlace(
     transaction: Transaction,
     placeId: string,
-    sort: Language = Language.PL,
+    sort: Sort = Sort.PL,
   ): Promise<Demand[]> {
-    if (!Object.values(Language).includes(sort)) {
+    if (!Object.values(Sort).includes(sort)) {
       throw new IncorrectValueError();
     }
 
+    const order: Order =
+      sort === Sort.DATE
+        ? [['createdAt', 'ASC']]
+        : [
+            [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
+            [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
+          ];
     return await this.demandModel.findAll({
       include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
       where: { placeId },
-      order: [
-        [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
-        [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
-      ],
+      order,
       transaction,
     });
   }
