@@ -7,7 +7,7 @@ import { Priority } from '../../priorities/models/priority.model';
 import { CreateDemandDto } from '../dto/create-demand.dto';
 import { UpdateDemandDto } from '../dto/update-demand.dto';
 import { Category } from '../../categories/models/category.model';
-import { Sort } from '../types/sort.type.enum';
+import { DemandSortOptions } from '../types/demands-sort-options.type.enum';
 import IncorrectValueError from '../../error/incorrect-value.error';
 import { PlacesService } from '../../places/services/places.service';
 import NotFoundError from '../../error/not-found.error';
@@ -31,15 +31,15 @@ export class DemandsService {
   public async getDetailedDemandsForPlace(
     transaction: Transaction,
     placeId: string,
-    sort: Sort = Sort.PL,
+    sort: DemandSortOptions = DemandSortOptions.PL,
   ): Promise<Demand[]> {
-    if (!Object.values(Sort).includes(sort)) {
+    if (!Object.values(DemandSortOptions).includes(sort)) {
       throw new IncorrectValueError();
     }
 
     const order: Order =
-      sort === Sort.DATE
-        ? [['createdAt', 'ASC']]
+      sort === DemandSortOptions.NEWEST
+        ? [['createdAt', 'DESC']]
         : [
             [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
             [{ model: Supply, as: 'supply' }, `name_${sort}`, 'ASC'],
