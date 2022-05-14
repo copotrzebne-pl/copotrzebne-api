@@ -9,18 +9,34 @@ import { Supply } from '../../supplies/models/supply.model';
 import { Priority } from '../../priorities/models/priority.model';
 import { UsersPlaces } from '../../users/models/users-places.model';
 import { Category } from '../../categories/models/category.model';
-import { Comment } from '../../comments/models/comment.model';
 import { Journal } from '../../journals/models/journal.model';
 import { UserDraft } from '../../users-drafts/models/user-draft.model';
-import { Link } from '../../links/models/link.model';
+import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
+import { InternalAnnouncement } from '../../announcements/models/internal-announcement.model';
+import { AnnouncementComment } from '../../announcement-comments/models/announcement-comment.model';
 
 export const getDatabaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
   const options: SequelizeModuleOptions = {
     dialect: 'postgres',
     synchronize: false,
-    models: [Place, User, Demand, Supply, Priority, UsersPlaces, Category, Comment, Link, Journal, UserDraft],
+    models: [
+      User,
+      UserDraft,
+      Place,
+      PlaceLink,
+      Demand,
+      Supply,
+      Priority,
+      UsersPlaces,
+      Category,
+      Journal,
+      PublicAnnouncement,
+      InternalAnnouncement,
+      AnnouncementComment,
+    ],
   };
-  // Heroku
+
   const databaseUrl = configService.get<string>('DATABASE_URL', '');
   if (databaseUrl) {
     const dbUrl = new URL(databaseUrl);
@@ -37,9 +53,7 @@ export const getDatabaseConfig = (configService: ConfigService): SequelizeModule
     options.password = configService.get<string>('API_DB_PWD', '');
     options.database = configService.get<string>('API_DB_DATABASE', '');
     options.logging = process.env.NODE_ENV !== 'test';
-
-    // uncomment when needed for local debugging of prod
-    // options.dialectOptions = { ssl: { require: true, rejectUnauthorized: false } };
   }
+
   return options;
 };

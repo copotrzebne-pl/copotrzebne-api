@@ -30,12 +30,18 @@ describe('PlacesController (e2e)', () => {
     it('creates place and user drafts for anonymous user', async (done) => {
       // GIVEN
       const payload = {
-        name: 'Draft org',
+        name: { pl: 'Draft org PL', en: 'Draft org EN', ua: 'Draft org UA' },
         street: 'Pawia',
         buildingNumber: '22',
         city: 'Krakow',
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         userEmail: 'adrian@schibsted.com',
+        placeLink: {
+          homepage: 'homepage',
+          facebook: 'facebook',
+          signup: 'signup',
+          fundraising: 'fundraising',
+        },
       };
       const placesCount = await dbHelper.placeRepository.count();
 
@@ -50,20 +56,26 @@ describe('PlacesController (e2e)', () => {
         apartment: null,
         buildingNumber: '22',
         city: 'Krakow',
-        comment: null,
+        additionalDescription: null,
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
         latitude: null,
         longitude: null,
-        name: 'Draft org',
-        nameSlug: 'draft-org',
+        name: { pl: 'Draft org PL', en: 'Draft org EN', ua: 'Draft org UA' },
+        nameSlug: { pl: 'draft-org-pl', en: 'draft-org-en', ua: 'draft-org-ua' },
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),
         workingHours: null,
         state: PlaceState.INACTIVE,
+        placeLink: {
+          homepage: 'homepage',
+          facebook: 'facebook',
+          signup: 'signup',
+          fundraising: 'fundraising',
+        },
       });
 
       expect(newPlacesCount).toEqual(placesCount + 1);

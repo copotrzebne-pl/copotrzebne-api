@@ -1,7 +1,0 @@
-{
-    "name": "API for CoPotrzebne.pl",
-    "description": "A barebones Node.js app using NestJS",
-    "repository": "https://github.com/copotrzebne-pl/copotrzebne-api",
-    "keywords": ["node", "nestjs", "heroku"],
-    "image": "heroku/nodejs"
-  }

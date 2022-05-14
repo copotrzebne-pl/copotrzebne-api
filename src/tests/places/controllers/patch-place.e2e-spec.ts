@@ -33,13 +33,15 @@ describe('PlacesController (e2e)', () => {
       hashedPassword = await hash(password, process.env.API_PASSWORD_SALT || '');
 
       place = await dbHelper.placeRepository.create({
-        name: 'Patched org',
+        name: { pl: 'Patched org PL', en: 'Patched org EN', ua: 'Patched org UA' },
         city: 'Gdansk',
         street: 'Pawia',
         buildingNumber: '5a',
         nameSlug: 'my-org',
         state: PlaceState.ACTIVE,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Some title',
+        resources: null,
         lastUpdatedAt: '2022-04-09T00:00:00.000Z',
       });
     });
@@ -67,7 +69,7 @@ describe('PlacesController (e2e)', () => {
         .patch(`/places/${place.id}`)
         .set({ authorization: `Bearer ${jwt}` })
         .send({
-          name: 'New Name',
+          name: { pl: 'New Name PL', en: '', ua: '' },
         })
         .expect(200);
 
@@ -76,20 +78,23 @@ describe('PlacesController (e2e)', () => {
         apartment: null,
         buildingNumber: '5a',
         city: 'Gdansk',
-        comment: null,
+        additionalDescription: null,
         createdAt: expect.any(String),
         email: null,
         id: expect.any(String),
         lastUpdatedAt: null,
         latitude: null,
         longitude: null,
-        name: 'New Name',
-        nameSlug: 'new-name',
+        name: { pl: 'New Name PL', en: '', ua: '' },
+        nameSlug: { pl: 'new-name-pl', en: '', ua: '' },
         phone: null,
         street: 'Pawia',
         updatedAt: expect.any(String),
         workingHours: null,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Some title',
+        resources: null,
+        placeLink: null,
       });
 
       done();
@@ -108,10 +113,10 @@ describe('PlacesController (e2e)', () => {
         .patch(`/places/${place.id}`)
         .set({ authorization: `Bearer ${jwt}` })
         .send({
-          name: 'New Name 2',
+          name: { pl: 'New Name PL', en: 'New Name EN', ua: 'New Name UA' },
           apartment: '2',
           street: 'Long street',
-          comment: 'foo',
+          additionalDescription: 'Test description',
           city: 'Krakow',
           email: 'email',
           latitude: 11,
@@ -120,6 +125,8 @@ describe('PlacesController (e2e)', () => {
           workingHours: 'From 9 to 10',
           lastUpdatedAt: '2022-04-08T21:44:00.940Z',
           bankAccount: '78 1370 1011 7522 3905 2498 0200',
+          bankAccountDescription: 'Payment title: Title',
+          resources: 'Some resources',
         })
         .expect(200);
 
@@ -128,22 +135,25 @@ describe('PlacesController (e2e)', () => {
         apartment: '2',
         buildingNumber: '5a',
         city: 'Krakow',
-        comment: 'foo',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         email: 'email',
         id: expect.any(String),
         lastUpdatedAt: null,
         latitude: '11',
         longitude: '12',
-        name: 'New Name 2',
-        nameSlug: 'new-name-2',
+        name: { pl: 'New Name PL', en: 'New Name EN', ua: 'New Name UA' },
+        nameSlug: { pl: 'new-name-pl', en: 'new-name-en', ua: 'new-name-ua' },
         phone: '123',
         street: 'Long street',
         updatedAt: expect.any(String),
         workingHours: 'From 9 to 10',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Some resources',
         priority: 0,
         state: 1,
+        placeLink: null,
         transitions: [
           {
             endState: 2,

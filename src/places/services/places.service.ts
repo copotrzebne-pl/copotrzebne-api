@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction, Op } from 'sequelize';
+import { Op, Transaction, WhereOptions } from 'sequelize';
 
 import { Place } from '../models/place.model';
 import { CreatePlaceDto } from '../dto/create-place.dto';
@@ -15,15 +15,22 @@ import { slugify } from '../../helpers/slugifier';
 import NotFoundError from '../../error/not-found.error';
 import { Priority } from '../../priorities/models/priority.model';
 import { Category } from '../../categories/models/category.model';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { Sequelize } from 'sequelize-typescript';
+import { TranslatedField } from '../../types/translated.field.type';
+import { PlaceLink } from '../../place-links/models/place-link.model';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
+import { PlaceBoundaries } from '../types/place-boundaries.type';
+import IncorrectValueError from '../../error/incorrect-value.error';
 
 @Injectable()
 export class PlacesService {
   constructor(
     @InjectModel(Place)
     private readonly placeModel: typeof Place,
+    @InjectModel(PlaceLink)
+    private readonly placeLinkModel: typeof PlaceLink,
     private readonly usersService: UsersService,
     private readonly sequelize: Sequelize,
   ) {}
@@ -43,7 +50,9 @@ export class PlacesService {
         [Op.or]: [
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
           {
-            nameSlug: idOrSlug,
+            nameSlug: {
+              [Op.or]: [{ pl: idOrSlug }, { en: idOrSlug }, { ua: idOrSlug }],
+            },
           },
         ],
       },
@@ -54,7 +63,11 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getDetailedPlaces(transaction: Transaction, scope: PlaceScope = PlaceScope.DEFAULT): Promise<Place[]> {
+  public async getDetailedPlaces(
+    transaction: Transaction,
+    scope: PlaceScope = PlaceScope.DEFAULT,
+    boundaries?: string,
+  ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
         {
@@ -70,6 +83,9 @@ export class PlacesService {
           ],
         },
       ],
+      where: {
+        ...this.createWhereClauseForBoundaries(boundaries),
+      },
       transaction,
     });
 
@@ -80,6 +96,7 @@ export class PlacesService {
     transaction: Transaction,
     suppliesIds: string[],
     scope: PlaceScope = PlaceScope.DEFAULT,
+    boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
       include: [
@@ -90,15 +107,32 @@ export class PlacesService {
       ],
       where: {
         '$demands->supply.id$': suppliesIds,
+        ...this.createWhereClauseForBoundaries(boundaries),
       },
+      transaction,
     });
 
     return this.sortPlacesByLastUpdateAndPriority(places);
   }
 
-  public async createPlace(transaction: Transaction, placeDto: CreatePlaceDto, state: PlaceState): Promise<Place> {
-    const nameSlug = slugify(placeDto.name);
-    return await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
+  public async createPlace(
+    transaction: Transaction,
+    placeDto: CreatePlaceDto,
+    state: PlaceState,
+  ): Promise<Place | null> {
+    const nameSlug: TranslatedField = {
+      pl: slugify(placeDto.name.pl),
+      en: slugify(placeDto.name.en),
+      ua: slugify(placeDto.name.ua),
+    };
+
+    const place = await this.placeModel.create({ ...placeDto, nameSlug, state }, { transaction });
+
+    if (placeDto.placeLink) {
+      await this.createLinkForPlace(transaction, place.id, placeDto.placeLink);
+    }
+
+    return this.getPlaceById(transaction, place.id);
   }
 
   public async updatePlace(transaction: Transaction, id: string, placeDto: UpdatePlaceDto): Promise<Place | null> {
@@ -108,10 +142,31 @@ export class PlacesService {
       throw new NotFoundError();
     }
 
-    const nameSlug = placeDto.name ? slugify(placeDto.name) : slugify(place.name);
+    const nameSlug: TranslatedField = placeDto.name
+      ? {
+          pl: slugify(placeDto.name.pl),
+          en: slugify(placeDto.name.en),
+          ua: slugify(placeDto.name.ua),
+        }
+      : {
+          pl: slugify(place.name.pl),
+          en: slugify(place.name.en),
+          ua: slugify(place.name.ua),
+        };
+
     const lastUpdatedAt = place.demands.length ? placeDto.lastUpdatedAt : null;
 
     await this.placeModel.update({ ...placeDto, nameSlug, lastUpdatedAt }, { where: { id }, transaction });
+
+    if (placeDto.placeLink) {
+      const linkForPlace = await this.getLinkForPlace(transaction, id);
+
+      if (linkForPlace) {
+        await this.updateLinkForPlace(transaction, id, placeDto.placeLink);
+      } else {
+        await this.createLinkForPlace(transaction, id, placeDto.placeLink);
+      }
+    }
 
     return await this.getPlaceById(transaction, id);
   }
@@ -158,6 +213,27 @@ export class PlacesService {
     return true;
   }
 
+  public async getLinkForPlace(transaction: Transaction, placeId: string): Promise<PlaceLink | null> {
+    return await this.placeLinkModel.findOne({ where: { placeId }, transaction });
+  }
+
+  public async createLinkForPlace(
+    transaction: Transaction,
+    placeId: string,
+    placeLinkDto: PlaceLinkDto,
+  ): Promise<PlaceLink> {
+    return await this.placeLinkModel.create({ ...placeLinkDto, placeId }, { transaction });
+  }
+
+  public async updateLinkForPlace(
+    transaction: Transaction,
+    placeId: string,
+    placeLinkDto: PlaceLinkDto,
+  ): Promise<PlaceLink | null> {
+    await this.placeLinkModel.update({ ...placeLinkDto }, { where: { placeId }, transaction });
+    return await this.getLinkForPlace(transaction, placeId);
+  }
+
   public mapStateToScope(state: PlaceState | undefined): PlaceScope {
     if (!state || !Object.values(PlaceState).includes(state)) {
       return PlaceScope.DEFAULT;
@@ -167,7 +243,6 @@ export class PlacesService {
   }
 
   private getRawPlaceWithoutAssociations(place: Place): Place {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { demands = [], users = [], ...rawPlace } = place.get();
     return rawPlace as Place;
   }
@@ -185,5 +260,33 @@ export class PlacesService {
     const place2LastUpdatedAt = place2.lastUpdatedAt ? place2.lastUpdatedAt.getTime() : 0;
 
     return place2LastUpdatedAt - place1LastUpdatedAt;
+  }
+
+  createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+    if (!boundariesStr) {
+      return {};
+    }
+
+    const boundaries = this.createPlaceBoundariesFromString(boundariesStr);
+
+    return {
+      latitude: { [Op.lte]: boundaries.topLeft.lat, [Op.gte]: boundaries.bottomRight.lat },
+      longitude: { [Op.lte]: boundaries.bottomRight.long, [Op.gte]: boundaries.topLeft.long },
+    };
+  }
+
+  private createPlaceBoundariesFromString(boundaries: string): PlaceBoundaries {
+    const coordinates = boundaries.split(',').map((boundary) => parseFloat(boundary));
+
+    if (coordinates.some((coordinate) => isNaN(coordinate))) {
+      throw new IncorrectValueError();
+    }
+
+    const [north, west, south, east] = coordinates;
+
+    return {
+      topLeft: { lat: north, long: west },
+      bottomRight: { lat: south, long: east },
+    };
   }
 }
