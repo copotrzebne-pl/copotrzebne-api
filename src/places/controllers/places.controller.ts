@@ -32,18 +32,17 @@ import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
 import { Language } from '../../types/language.type.enum';
-import { Comment } from '../../comments/models/comment.model';
-import { CommentsService } from '../../comments/services/comments.service';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
 import { PlacesStateMachine } from '../services/state-machine/places.state-machine';
-import { PlaceScope } from '../types/placeScope';
+import { PlaceScope } from '../types/place-scope.enum';
 import { JournalsService } from '../../journals/services/journals.service';
 import { Action } from '../../journals/types/action.enum';
 import { PlaceState } from '../types/place.state.enum';
 import { UsersDraftsService } from '../../users-drafts/services/users-drafts.service';
 import { CreateDraftPlaceDto } from '../dto/create-draft-place.dto';
+import { DemandSortOptions } from '../../demands/types/demands-sort-options.type.enum';
 
 @ApiTags('places')
 @Injectable()
@@ -55,46 +54,56 @@ export class PlacesController {
     private readonly placesService: PlacesService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
-    private readonly commentsService: CommentsService,
     private readonly placeStateMachine: PlacesStateMachine,
     private readonly journalsService: JournalsService,
     private readonly usersDraftsService: UsersDraftsService,
   ) {}
 
   @ApiQuery({ name: 'supply', type: String })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
     description:
-      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places',
+      'if query param "supplyId" is given - returns all active places with demands for specific supply; if not - returns all active places\n' +
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @Get('/')
-  public async getActivePlaces(@Query('supplyId') supplyId?: string): Promise<Place[] | void> {
+  public async getActivePlaces(
+    @Query('supplyId') supplyId?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       if (supplyId) {
         const supplies = supplyId.split(',');
-        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE);
+        return await this.placesService.getPlacesWithSupplies(transaction, supplies, PlaceScope.ACTIVE, boundaries);
       }
 
-      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE);
+      return await this.placesService.getDetailedPlaces(transaction, PlaceScope.ACTIVE, boundaries);
     });
   }
 
   @ApiQuery({ name: 'state', type: Number })
+  @ApiQuery({ name: 'boundaries', type: String })
   @ApiResponse({
     isArray: true,
     type: Place,
-    description: 'returns all places',
+    description:
+      'returns all places\n' +
+      'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @ApiHeader({ name: 'authorization' })
   @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
   @UseGuards(AuthGuard)
   @Get('/all')
-  public async getAllPlaces(@Query('state') state?: string): Promise<Place[] | void> {
+  public async getAllPlaces(
+    @Query('state') state?: string,
+    @Query('boundaries') boundaries?: string,
+  ): Promise<Place[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       const placeState = state ? +state : undefined;
       const scope = this.placesService.mapStateToScope(placeState);
-      return await this.placesService.getDetailedPlaces(transaction, scope);
+      return await this.placesService.getDetailedPlaces(transaction, scope, boundaries);
     });
   }
 
@@ -115,17 +124,12 @@ export class PlacesController {
   @ApiQuery({ name: 'sort', enum: Language })
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
-  public async getDemandsForPlace(@Param('id') id: string, @Query('sort') sort?: Language): Promise<Demand[] | void> {
+  public async getDemandsForPlace(
+    @Param('id') id: string,
+    @Query('sort') sort?: DemandSortOptions,
+  ): Promise<Demand[] | void> {
     return await this.sequelize.transaction(async (transaction) => {
       return await this.demandsService.getDetailedDemandsForPlace(transaction, id, sort);
-    });
-  }
-
-  @ApiResponse({ isArray: true, type: Comment, description: 'returns all comments for place' })
-  @Get(':id/comments')
-  public async getCommentsForPlace(@Param('id') id: string): Promise<Comment[] | void> {
-    return await this.sequelize.transaction(async (transaction) => {
-      return await this.commentsService.getCommentsForPlace(transaction, id);
     });
   }
 

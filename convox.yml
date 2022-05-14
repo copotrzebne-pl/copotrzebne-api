@@ -1,0 +1,24 @@
+resources:
+  database:
+    type: postgres
+    options:
+      version: 14.2
+      class: ${DB_INSTANCE_TYPE}
+      storage: ${DB_STORAGE}
+      encrypted: ${DB_ENCRYPTED}
+      durable: ${DB_MULTI_AZ}
+services:
+  web:
+    build: .
+    domain: ${DOMAIN}
+    health: /api/health
+    port: 3000
+    resources:
+      - database
+    scale:
+      count: 1
+      cpu: 64
+      memory: 128
+    environment:
+      - PORT=3000
+      - "*"

@@ -1,2 +1,0 @@
-release: npx sequelize-cli db:migrate
-web: yarn start:prod

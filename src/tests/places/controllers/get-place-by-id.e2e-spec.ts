@@ -27,36 +27,38 @@ describe('PlacesController (e2e)', () => {
       dbHelper.placeRepository.destroy({ where: {} });
 
       place = await dbHelper.placeRepository.create({
-        name: 'ZHP Test',
+        name: { pl: 'ZHP Test PL', en: 'ZHP Test EN', ua: 'ZHP Test UA' },
         city: 'Krakow',
         street: 'Pawia',
         buildingNumber: '5a',
         apartment: '1',
-        comment: 'Test comment',
+        additionalDescription: 'Test description',
         email: 'test-email@email.com',
         latitude: 56,
         longitude: 58,
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
-        nameSlug: 'zhp-test',
+        nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
       });
 
       await dbHelper.placeRepository.create({
-        name: 'Other place',
+        name: { pl: 'Other Place PL', en: 'Other Place EN', ua: 'Other Place UA' },
         city: 'Gdynia',
         street: 'Dluga',
         buildingNumber: '1',
         apartment: null,
-        comment: 'Comment',
+        additionalDescription: 'Test description',
         email: 'test-22@email.com',
         latitude: null,
         longitude: null,
         phone: '888-221-222',
         workingHours: 'Codziennie 6:00-11:11',
-        nameSlug: 'other-place',
+        nameSlug: { pl: 'other-place-pl', en: 'other-place-en', ua: 'other-place-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
       });
@@ -73,12 +75,12 @@ describe('PlacesController (e2e)', () => {
       // THEN
       expect(body).toEqual({
         id: expect.any(String),
-        name: 'ZHP Test',
+        name: { pl: 'ZHP Test PL', en: 'ZHP Test EN', ua: 'ZHP Test UA' },
         city: 'Krakow',
         street: 'Pawia',
         buildingNumber: '5a',
         apartment: '1',
-        comment: 'Test comment',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         email: 'test-email@email.com',
@@ -86,29 +88,32 @@ describe('PlacesController (e2e)', () => {
         longitude: '58',
         phone: '888-111-222',
         workingHours: 'Codziennie 6:30-23:30',
-        nameSlug: 'zhp-test',
+        nameSlug: { pl: 'zhp-test-pl', en: 'zhp-test-en', ua: 'zhp-test-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: '78 1370 1011 7522 3905 2498 0200',
+        bankAccountDescription: 'Payment title: Title',
+        resources: 'Resources',
+        placeLink: null,
       });
       done();
     });
 
     it('returns place by slug', async (done) => {
       // WHEN
-      const { body } = await request(app.getHttpServer()).get(`/places/other-place`).expect(200);
+      const { body } = await request(app.getHttpServer()).get(`/places/other-place-pl`).expect(200);
 
       // THEN
       expect(body).toEqual({
         id: expect.any(String),
-        name: 'Other place',
+        name: { pl: 'Other Place PL', en: 'Other Place EN', ua: 'Other Place UA' },
         city: 'Gdynia',
         street: 'Dluga',
         buildingNumber: '1',
         apartment: null,
-        comment: 'Comment',
+        additionalDescription: 'Test description',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         email: 'test-22@email.com',
@@ -116,12 +121,15 @@ describe('PlacesController (e2e)', () => {
         longitude: null,
         phone: '888-221-222',
         workingHours: 'Codziennie 6:00-11:11',
-        nameSlug: 'other-place',
+        nameSlug: { pl: 'other-place-pl', en: 'other-place-en', ua: 'other-place-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: '2022-04-08T21:44:00.940Z',
         transitions: [{ endState: 2, startState: 1, name: 'DEACTIVATE' }],
         priority: 0,
         bankAccount: null,
+        bankAccountDescription: null,
+        resources: null,
+        placeLink: null,
       });
       done();
     });

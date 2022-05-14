@@ -1,11 +1,12 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TranslatedField } from '../../types/translated.field.type';
+import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 
 export class CreatePlaceDto {
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  name!: string;
+  name!: TranslatedField;
 
   @ApiProperty()
   @IsString()
@@ -30,7 +31,7 @@ export class CreatePlaceDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  comment?: string;
+  additionalDescription?: string;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
@@ -61,4 +62,18 @@ export class CreatePlaceDto {
   @IsOptional()
   @IsString()
   bankAccount?: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  bankAccountDescription?: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  resources?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  placeLink?: PlaceLinkDto;
 }

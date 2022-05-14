@@ -42,11 +42,11 @@ describe('DemandsController (e2e)', () => {
       const priority = (await dbHelper.prioritiesRepository.findOne()) as Priority;
 
       place = await dbHelper.placeRepository.create({
-        name: 'Demand test org',
+        name: { pl: 'Demand test org PL', en: 'Demand test org EN', ua: 'Demand test org UA' },
         city: 'Gdansk',
         street: 'Pawia',
         buildingNumber: '5a',
-        nameSlug: 'demand-test-org',
+        nameSlug: { pl: 'demand-test-org-pl', en: 'demand-test-org-en', ua: 'demand-test-org-ua' },
         state: PlaceState.ACTIVE,
         lastUpdatedAt: new Date(),
       });
