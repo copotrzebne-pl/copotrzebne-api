@@ -4,10 +4,6 @@ export enum Action {
   GET_OWNED_PLACES = 'get_places',
   EDIT_PLACE = 'edit_place',
 
-  ADD_COMMENT = 'add_comment',
-  EDIT_COMMENT = 'edit_comment',
-  DELETE_COMMENT = 'delete_comment',
-
   ADD_DEMAND = 'add_demand',
   EDIT_DEMAND = 'edit_demand',
   DELETE_DEMAND = 'delete_demand',

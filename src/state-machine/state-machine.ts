@@ -47,9 +47,7 @@ export class StateMachine<T extends Model> {
     return updatedEntity;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   protected beforeTransition(entity: T, transition: Transition, transaction: Transaction): void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   protected afterTransition(entity: T, transition: Transition, transaction: Transaction): void {}
 }
