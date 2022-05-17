@@ -23,6 +23,8 @@ import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 import { PlaceBoundaries } from '../types/place-boundaries.type';
 import IncorrectValueError from '../../error/incorrect-value.error';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
+import { Includeable } from 'sequelize/types/model';
 
 @Injectable()
 export class PlacesService {
@@ -36,16 +38,14 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    const place = await this.placeModel.findByPk(id, {
-      include: [{ model: Demand, include: [Priority] }],
+    return await this.placeModel.findByPk(id, {
+      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
       transaction,
     });
-
-    return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
-    const place = await this.placeModel.findOne({
+    return await this.placeModel.findOne({
       where: {
         [Op.or]: [
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
@@ -56,11 +56,9 @@ export class PlacesService {
           },
         ],
       },
-      include: [{ model: Demand, include: [Priority] }],
+      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
       transaction,
     });
-
-    return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getDetailedPlaces(
@@ -69,20 +67,7 @@ export class PlacesService {
     boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
-      include: [
-        {
-          model: Demand,
-          include: [
-            {
-              model: Supply,
-              include: [Category],
-            },
-            {
-              model: Priority,
-            },
-          ],
-        },
-      ],
+      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
       where: {
         ...this.createWhereClauseForBoundaries(boundaries),
       },
@@ -99,12 +84,7 @@ export class PlacesService {
     boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
-      include: [
-        {
-          model: Demand,
-          include: [Supply, Priority],
-        },
-      ],
+      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
       where: {
         '$demands->supply.id$': suppliesIds,
         ...this.createWhereClauseForBoundaries(boundaries),
@@ -198,7 +178,8 @@ export class PlacesService {
     });
 
     return places.map((place) => {
-      return this.getRawPlaceWithoutAssociations(place);
+      const { users = [], ...rawPlace } = place.get();
+      return rawPlace as Place;
     });
   }
 
@@ -242,11 +223,6 @@ export class PlacesService {
     return state === PlaceState.ACTIVE ? PlaceScope.ACTIVE : PlaceScope.INACTIVE;
   }
 
-  private getRawPlaceWithoutAssociations(place: Place): Place {
-    const { demands = [], users = [], ...rawPlace } = place.get();
-    return rawPlace as Place;
-  }
-
   private sortPlacesByLastUpdateAndPriority(places: Place[]): Place[] {
     return places.sort(this.sortPlacesByPriority).sort(this.sortPlacesByLastUpdate);
   }
@@ -262,7 +238,27 @@ export class PlacesService {
     return place2LastUpdatedAt - place1LastUpdatedAt;
   }
 
-  createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+  private static createJoinClauseForDemandsAndAnnouncements(): Includeable[] {
+    return [
+      {
+        model: Demand,
+        include: [
+          {
+            model: Supply,
+            include: [Category],
+          },
+          {
+            model: Priority,
+          },
+        ],
+      },
+      {
+        model: PublicAnnouncement,
+      },
+    ];
+  }
+
+  private createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
     if (!boundariesStr) {
       return {};
     }
