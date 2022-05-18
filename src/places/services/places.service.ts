@@ -37,9 +37,12 @@ export class PlacesService {
   ) {}
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
-    return await this.placeModel.findByPk(id, {
+    const place = await this.placeModel.findByPk(id, {
+      include: [{ model: Demand, include: [Priority] }],
       transaction,
     });
+
+    return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getDetailedPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
@@ -194,8 +197,7 @@ export class PlacesService {
     });
 
     return places.map((place) => {
-      const { demands = [], users = [], ...rawPlace } = place.get();
-      return rawPlace as Place;
+      return this.getRawPlaceWithoutAssociations(place);
     });
   }
 
@@ -237,6 +239,11 @@ export class PlacesService {
     }
 
     return state === PlaceState.ACTIVE ? PlaceScope.ACTIVE : PlaceScope.INACTIVE;
+  }
+
+  private getRawPlaceWithoutAssociations(place: Place): Place {
+    const { demands = [], users = [], ...rawPlace } = place.get();
+    return rawPlace as Place;
   }
 
   private sortPlacesByLastUpdateAndPriority(places: Place[]): Place[] {
