@@ -24,7 +24,6 @@ import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 import { PlaceBoundaries } from '../types/place-boundaries.type';
 import IncorrectValueError from '../../error/incorrect-value.error';
 import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
-import { Includeable } from 'sequelize/types/model';
 
 @Injectable()
 export class PlacesService {
@@ -55,7 +54,7 @@ export class PlacesService {
           },
         ],
       },
-      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
+      include: [{ model: Demand, include: [{ model: Supply, include: [Category] }, Priority] }, PublicAnnouncement],
       transaction,
     });
   }
@@ -255,27 +254,7 @@ export class PlacesService {
     return place2LastUpdatedAt - place1LastUpdatedAt;
   }
 
-  private static createJoinClauseForDemandsAndAnnouncements(): Includeable[] {
-    return [
-      {
-        model: Demand,
-        include: [
-          {
-            model: Supply,
-            include: [Category],
-          },
-          {
-            model: Priority,
-          },
-        ],
-      },
-      {
-        model: PublicAnnouncement,
-      },
-    ];
-  }
-
-  private createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
+  createWhereClauseForBoundaries(boundariesStr?: string): WhereOptions<Place> {
     if (!boundariesStr) {
       return {};
     }
