@@ -161,8 +161,6 @@ describe('PlacesController (e2e)', () => {
             startState: 1,
           },
         ],
-        demands: [],
-        publicAnnouncements: [],
       });
 
       done();

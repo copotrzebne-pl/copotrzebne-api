@@ -165,7 +165,7 @@ export class PlacesService {
       }
     }
 
-    return await this.getDetailedPlaceByIdOrSlug(transaction, id);
+    return await this.getPlaceById(transaction, id);
   }
 
   public async deletePlace(transaction: Transaction, id: string): Promise<void> {
