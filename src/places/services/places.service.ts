@@ -39,12 +39,11 @@ export class PlacesService {
 
   public async getPlaceById(transaction: Transaction, id: string): Promise<Place | null> {
     return await this.placeModel.findByPk(id, {
-      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
       transaction,
     });
   }
 
-  public async getPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
+  public async getDetailedPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
     return await this.placeModel.findOne({
       where: {
         [Op.or]: [
@@ -67,7 +66,20 @@ export class PlacesService {
     boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
-      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
+      include: [
+        {
+          model: Demand,
+          include: [
+            {
+              model: Supply,
+              include: [Category],
+            },
+            {
+              model: Priority,
+            },
+          ],
+        },
+      ],
       where: {
         ...this.createWhereClauseForBoundaries(boundaries),
       },
@@ -84,7 +96,12 @@ export class PlacesService {
     boundaries?: string,
   ): Promise<Place[]> {
     const places = await this.placeModel.scope(scope).findAll({
-      include: PlacesService.createJoinClauseForDemandsAndAnnouncements(),
+      include: [
+        {
+          model: Demand,
+          include: [Supply, Priority],
+        },
+      ],
       where: {
         '$demands->supply.id$': suppliesIds,
         ...this.createWhereClauseForBoundaries(boundaries),
@@ -148,7 +165,7 @@ export class PlacesService {
       }
     }
 
-    return await this.getPlaceById(transaction, id);
+    return await this.getDetailedPlaceByIdOrSlug(transaction, id);
   }
 
   public async deletePlace(transaction: Transaction, id: string): Promise<void> {
@@ -178,7 +195,7 @@ export class PlacesService {
     });
 
     return places.map((place) => {
-      const { users = [], ...rawPlace } = place.get();
+      const { demands = [], users = [], ...rawPlace } = place.get();
       return rawPlace as Place;
     });
   }

@@ -89,7 +89,6 @@ describe('PlacesController (e2e)', () => {
           bankAccountDescription: 'Payment title: Title',
           resources: 'Resources',
           demands: [],
-          publicAnnouncements: [],
           priority: 0,
           state: 1,
           transitions: [

@@ -110,7 +110,7 @@ export class PlacesController {
   @Get('/:idOrSlug')
   public async getPlace(@Param('idOrSlug') idOrSlug: string): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.getPlaceByIdOrSlug(transaction, idOrSlug);
+      const place = await this.placesService.getDetailedPlaceByIdOrSlug(transaction, idOrSlug);
 
       if (!place) {
         throw new NotFoundError('PLACE_NOT_FOUND');
