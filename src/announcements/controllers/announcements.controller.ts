@@ -53,7 +53,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ isArray: true, type: InternalAnnouncement, description: 'returns internal announcements' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/internal')
   public async getInternalAnnouncements(): Promise<InternalAnnouncement[]> {
@@ -67,7 +67,7 @@ export class AnnouncementsController {
     type: InternalAnnouncement,
     description: 'returns only active internal announcements (by start and end date)',
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/internal/active')
   public async getActiveInternalAnnouncements(): Promise<InternalAnnouncement[]> {
@@ -85,7 +85,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ type: InternalAnnouncement, description: 'returns single internal announcement found by id' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/internal/:id')
   public async getInternalAnnouncement(@Param('id') id: string): Promise<InternalAnnouncement | null> {
@@ -95,7 +95,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ type: PublicAnnouncement, description: 'creates public announcement and returns created entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/public')
   public async createPublicAnnouncement(
@@ -124,7 +124,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ type: InternalAnnouncement, description: 'creates internal announcement and returns created entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/internal')
   public async createInternalAnnouncement(
@@ -156,7 +156,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ type: PublicAnnouncement, description: 'updates public announcement and returns updated entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/public/:id')
   public async updatePublicAnnouncementDto(
@@ -195,8 +195,8 @@ export class AnnouncementsController {
     });
   }
 
-  @ApiResponse({ type: InternalAnnouncement, description: 'updates public announcement and returns updated entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @ApiResponse({ type: InternalAnnouncement, description: 'updates internal announcement and returns updated entity' })
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/internal/:id')
   public async updateInternalAnnouncementDto(
