@@ -198,26 +198,6 @@ describe('PlacesController (e2e)', () => {
       done();
     });
 
-    it('returns 403 for SERVICE role', async (done) => {
-      // GIVEN
-      await dbHelper.usersRepository.create({ login, hashedPassword, role: UserRole.SERVICE });
-
-      // WHEN
-      const {
-        body: { jwt },
-      } = await request(app.getHttpServer()).post(`/login`).send({ login, password });
-
-      const { body } = await request(app.getHttpServer())
-        .patch(`/places/${place.id}`)
-        .set({ authorization: `Bearer ${jwt}` })
-        .expect(403);
-
-      // THEN
-      expect(body).toEqual({ message: 'Forbidden resource', statusCode: 403 });
-
-      done();
-    });
-
     it('logs in journal on success', async (done) => {
       // GIVEN
       const uniqueLogin = 'unique_login_for_patch_place';
