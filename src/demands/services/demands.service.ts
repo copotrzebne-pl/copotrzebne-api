@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Order, Transaction } from 'sequelize';
+import sequelize, { Order, Transaction } from 'sequelize';
 import { Demand } from '../models/demand.model';
 import { Supply } from '../../supplies/models/supply.model';
 import { Priority } from '../../priorities/models/priority.model';
@@ -42,8 +42,9 @@ export class DemandsService {
         ? [['createdAt', 'DESC']]
         : [
             [{ model: Supply, as: 'supply' }, { model: Category, as: 'category' }, `priority`, 'ASC'],
-            [{ model: Supply, as: 'supply' }, `name.${sort}`, 'ASC'],
+            [{ model: Supply, as: 'supply' }, sequelize.literal(`"name"#>>'{pl}'`), 'ASC'],
           ];
+
     return await this.demandModel.findAll({
       include: [{ model: Supply, include: [{ model: Category }] }, { model: Priority }],
       where: { placeId },
