@@ -43,7 +43,7 @@ export class AnnouncementCommentsController {
   ) {}
 
   @ApiResponse({ type: AnnouncementComment, description: 'creates comment and returns created entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
   public async createAnnouncementComment(
@@ -81,7 +81,7 @@ export class AnnouncementCommentsController {
   }
 
   @ApiResponse({ type: AnnouncementComment, description: 'updates comment and returns updated entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updateAnnouncementComment(
@@ -117,7 +117,7 @@ export class AnnouncementCommentsController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes comment and returns empty response' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')

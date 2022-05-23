@@ -23,7 +23,7 @@ export class UsersController {
         id: { type: 'string' },
         login: { type: 'string' },
         placeId: { type: 'string', nullable: true },
-        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER] },
+        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER] },
       },
     },
   })
@@ -59,11 +59,11 @@ export class UsersController {
       properties: {
         id: { type: 'string' },
         login: { type: 'string' },
-        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER] },
+        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER] },
       },
     },
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Get('/whoami')
   public async whoami(@SessionUser() user: User): Promise<{ login: string; id: string; role: string } | void> {
