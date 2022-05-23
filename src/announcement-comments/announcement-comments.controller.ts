@@ -117,7 +117,7 @@ export class AnnouncementCommentsController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes comment and returns empty response' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')

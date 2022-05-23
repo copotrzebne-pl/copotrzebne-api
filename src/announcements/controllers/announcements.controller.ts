@@ -236,7 +236,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes public announcement and returns empty response' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/public/:id')
@@ -263,7 +263,7 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes internal announcement and returns empty response' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/internal/:id')
