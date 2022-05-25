@@ -97,6 +97,8 @@ describe('PlacesController (e2e)', () => {
         bankAccountDescription: 'Payment title: Title',
         resources: 'Resources',
         placeLink: null,
+        demands: [],
+        publicAnnouncements: [],
       });
       done();
     });
@@ -130,6 +132,8 @@ describe('PlacesController (e2e)', () => {
         bankAccountDescription: null,
         resources: null,
         placeLink: null,
+        demands: [],
+        publicAnnouncements: [],
       });
       done();
     });
