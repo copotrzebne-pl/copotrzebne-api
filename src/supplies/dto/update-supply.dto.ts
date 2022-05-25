@@ -1,22 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TranslatedField } from '../../types/translated-field.type';
 
 export class UpdateSupplyDto {
   @ApiProperty()
   @IsOptional()
-  @IsString()
   @IsNotEmpty()
-  namePl?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  cityEn?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  streetUa?: string;
+  name?: TranslatedField;
 }

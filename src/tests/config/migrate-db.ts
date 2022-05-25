@@ -61,8 +61,8 @@ const seedSupplies = async (sequelize: Sequelize) => {
   const categoryId = idResult[0].id;
 
   await sequelize.query(
-    `INSERT INTO supplies ("name_pl", "name_ua", "name_en", "category_id")
-           VALUES ('miód', 'мед', 'honey', '${categoryId}'), ('witaminy', 'вітаміни', 'vitamins', '${categoryId}')`,
+    `INSERT INTO supplies ("name", "category_id")
+           VALUES ('{"pl": "miód", "en": "honey", "ua": "мед"}', '${categoryId}'), ('{"pl": "witaminy", "en": "vitamins", "ua": "вітаміни"}', '${categoryId}')`,
   );
 };
 const seedPriorities = async (sequelize: Sequelize) => {

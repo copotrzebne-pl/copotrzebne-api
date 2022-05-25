@@ -2,6 +2,7 @@ import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Sequelize, Tab
 import { Demand } from '../../demands/models/demand.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from '../../categories/models/category.model';
+import { TranslatedField } from '../../types/translated-field.type';
 
 @Table({ tableName: 'supplies', underscored: true, timestamps: false })
 export class Supply extends Model {
@@ -10,16 +11,8 @@ export class Supply extends Model {
   id!: string;
 
   @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  namePl!: string;
-
-  @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  nameUa!: string;
-
-  @ApiProperty()
-  @Column({ allowNull: false, type: DataType.STRING })
-  nameEn!: string;
+  @Column({ allowNull: false, type: DataType.JSONB })
+  name!: TranslatedField;
 
   @HasMany(() => Demand)
   demand!: Demand[];
