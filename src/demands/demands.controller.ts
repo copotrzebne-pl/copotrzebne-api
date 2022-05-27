@@ -60,7 +60,7 @@ export class DemandsController {
   }
 
   @ApiResponse({ type: Demand, description: 'creates demand and returns created entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Post('/')
   public async createDemand(@SessionUser() user: User, @Body() demandDto: CreateDemandDto): Promise<Demand | void> {
@@ -86,7 +86,7 @@ export class DemandsController {
   }
 
   @ApiResponse({ type: Demand, description: 'updates demand and returns updated entity' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updateDemand(
@@ -121,7 +121,7 @@ export class DemandsController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes demand and returns empty response' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')

@@ -111,10 +111,10 @@ describe('PlacesController (e2e)', () => {
       done();
     });
 
-    it('returns 403 for SERVICE role', async (done) => {
+    it('returns 403 for MODERATOR role', async (done) => {
       // GIVEN
       // create place manager
-      await dbHelper.usersRepository.create({ login, hashedPassword, role: UserRole.SERVICE });
+      await dbHelper.usersRepository.create({ login, hashedPassword, role: UserRole.MODERATOR });
 
       // WHEN
       const {

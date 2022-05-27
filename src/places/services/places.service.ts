@@ -23,6 +23,7 @@ import { PlaceLink } from '../../place-links/models/place-link.model';
 import { PlaceLinkDto } from '../../place-links/dto/place-link.dto';
 import { PlaceBoundaries } from '../types/place-boundaries.type';
 import IncorrectValueError from '../../error/incorrect-value.error';
+import { PublicAnnouncement } from '../../announcements/models/public-announcement.model';
 
 @Injectable()
 export class PlacesService {
@@ -44,8 +45,8 @@ export class PlacesService {
     return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
-  public async getPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
-    const place = await this.placeModel.findOne({
+  public async getDetailedPlaceByIdOrSlug(transaction: Transaction, idOrSlug: string): Promise<Place | null> {
+    return await this.placeModel.findOne({
       where: {
         [Op.or]: [
           this.sequelize.where(this.sequelize.cast(this.sequelize.col('id'), 'varchar'), { [Op.eq]: idOrSlug }),
@@ -56,11 +57,9 @@ export class PlacesService {
           },
         ],
       },
-      include: [{ model: Demand, include: [Priority] }],
+      include: [{ model: Demand, include: [{ model: Supply, include: [Category] }, Priority] }, PublicAnnouncement],
       transaction,
     });
-
-    return place ? this.getRawPlaceWithoutAssociations(place) : null;
   }
 
   public async getDetailedPlaces(
