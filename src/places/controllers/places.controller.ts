@@ -31,7 +31,6 @@ import { UsersService } from '../../users/users.service';
 import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
-import { Language } from '../../types/language.type.enum';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
