@@ -92,7 +92,7 @@ export class PlacesController {
       'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @ApiHeader({ name: 'authorization' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.AUDITOR])
   @UseGuards(AuthGuard)
   @Get('/all')
   public async getAllPlaces(
@@ -270,7 +270,7 @@ export class PlacesController {
     isArray: true,
     description: 'Returns list of owned places for user. Only accessibe by admins.',
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.AUDITOR])
   @UseGuards(AuthGuard)
   @Get('/owned/:userId')
   public async getOwnedPlacesByUserId(@Param('userId') userId: string): Promise<Place[] | void> {

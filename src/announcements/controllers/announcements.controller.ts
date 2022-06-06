@@ -53,7 +53,12 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ isArray: true, type: InternalAnnouncement, description: 'returns internal announcements' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/internal')
   public async getInternalAnnouncements(): Promise<InternalAnnouncement[]> {
@@ -67,7 +72,12 @@ export class AnnouncementsController {
     type: InternalAnnouncement,
     description: 'returns only active internal announcements (by start and end date)',
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/internal/active')
   public async getActiveInternalAnnouncements(): Promise<InternalAnnouncement[]> {
@@ -85,7 +95,12 @@ export class AnnouncementsController {
   }
 
   @ApiResponse({ type: InternalAnnouncement, description: 'returns single internal announcement found by id' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/internal/:id')
   public async getInternalAnnouncement(@Param('id') id: string): Promise<InternalAnnouncement | null> {
