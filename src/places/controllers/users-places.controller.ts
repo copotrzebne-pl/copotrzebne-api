@@ -51,7 +51,7 @@ export class UsersPlacesController {
   @Get('/owned')
   public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
     const userPlaces = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
-      if (user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR) {
+      if (user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR || user.role === UserRole.AUDITOR) {
         return await this.placesService.getDetailedPlaces(transaction);
       }
 
