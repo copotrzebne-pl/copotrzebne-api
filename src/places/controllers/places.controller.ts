@@ -120,7 +120,7 @@ export class PlacesController {
     });
   }
 
-  @ApiQuery({ name: 'sort', enum: Language })
+  @ApiQuery({ name: 'sort', enum: DemandSortOptions })
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
   public async getDemandsForPlace(
