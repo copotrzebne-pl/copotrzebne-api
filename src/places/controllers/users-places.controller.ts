@@ -41,7 +41,12 @@ export class UsersPlacesController {
 
   @ApiHeader({ name: 'authorization' })
   @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/owned')
   public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
