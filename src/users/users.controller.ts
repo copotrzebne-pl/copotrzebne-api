@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, SetMetadata, UseFilters, UseGuards } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
-import { ApiResponse, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './models/user.model';
@@ -23,7 +23,7 @@ export class UsersController {
         id: { type: 'string' },
         login: { type: 'string' },
         placeId: { type: 'string', nullable: true },
-        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER] },
+        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER] },
       },
     },
   })
@@ -59,11 +59,16 @@ export class UsersController {
       properties: {
         id: { type: 'string' },
         login: { type: 'string' },
-        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER] },
+        role: { type: 'string', enum: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER] },
       },
     },
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.SERVICE, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/whoami')
   public async whoami(@SessionUser() user: User): Promise<{ login: string; id: string; role: string } | void> {
@@ -71,7 +76,7 @@ export class UsersController {
   }
 
   @ApiResponse({ type: User, isArray: true, description: 'Returns list of users. Access for admins only.' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.AUDITOR])
   @UseGuards(AuthGuard)
   @Get('/')
   public async getUsers(): Promise<User[] | void> {

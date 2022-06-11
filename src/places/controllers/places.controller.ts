@@ -31,7 +31,6 @@ import { UsersService } from '../../users/users.service';
 import { AuthorizationError } from '../../error/authorization.error';
 import NotFoundError from '../../error/not-found.error';
 import { ErrorHandler } from '../../error/error-handler';
-import { Language } from '../../types/language.type.enum';
 import { SessionUser } from '../../decorators/session-user.decorator';
 import { User } from '../../users/models/user.model';
 import { PerformPlaceTransitionDto } from '../dto/perform-place-transition.dto';
@@ -93,7 +92,7 @@ export class PlacesController {
       'if boundaries are given, then they are expected to be in format "50.068,19.958,50.067,19.959" - North, West, South, East (counter-clockwise)',
   })
   @ApiHeader({ name: 'authorization' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.AUDITOR])
   @UseGuards(AuthGuard)
   @Get('/all')
   public async getAllPlaces(
@@ -111,7 +110,7 @@ export class PlacesController {
   @Get('/:idOrSlug')
   public async getPlace(@Param('idOrSlug') idOrSlug: string): Promise<Place | void> {
     return await this.sequelize.transaction(async (transaction) => {
-      const place = await this.placesService.getPlaceByIdOrSlug(transaction, idOrSlug);
+      const place = await this.placesService.getDetailedPlaceByIdOrSlug(transaction, idOrSlug);
 
       if (!place) {
         throw new NotFoundError('PLACE_NOT_FOUND');
@@ -121,7 +120,7 @@ export class PlacesController {
     });
   }
 
-  @ApiQuery({ name: 'sort', enum: Language })
+  @ApiQuery({ name: 'sort', enum: DemandSortOptions })
   @ApiResponse({ isArray: true, type: Demand, description: 'returns all demands for place' })
   @Get(':id/demands')
   public async getDemandsForPlace(
@@ -134,7 +133,7 @@ export class PlacesController {
   }
 
   @ApiResponse({ status: 204, description: 'deletes all demands for place' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id/demands')
@@ -157,7 +156,7 @@ export class PlacesController {
 
   @ApiResponse({ type: Place, description: 'creates place and returns created entity' })
   @ApiHeader({ name: 'authorization' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR])
   @UseGuards(AuthGuard)
   @Post('/')
   public async createPlace(@SessionUser() user: User, @Body() placeDto: CreatePlaceDto): Promise<Place | void> {
@@ -193,7 +192,7 @@ export class PlacesController {
 
   @ApiResponse({ type: Place, description: 'updates place and returns updated entity' })
   @ApiHeader({ name: 'authorization' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.PLACE_MANAGER])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.MODERATOR, UserRole.PLACE_MANAGER])
   @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updatePlace(
@@ -271,7 +270,7 @@ export class PlacesController {
     isArray: true,
     description: 'Returns list of owned places for user. Only accessibe by admins.',
   })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.ADMIN, UserRole.AUDITOR])
   @UseGuards(AuthGuard)
   @Get('/owned/:userId')
   public async getOwnedPlacesByUserId(@Param('userId') userId: string): Promise<Place[] | void> {

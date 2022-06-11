@@ -41,12 +41,17 @@ export class UsersPlacesController {
 
   @ApiHeader({ name: 'authorization' })
   @ApiResponse({ isArray: true, type: Place, description: 'returns places, which can be managed by the current user' })
-  @SetMetadata(MetadataKey.ALLOWED_ROLES, [UserRole.PLACE_MANAGER, UserRole.ADMIN])
+  @SetMetadata(MetadataKey.ALLOWED_ROLES, [
+    UserRole.ADMIN,
+    UserRole.MODERATOR,
+    UserRole.PLACE_MANAGER,
+    UserRole.AUDITOR,
+  ])
   @UseGuards(AuthGuard)
   @Get('/owned')
   public async getOwnedPlaces(@SessionUser() user: User): Promise<Place[] | void> {
     const userPlaces = await this.sequelize.transaction(async (transaction): Promise<Place[]> => {
-      if (user.role === UserRole.ADMIN) {
+      if (user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR || user.role === UserRole.AUDITOR) {
         return await this.placesService.getDetailedPlaces(transaction);
       }
 
